@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Dashboard</title>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <h1>Welcome to Dashboard!</h1>
+            <input type="button" onclick="deleteUserAccount()" value="Delete My Account"/>    
+        </div>
+        <script>
+            async function deleteUserAccount() {
+                const accountID = localStorage.getItem("accountID");
+                if(!accountID) {
+                    alert("Cant find account UUID, try to login again!");
+                    return;
+                }
+
+                try {
+                    const deleteRequest = await fetch("/api/db", {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({accountID})
+                    });
+                    const deleteResponse = await deleteRequest.json();
+
+                    alert(deleteResponse.body);
+
+                    if(deleteResponse.statusCode === 200) {
+                        localStorage.removeItem("accountID");
+                        localStorage.removeItem("firstName");
+                        localStorage.removeItem("lastName");
+                        localStorage.removeItem("email");
+
+                        window.location.href = "/api/index";
+                    }
+                } catch(error) {
+                    console.log(error);
+                }
+            };
+        </script>
+    </body>
+</html>

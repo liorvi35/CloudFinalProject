@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Register</title>
+        <style>
+            .center_placeholder {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <h1>Register New User</h1>
+            <form id="registerForm">
+                <table style="margin-left: auto; margin-right: auto;">
+                    <tr>
+                        <td><input type="text" name="firstName" placeholder="First Name" class="center_placeholder" required/></td>
+                        <td><input type="text" name="lastName" placeholder="Last Name" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="email" name="email" placeholder="Email" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" name="password" placeholder="Password" class="center_placeholder" required/></td>
+                        <td><input type="password" name="confirmPassword" placeholder="Confirm Password" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="date" name="birthDate" placeholder="Birth Date" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <select name="gender" required>
+                                <option value="" disabled selected>Gender</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="Register!"/></td>
+                    </tr>
+                </table>
+            </form>
+            <input type="button" onclick="window.location.href = '/api/index';" value="Back to home page"/>
+        </div>
+        <script>
+            function generateRandomString(length) {
+                const characters = "0123456789ABCDEF";
+                let result = "";
+                const charactersLength = characters.length;
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                }
+                return result;
+            }
+
+            async function hashString(string) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(string);
+
+                const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+                return hashHex;
+            }
+
+            function getUUID() {
+                const uuid = generateRandomString(8) + "-" + generateRandomString(4) + "-" + generateRandomString(4) + "-" + generateRandomString(4) + "-" +generateRandomString(12);
+                return uuid;
+            }
+
+            document.getElementById("registerForm").addEventListener("submit", async function(event) {
+                event.preventDefault();
+
+                const registerFormData = new FormData(this);
+
+                const firstName = registerFormData.get("firstName");
+                const lastName = registerFormData.get("lastName");
+
+                const email = registerFormData.get("email");
+
+                const password = registerFormData.get("password");
+                const confirmPassword = registerFormData.get("confirmPassword");
+
+                const birthDateString = registerFormData.get("birthDate");
+                const birthDate = new Date(birthDateString);
+                const today = new Date();
+                var age = today.getFullYear() - birthDate.getFullYear();
+                const monthDifference = today.getMonth() - birthDate.getMonth();
+                const dayDifference = today.getDate() - birthDate.getDate();
+                if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+                    age--;
+                }
+
+                const gender = registerFormData.get("gender");
+
+                if(password != confirmPassword) {
+                    alert("Passwords doesn't matches!");
+                    return;
+                } else if(age < 13) {
+                    alert("You must be at least 13 years old to join!");
+                    return;
+                }
+
+                try {
+                    const accountID = getUUID();
+                    const hashPassword = await hashString(password);
+
+                    const registerRequestData = {
+                        accountID,
+                        firstName,
+                        lastName,
+                        email,
+                        hashPassword,
+                        birthDate,
+                        gender
+                    };
+
+                    const registerRequest = await fetch("/api/db", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(registerRequestData)
+                    });
+                    const registerResponse = await registerRequest.json();
+
+                    alert(registerResponse.body);
+
+                    if(registerResponse.statusCode === 200) {
+                        localStorage.setItem("accountID", accountID);
+                        localStorage.setItem("firstName", firstName);
+                        localStorage.setItem("lastName", lastName);
+                        localStorage.setItem("email", email);
+
+                        window.location.href = "/api/dashboard";
+                    }
+                } catch(error) {
+                    console.log(error);
+                }
+            });
+        </script>
+    </body>
+</html>
