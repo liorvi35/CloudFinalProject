@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Register</title>
+        <style>
+            .center_placeholder {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <h1>Register New User</h1>
+            <form id="loginForm">
+                <table style="margin-left: auto; margin-right: auto;">
+                    <tr>
+                        <td><input type="email" name="email" placeholder="Email" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="password" name="password" placeholder="Password" class="center_placeholder" required/></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" value="Login!"/></td>
+                    </tr>
+                </table>
+            </form>
+            <input type="button" onclick="window.location.href = '/api/index';" value="Back to home page"/>
+        </div>
+        <script>
+            async function hashString(string) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(string);
+
+                const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+
+                return hashHex;
+            }
+
+            document.getElementById("loginForm").addEventListener("submit", async function(event) {
+                event.preventDefault();
+
+                const registerFormData = new FormData(this);
+                const email = registerFormData.get("email");
+                const password = registerFormData.get("password");
+
+                try {
+                    const hashPassword = await hashString(password);
+
+                    const loginRequest = await fetch("/api/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({email})
+                    });
+                    const loginResponse = await loginRequest.json();
+
+                    const accountDetails = JSON.parse(loginResponse.body);
+
+                    if((loginResponse.statusCode === 400) || (accountDetails.hashPassword != hashPassword)) {
+                        alert("Bad Email or Password!");
+                        return;
+                    }
+
+                    if(loginResponse.statusCode === 200) {
+                        alert("OK");
+
+                        localStorage.setItem("accountID", accountDetails.accountID);
+                        localStorage.setItem("firstName", accountDetails.firstName);
+                        localStorage.setItem("lastName", accountDetails.lastName);
+                        localStorage.setItem("email", accountDetails.email);
+
+                        window.location.href = "/api/dashboard";
+                    }
+                } catch(error) {
+                    console.log(error);
+                }
+            });
+        </script>
+    </body>
+</html>
