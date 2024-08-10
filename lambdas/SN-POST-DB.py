@@ -5,6 +5,13 @@ from boto3.dynamodb.conditions import Key
 DYNAMO_DB_SERVICE = "dynamodb"
 TABLE_NAME = "SN-Users"
 
+S3_SERVICE = "s3"
+BUCKET_NAME = "sn-profile-pictures"
+TIMEOUT = 3600
+
+DEFAULT_PICTURE_KEY_FEMALE = "female_default.png"
+DEFAULT_PICTURE_KEY_MALE = "male_default.png"
+
 def lambda_handler(event, context):
     try:
         try:
@@ -40,6 +47,16 @@ def lambda_handler(event, context):
                 "body": "Bad Request"
             }
 
+        s3_client = boto3.client(S3_SERVICE)
+        presigned_url = s3_client.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": BUCKET_NAME,
+                "Key": DEFAULT_PICTURE_KEY_MALE if gender == "male" else DEFAULT_PICTURE_KEY_FEMALE
+            },
+            ExpiresIn=TIMEOUT
+        )
+
         user_details = {
             "accountID": account_id,
             "firstName": first_name,
@@ -47,9 +64,11 @@ def lambda_handler(event, context):
             "email": email,
             "hashPassword": hash_password,
             "birthDate": birth_date,
-            "gender": gender
+            "gender": gender,
+            "profilePicture": presigned_url
         }
 
+        # Insert new user into DynamoDB
         insert_new_user = table.put_item(Item=user_details)
         
         return {
@@ -57,7 +76,8 @@ def lambda_handler(event, context):
             "headers": {
                 "Content-Type": "text/plain"
             },
-            "body": "OK"
+            "body": "OK",
+            "profilePicture": presigned_url
         }
     except Exception:
         return {

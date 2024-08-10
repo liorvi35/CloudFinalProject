@@ -2,13 +2,106 @@
 <html lang="en">
     <head>
         <title>Dashboard</title>
+        <script>
+        const accountID = localStorage.getItem("accountID");
+        if (!accountID) {
+            alert("Access denied: Please log in.");
+            window.location.href = "/api/index";
+        }
+    </script>
     </head>
     <body>
         <div style="text-align: center;">
-            <h1>Welcome to Dashboard!</h1>
-            <input type="button" onclick="deleteUserAccount()" value="Delete My Account"/>    
+            <h1 id="welcome">Welcome to Dashboard!</h1>
+            <img id="profile-picture" style="width: 10%; height: 10%;"></img>
+            <br/>
+            <input type="button" onclick="deleteUserAccount()" value="Delete My Account"/>
+            <input type="button" onclick="logOut()" value="Log OUT!"/>
+            <br/><br/>
+            <h1>Upload Profile Picture</h1>
+            <input type="file" id="profile-pic" accept=".png, .jpg, .jpeg">
+            <button id="upload-btn">Upload</button>
         </div>
         <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const profilePictureUrl = localStorage.getItem("profilePicture");
+                
+                const imgElement = document.getElementById("profile-picture");
+                
+                if (profilePictureUrl) {
+                    imgElement.src = profilePictureUrl;
+                } else {
+                    imgElement.alt = "No profile picture available";
+                }
+                
+                const welcome = document.getElementById("welcome");
+                welcome.innerHTML = "Welcome " + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName") + "!"
+            });
+            
+            
+            document.getElementById("upload-btn").addEventListener("click", async function() {
+                const fileInput = document.getElementById("profile-pic");
+                const file = fileInput.files[0];
+            
+                if (!file) {
+                    alert("Please select a file.");
+                    return;
+                }
+            
+                const validFormats = ["image/png", "image/jpeg", "image/jpg"];
+                if (!validFormats.includes(file.type)) {
+                    alert("Invalid file format. Please upload a PNG or JPEG image.");
+                    return;
+                }
+            
+                const reader = new FileReader();
+                reader.onload = async function(event) {
+                    const base64String = event.target.result.split(",")[1]; 
+                    const format = file.type.split("/")[1];
+            
+                    const accountID = localStorage.getItem("accountID");
+            
+                    const requestBody = JSON.stringify({
+                        accountID: accountID,
+                        profilePicture: base64String,
+                        format: format
+                    });
+                    
+                    try {
+                        const response = await fetch("/api/db", {
+                            method: "PUT",
+                            headers: {
+                            "Content-Type": "application/json"
+                            },
+                            body: requestBody
+                        });
+            
+                        if (response.ok) {
+                            const result = await response.json();
+                            const presignedUrl = JSON.parse(result.body).presignedUrl;
+                            const imgElement = document.getElementById("profile-picture");
+                            imgElement.src = presignedUrl;
+                            localStorage.setItem("profilePicture", presignedUrl);
+                        } else {
+                            alert("Failed to upload profile picture.");
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("An error occurred while uploading the profile picture.");
+                    }
+                };
+            
+                reader.readAsDataURL(file);
+            });
+            async function logOut() {
+                localStorage.removeItem("accountID");
+                localStorage.removeItem("firstName");
+                localStorage.removeItem("lastName");
+                localStorage.removeItem("email");
+                localStorage.removeItem("profilePicture");
+                window.location.href = "/api/index";
+            }
+            
             async function deleteUserAccount() {
                 const accountID = localStorage.getItem("accountID");
                 if(!accountID) {

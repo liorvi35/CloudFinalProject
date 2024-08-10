@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Register</title>
+        <title>Login</title>
         <style>
             .center_placeholder {
                 text-align: center;
@@ -10,7 +10,7 @@
     </head>
     <body>
         <div style="text-align: center;">
-            <h1>Register New User</h1>
+            <h1>Sign Existing User</h1>
             <form id="loginForm">
                 <table style="margin-left: auto; margin-right: auto;">
                     <tr>
@@ -66,12 +66,11 @@
                     }
 
                     if(loginResponse.statusCode === 200) {
-                        alert("OK");
-
                         localStorage.setItem("accountID", accountDetails.accountID);
                         localStorage.setItem("firstName", accountDetails.firstName);
                         localStorage.setItem("lastName", accountDetails.lastName);
                         localStorage.setItem("email", accountDetails.email);
+                        localStorage.setItem("profilePicture", accountDetails.profilePicture);
 
                         window.location.href = "/api/dashboard";
                     }

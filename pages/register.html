@@ -127,13 +127,12 @@
                     });
                     const registerResponse = await registerRequest.json();
 
-                    alert(registerResponse.body);
-
                     if(registerResponse.statusCode === 200) {
                         localStorage.setItem("accountID", accountID);
                         localStorage.setItem("firstName", firstName);
                         localStorage.setItem("lastName", lastName);
                         localStorage.setItem("email", email);
+                        localStorage.setItem("profilePicture", registerResponse.profilePicture);
 
                         window.location.href = "/api/dashboard";
                     }
