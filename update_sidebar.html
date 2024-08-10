@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Create Sticky Header/Footer on a Web Page
+        using HTML CSS and JavaScript
+    </title>
+
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            text-align: center;
+            background-color: lightgray;
+            padding: 20px;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navigation li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: lightgray;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .content {
+            margin-bottom: 100px;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .main {
+            margin-left: 160px; /* Same as the width of the sidenav */
+            padding: 0px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Sticky Header</h1>
+        <nav class="navigation">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#html">HTML</a></li>
+                <li><a href="#css">CSS</a></li>
+                <li><a href="#js">JavaScript</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="sidenav">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#clients">Clients</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <div class="main">
+        <div class="content">
+            <h2 style="text-align: center;" id="html">
+                HTML
+            </h2>
+
+            <p>
+                HTML stands for HyperText Markup Language. 
+                It is used to design the web pages. With 
+                the help of HTML, you can create a complete 
+                website structure. HTML is the combination 
+                of Hypertext and Markup language. Hypertext
+                defines the link between the web pages and 
+                markup language defines the text document 
+                within the tag that define the structure 
+                of web pages.
+            </p>
+
+            <h2 style="text-align: center;" id="css">
+                CSS
+            </h2>
+            <p>
+                CSS (Cascading Style Sheets) is used to 
+                styles web pages. Cascading Style Sheets 
+                are fondly referred to as CSS. The reason 
+                for using this is to simplify the process 
+                of making web pages presentable. It allows 
+                you to apply styles on web pages. More 
+                importantly, it enables you to do this 
+                independently of the HTML that makes up 
+                each web page.
+            </p>
+
+            <h2 style="text-align: center;" id="js">
+                JavaScript
+            </h2>        
+            <p>
+                JavaScript is a lightweight, cross-platform, 
+                single-threaded, and interpreted compiled 
+                programming language. It is also known as 
+                the scripting language for webpages. It is 
+                well-known for the development of web pages, 
+                and many non-browser environments also use it.
+                JavaScript is a weakly typed language (
+                dynamically typed). JavaScript can be used 
+                for Client-side developments as well as 
+                Server-side developments. JavaScript is both 
+                an imperative and declarative type of language. 
+                JavaScript contains a standard library of 
+                objects, like Array, Date, and Math, and a 
+                core set of language elements like operators, 
+                control structures, and statements. 
+            </p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2023 GFG. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

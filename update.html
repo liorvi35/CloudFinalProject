@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Details</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: lightgray;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .navigation ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navigation li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: lightgray;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="password"],
+        .form-container input[type="date"],
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-container button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .form-container button:active {
+            background-color: #004494;
+            transform: scale(0.98);
+        }
+
+        .content {
+    padding: 20px;
+    text-align: center;
+}
+
+.content button {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    margin: 10px;
+    outline: none;
+}
+
+.content button.delete {
+    background-color: #dc3545; /* Red */
+}
+
+.content button.update {
+    background-color: #28a745; /* Green */
+}
+
+.content button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+    </style>
+    <script>
+        function toggleForm(formId) {
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.style.display = 'none';
+            });
+            document.getElementById(formId).style.display = 'block';
+        }
+    </script>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Update Profile Details</h1>
+        <nav class="navigation">
+            <ul>
+                <li><a href="/api/index">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        <button class="delete" onclick="toggleForm('deleteForm')">Delete Account</button>
+        <button class="update" onclick="toggleForm('updateForm')">Update Account</button>
+    </div>    
+
+    <div id="deleteForm" class="form-container" style="display: none;">
+        <h2>Delete Account</h2>
+        <form action="/api/delete" method="post">
+            <p>Are you sure you want to delete your account?</p>
+            <button type="submit">Delete Account</button>
+        </form>
+    </div>
+
+    <div id="updateForm" class="form-container" style="display: none;">
+        <h2>Update Account</h2>
+        <form action="/api/update" method="post">
+            <input type="text" name="firstName" placeholder="First Name" required>
+            <input type="text" name="lastName" placeholder="Last Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+            <input type="date" name="birthDate" placeholder="Birth Date" required>
+            <select name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+            <div class="form-actions">
+                <button type="submit">Update Account</button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 Your Company. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
