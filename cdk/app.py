@@ -2,10 +2,10 @@
 
 import aws_cdk as cdk
 
-from cdk.cdk_stack import CdkStack
+from cdk.sn_stack import SnStack
 
 
 app = cdk.App()
-CdkStack(app, "CdkStack")
+SnStack(app, "SnStack")
 
 app.synth()
