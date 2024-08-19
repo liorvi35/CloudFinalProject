@@ -1,0 +1,97 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "LinkupCdkStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "LinkupCdkStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "LinkupCdkStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://991888206011/us-east-1",
+      "properties": {
+        "templateFile": "LinkupCdkStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleExternalId": "",
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/c744c6fb08b07fee5c022c4adf028025ef756e5ee2d65461bce5d152d4613028.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "LinkupCdkStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
+          "assumeRoleExternalId": "",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "LinkupCdkStack.assets"
+      ],
+      "metadata": {
+        "/LinkupCdkStack/MyBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyBucketF68F3FF0"
+          }
+        ],
+        "/LinkupCdkStack/MyBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyBucketPolicyE7FBAC7B"
+          }
+        ],
+        "/LinkupCdkStack/MyBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MyBucketAutoDeleteObjectsCustomResource2C28D565"
+          }
+        ],
+        "/LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/LinkupCdkStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/LinkupCdkStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/LinkupCdkStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "LinkupCdkStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
