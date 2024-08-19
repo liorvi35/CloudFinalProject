@@ -24,17 +24,17 @@
               "version": "2.146.0"
             }
           },
-          "MyBucket": {
-            "id": "MyBucket",
-            "path": "LinkupCdkStack/MyBucket",
+          "yoad-tamar-123123": {
+            "id": "yoad-tamar-123123",
+            "path": "LinkupCdkStack/yoad-tamar-123123",
             "children": {
               "Resource": {
                 "id": "Resource",
-                "path": "LinkupCdkStack/MyBucket/Resource",
+                "path": "LinkupCdkStack/yoad-tamar-123123/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
                   "aws:cdk:cloudformation:props": {
-                    "bucketName": "my-bucket-name",
+                    "bucketName": "yoad-tamar-123123",
                     "tags": [
                       {
                         "key": "aws-cdk:auto-delete-objects",
@@ -53,16 +53,16 @@
               },
               "Policy": {
                 "id": "Policy",
-                "path": "LinkupCdkStack/MyBucket/Policy",
+                "path": "LinkupCdkStack/yoad-tamar-123123/Policy",
                 "children": {
                   "Resource": {
                     "id": "Resource",
-                    "path": "LinkupCdkStack/MyBucket/Policy/Resource",
+                    "path": "LinkupCdkStack/yoad-tamar-123123/Policy/Resource",
                     "attributes": {
                       "aws:cdk:cloudformation:type": "AWS::S3::BucketPolicy",
                       "aws:cdk:cloudformation:props": {
                         "bucket": {
-                          "Ref": "MyBucketF68F3FF0"
+                          "Ref": "yoadtamar123123ABEBC94A"
                         },
                         "policyDocument": {
                           "Statement": [
@@ -85,7 +85,7 @@
                               "Resource": [
                                 {
                                   "Fn::GetAtt": [
-                                    "MyBucketF68F3FF0",
+                                    "yoadtamar123123ABEBC94A",
                                     "Arn"
                                   ]
                                 },
@@ -95,7 +95,7 @@
                                     [
                                       {
                                         "Fn::GetAtt": [
-                                          "MyBucketF68F3FF0",
+                                          "yoadtamar123123ABEBC94A",
                                           "Arn"
                                         ]
                                       },
@@ -123,11 +123,11 @@
               },
               "AutoDeleteObjectsCustomResource": {
                 "id": "AutoDeleteObjectsCustomResource",
-                "path": "LinkupCdkStack/MyBucket/AutoDeleteObjectsCustomResource",
+                "path": "LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource",
                 "children": {
                   "Default": {
                     "id": "Default",
-                    "path": "LinkupCdkStack/MyBucket/AutoDeleteObjectsCustomResource/Default",
+                    "path": "LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource/Default",
                     "constructInfo": {
                       "fqn": "aws-cdk-lib.CfnResource",
                       "version": "2.146.0"

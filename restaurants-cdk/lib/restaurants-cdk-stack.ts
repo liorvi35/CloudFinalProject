@@ -15,31 +15,31 @@ export class RestaurantsCdkStack extends cdk.Stack {
     const useCacheFlag = true;
 
     // Students TODO Account Details: Change to your account id
-    const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::114985187174:role/LabRole", { mutable: false });
+    const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
 
     // Students TODO Account Details: Change the vpcId to the VPC ID of your existing VPC
-    const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
-      vpcId: 'vpc-04cb09bb115a514c5',
-    });
+    // const vpc = ec2.Vpc.fromLookup(this, 'VPC', {
+    //   vpcId: 'vpc-04cb09bb115a514c5',
+    // });
 
-    this.createNatGatewayForPrivateSubnet(vpc);
+    // this.createNatGatewayForPrivateSubnet(vpc);
 
-    const memcachedConfigurationEndpoint = this.createMemcachedSingleInstaceInPublicSubnetForTestingPurpose(vpc, labRole);
-    // Students TODO: Comment out the above line and uncomment the below line to use Elasticache, for the testing phase
-    // const memcachedConfigurationEndpoint = this.createMemcachedElasticache(vpc, labRole);
+    // const memcachedConfigurationEndpoint = this.createMemcachedSingleInstaceInPublicSubnetForTestingPurpose(vpc, labRole);
+    // // Students TODO: Comment out the above line and uncomment the below line to use Elasticache, for the testing phase
+    // // const memcachedConfigurationEndpoint = this.createMemcachedElasticache(vpc, labRole);
 
-    const table = this.createDynamoDBTable();
+    // const table = this.createDynamoDBTable();
 
-    // Create an S3 bucket
-    const deploymentBucket = this.deployTheApplicationArtifactToS3Bucket(labRole);
+    // // Create an S3 bucket
+    // const deploymentBucket = this.deployTheApplicationArtifactToS3Bucket(labRole);
 
-    // create a amazon linux 2023 user data from node js app that deploy from bucket, 
-    // and pass the elastic cache and dynamodb table name in env to the app
-    this.deployApplicationInfrastructure(deploymentBucket, memcachedConfigurationEndpoint, table, useCacheFlag, vpc, labRole);
+    // // create a amazon linux 2023 user data from node js app that deploy from bucket, 
+    // // and pass the elastic cache and dynamodb table name in env to the app
+    // this.deployApplicationInfrastructure(deploymentBucket, memcachedConfigurationEndpoint, table, useCacheFlag, vpc, labRole);
 
-    new cdk.CfnOutput(this, 'Run Test Command', {
-      value: `MEMCACHED_CONFIGURATION_ENDPOINT='${memcachedConfigurationEndpoint}' TABLE_NAME='${table.tableName}' AWS_REGION='${this.region}' USE_CACHE='${useCacheFlag}' npm test`,
-    });
+    // new cdk.CfnOutput(this, 'Run Test Command', {
+    //   value: `MEMCACHED_CONFIGURATION_ENDPOINT='${memcachedConfigurationEndpoint}' TABLE_NAME='${table.tableName}' AWS_REGION='${this.region}' USE_CACHE='${useCacheFlag}' npm test`,
+    // });
 
   }
 

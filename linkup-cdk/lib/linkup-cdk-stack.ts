@@ -9,12 +9,15 @@ export class LinkupCdkStack extends cdk.Stack {
     
     const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
   
-    const storage = new s3.Bucket(this, 'MyBucket', {
-      bucketName: 'my-bucket-name',
+    const storage = new s3.Bucket(this, 'yoad-tamar-123123', {
+      bucketName: 'yoad-tamar-123123',
       versioned: true, // Optional: Enable versioning for the bucket
       removalPolicy: cdk.RemovalPolicy.DESTROY, // Optional: Automatically delete the bucket when the stack is deleted
-      autoDeleteObjects: true // Optional: Automatically delete all objects in the bucket when the stack is deleted
+      autoDeleteObjects: true, // Optional: Automatically delete all objects in the bucket when the stack is deleted
+      role: labRole
     });
+
+    storage.grantReadWrite(labRole);
 
 
   }

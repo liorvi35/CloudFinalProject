@@ -1,9 +1,9 @@
 {
  "Resources": {
-  "MyBucketF68F3FF0": {
+  "yoadtamar123123ABEBC94A": {
    "Type": "AWS::S3::Bucket",
    "Properties": {
-    "BucketName": "my-bucket-name",
+    "BucketName": "yoad-tamar-123123",
     "Tags": [
      {
       "Key": "aws-cdk:auto-delete-objects",
@@ -17,14 +17,14 @@
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
    "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/MyBucket/Resource"
+    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/Resource"
    }
   },
-  "MyBucketPolicyE7FBAC7B": {
+  "yoadtamar123123Policy618A962F": {
    "Type": "AWS::S3::BucketPolicy",
    "Properties": {
     "Bucket": {
-     "Ref": "MyBucketF68F3FF0"
+     "Ref": "yoadtamar123123ABEBC94A"
     },
     "PolicyDocument": {
      "Statement": [
@@ -47,7 +47,7 @@
        "Resource": [
         {
          "Fn::GetAtt": [
-          "MyBucketF68F3FF0",
+          "yoadtamar123123ABEBC94A",
           "Arn"
          ]
         },
@@ -57,7 +57,7 @@
           [
            {
             "Fn::GetAtt": [
-             "MyBucketF68F3FF0",
+             "yoadtamar123123ABEBC94A",
              "Arn"
             ]
            },
@@ -72,10 +72,10 @@
     }
    },
    "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/MyBucket/Policy/Resource"
+    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/Policy/Resource"
    }
   },
-  "MyBucketAutoDeleteObjectsCustomResource2C28D565": {
+  "yoadtamar123123AutoDeleteObjectsCustomResource51CA3CC1": {
    "Type": "Custom::S3AutoDeleteObjects",
    "Properties": {
     "ServiceToken": {
@@ -85,16 +85,16 @@
      ]
     },
     "BucketName": {
-     "Ref": "MyBucketF68F3FF0"
+     "Ref": "yoadtamar123123ABEBC94A"
     }
    },
    "DependsOn": [
-    "MyBucketPolicyE7FBAC7B"
+    "yoadtamar123123Policy618A962F"
    ],
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
    "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/MyBucket/AutoDeleteObjectsCustomResource/Default"
+    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource/Default"
    }
   },
   "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
@@ -145,7 +145,7 @@
       [
        "Lambda function for auto-deleting objects in ",
        {
-        "Ref": "MyBucketF68F3FF0"
+        "Ref": "yoadtamar123123ABEBC94A"
        },
        " S3 bucket."
       ]

@@ -19,7 +19,7 @@
         "assumeRoleExternalId": "",
         "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/c744c6fb08b07fee5c022c4adf028025ef756e5ee2d65461bce5d152d4613028.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/844e207f415f21905d40a8c8ed9f8cca44e250495da670c56836f7f454c9facb.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -36,22 +36,22 @@
         "LinkupCdkStack.assets"
       ],
       "metadata": {
-        "/LinkupCdkStack/MyBucket/Resource": [
+        "/LinkupCdkStack/yoad-tamar-123123/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "MyBucketF68F3FF0"
+            "data": "yoadtamar123123ABEBC94A"
           }
         ],
-        "/LinkupCdkStack/MyBucket/Policy/Resource": [
+        "/LinkupCdkStack/yoad-tamar-123123/Policy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "MyBucketPolicyE7FBAC7B"
+            "data": "yoadtamar123123Policy618A962F"
           }
         ],
-        "/LinkupCdkStack/MyBucket/AutoDeleteObjectsCustomResource/Default": [
+        "/LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource/Default": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "MyBucketAutoDeleteObjectsCustomResource2C28D565"
+            "data": "yoadtamar123123AutoDeleteObjectsCustomResource51CA3CC1"
           }
         ],
         "/LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
