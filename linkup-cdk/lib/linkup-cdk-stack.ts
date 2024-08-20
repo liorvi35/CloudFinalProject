@@ -14,19 +14,12 @@ export class LinkupCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
-
-    const deploymentBucket = this.deployTheApplicationArtifactToS3Bucket(labRole, "yoad-tamar-123456");
-  }
-
-  private deployTheApplicationArtifactToS3Bucket(labRole: cdk.aws_iam.IRole, bucketName: string) {
-    const bucket = new s3.Bucket(this, bucketName, {
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+	
+    const linkup_profile_pictures = new s3.Bucket(this, 'linkup_profile_pictures', {
+      bucketName: 'linkup_profile_pictures',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
-
-    // Output the bucket name with a unique ID
-    new cdk.CfnOutput(this, `${bucketName}-Output`, {
-      value: bucket.bucketName,
-    });
-    return bucket;
+    profilePictureBucket.grantReadWrite(labRole);
   }
 }
