@@ -20,11 +20,11 @@ export class LinkupCdkStack extends cdk.Stack {
 
   private deployTheApplicationArtifactToS3Bucket(labRole: cdk.aws_iam.IRole, bucketName: string) {
     const bucket = new s3.Bucket(this, bucketName, {
-      removalPolicy: cdk.RemovalPolicy.RETAIN_ON_UPDATE_OR_DELETE,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
-    // Output the bucket name
-    new cdk.CfnOutput(this, bucketName, {
+    // Output the bucket name with a unique ID
+    new cdk.CfnOutput(this, `${bucketName}-Output`, {
       value: bucket.bucketName,
     });
     return bucket;

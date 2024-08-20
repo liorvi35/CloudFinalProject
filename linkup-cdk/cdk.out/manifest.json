@@ -19,7 +19,7 @@
         "assumeRoleExternalId": "",
         "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/844e207f415f21905d40a8c8ed9f8cca44e250495da670c56836f7f454c9facb.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/f1aafc8d01c25ec5a7e5039faca46007d1f74dbd11ca1f63b1e906088cc433d0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -36,34 +36,16 @@
         "LinkupCdkStack.assets"
       ],
       "metadata": {
-        "/LinkupCdkStack/yoad-tamar-123123/Resource": [
+        "/LinkupCdkStack/yoad-tamar-123456/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "yoadtamar123123ABEBC94A"
+            "data": "yoadtamar1234566EF2404B"
           }
         ],
-        "/LinkupCdkStack/yoad-tamar-123123/Policy/Resource": [
+        "/LinkupCdkStack/yoad-tamar-123456-Output": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "yoadtamar123123Policy618A962F"
-          }
-        ],
-        "/LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource/Default": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "yoadtamar123123AutoDeleteObjectsCustomResource51CA3CC1"
-          }
-        ],
-        "/LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
-          }
-        ],
-        "/LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+            "data": "yoadtamar123456Output"
           }
         ],
         "/LinkupCdkStack/CDKMetadata/Default": [

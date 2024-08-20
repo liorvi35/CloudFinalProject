@@ -1,173 +1,27 @@
 {
  "Resources": {
-  "yoadtamar123123ABEBC94A": {
+  "yoadtamar1234566EF2404B": {
    "Type": "AWS::S3::Bucket",
-   "Properties": {
-    "BucketName": "yoad-tamar-123123",
-    "Tags": [
-     {
-      "Key": "aws-cdk:auto-delete-objects",
-      "Value": "true"
-     }
-    ],
-    "VersioningConfiguration": {
-     "Status": "Enabled"
-    }
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
    "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/Resource"
-   }
-  },
-  "yoadtamar123123Policy618A962F": {
-   "Type": "AWS::S3::BucketPolicy",
-   "Properties": {
-    "Bucket": {
-     "Ref": "yoadtamar123123ABEBC94A"
-    },
-    "PolicyDocument": {
-     "Statement": [
-      {
-       "Action": [
-        "s3:DeleteObject*",
-        "s3:GetBucket*",
-        "s3:List*",
-        "s3:PutBucketPolicy"
-       ],
-       "Effect": "Allow",
-       "Principal": {
-        "AWS": {
-         "Fn::GetAtt": [
-          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-          "Arn"
-         ]
-        }
-       },
-       "Resource": [
-        {
-         "Fn::GetAtt": [
-          "yoadtamar123123ABEBC94A",
-          "Arn"
-         ]
-        },
-        {
-         "Fn::Join": [
-          "",
-          [
-           {
-            "Fn::GetAtt": [
-             "yoadtamar123123ABEBC94A",
-             "Arn"
-            ]
-           },
-           "/*"
-          ]
-         ]
-        }
-       ]
-      }
-     ],
-     "Version": "2012-10-17"
-    }
-   },
-   "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/Policy/Resource"
-   }
-  },
-  "yoadtamar123123AutoDeleteObjectsCustomResource51CA3CC1": {
-   "Type": "Custom::S3AutoDeleteObjects",
-   "Properties": {
-    "ServiceToken": {
-     "Fn::GetAtt": [
-      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
-      "Arn"
-     ]
-    },
-    "BucketName": {
-     "Ref": "yoadtamar123123ABEBC94A"
-    }
-   },
-   "DependsOn": [
-    "yoadtamar123123Policy618A962F"
-   ],
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123123/AutoDeleteObjectsCustomResource/Default"
-   }
-  },
-  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
-   "Type": "AWS::IAM::Role",
-   "Properties": {
-    "AssumeRolePolicyDocument": {
-     "Version": "2012-10-17",
-     "Statement": [
-      {
-       "Action": "sts:AssumeRole",
-       "Effect": "Allow",
-       "Principal": {
-        "Service": "lambda.amazonaws.com"
-       }
-      }
-     ]
-    },
-    "ManagedPolicyArns": [
-     {
-      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-     }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
-   }
-  },
-  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
-   "Type": "AWS::Lambda::Function",
-   "Properties": {
-    "Code": {
-     "S3Bucket": "cdk-hnb659fds-assets-991888206011-us-east-1",
-     "S3Key": "2eb6a831b107939f63cfebf68e6316e1a40f79fc99cae0fee9b333bac8d29bc4.zip"
-    },
-    "Timeout": 900,
-    "MemorySize": 128,
-    "Handler": "index.handler",
-    "Role": {
-     "Fn::GetAtt": [
-      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
-      "Arn"
-     ]
-    },
-    "Runtime": "nodejs20.x",
-    "Description": {
-     "Fn::Join": [
-      "",
-      [
-       "Lambda function for auto-deleting objects in ",
-       {
-        "Ref": "yoadtamar123123ABEBC94A"
-       },
-       " S3 bucket."
-      ]
-     ]
-    }
-   },
-   "DependsOn": [
-    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
-    "aws:asset:path": "asset.2eb6a831b107939f63cfebf68e6316e1a40f79fc99cae0fee9b333bac8d29bc4",
-    "aws:asset:property": "Code"
+    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123456/Resource"
    }
   },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WMTQqDMBCFz+I+mar92VcvIHoASeMoYzSBTKIU8e5dWCpdfd97D14O2e0BaaJWlrozcqIXbE1Q2oga2UWvUaiVW77CVkRtMIiyt187ULmJ9Pusj7yLMnJw8++l7O3pf1Pl3UId+kIxiiczhiaogeywC+s6hJEvS55CdocsGZlI+mgDzQj1wQ8rHDVUxAAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzQx0zNQTCwv1k1OydbNyUzSqw4uSUzO1glKLc4vLUpO1UksL44vNtardipNzk4t0XFOy4OwakFM/9KSglKwIEx9rU5efkqqXlaxfpmRgZ6hqZ6hYlZxZqZuUWleSWZuql4QhAYAZ+Nas3oAAAA="
    },
    "Metadata": {
     "aws:cdk:path": "LinkupCdkStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "yoadtamar123456Output": {
+   "Value": {
+    "Ref": "yoadtamar1234566EF2404B"
    }
   }
  },

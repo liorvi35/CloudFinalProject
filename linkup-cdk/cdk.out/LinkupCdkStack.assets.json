@@ -1,22 +1,7 @@
 {
   "version": "36.0.0",
   "files": {
-    "2eb6a831b107939f63cfebf68e6316e1a40f79fc99cae0fee9b333bac8d29bc4": {
-      "source": {
-        "path": "asset.2eb6a831b107939f63cfebf68e6316e1a40f79fc99cae0fee9b333bac8d29bc4",
-        "packaging": "zip"
-      },
-      "destinations": {
-        "991888206011-us-east-1": {
-          "bucketName": "cdk-hnb659fds-assets-991888206011-us-east-1",
-          "objectKey": "2eb6a831b107939f63cfebf68e6316e1a40f79fc99cae0fee9b333bac8d29bc4.zip",
-          "region": "us-east-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
-          "assumeRoleExternalId": ""
-        }
-      }
-    },
-    "844e207f415f21905d40a8c8ed9f8cca44e250495da670c56836f7f454c9facb": {
+    "f1aafc8d01c25ec5a7e5039faca46007d1f74dbd11ca1f63b1e906088cc433d0": {
       "source": {
         "path": "LinkupCdkStack.template.json",
         "packaging": "file"
@@ -24,7 +9,7 @@
       "destinations": {
         "991888206011-us-east-1": {
           "bucketName": "cdk-hnb659fds-assets-991888206011-us-east-1",
-          "objectKey": "844e207f415f21905d40a8c8ed9f8cca44e250495da670c56836f7f454c9facb.json",
+          "objectKey": "f1aafc8d01c25ec5a7e5039faca46007d1f74dbd11ca1f63b1e906088cc433d0.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
           "assumeRoleExternalId": ""
