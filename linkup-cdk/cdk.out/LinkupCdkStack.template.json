@@ -150,7 +150,7 @@
    "Properties": {
     "Code": {
      "S3Bucket": "cdk-hnb659fds-assets-991888206011-us-east-1",
-     "S3Key": "d573dc429f39c3849c711a79872945838b9bb0ff2f4c43e2132a14848b6bb8a7.zip"
+     "S3Key": "0b81b1720315d77e44f4334c130eedf7a8f03503a360127642014906b9708a3f.zip"
     },
     "Handler": "index.lambda_handler",
     "Role": "arn:aws:iam::991888206011:role/LabRole",
@@ -158,7 +158,7 @@
    },
    "Metadata": {
     "aws:cdk:path": "LinkupCdkStack/linkup-get-index/Resource",
-    "aws:asset:path": "asset.d573dc429f39c3849c711a79872945838b9bb0ff2f4c43e2132a14848b6bb8a7",
+    "aws:asset:path": "asset.0b81b1720315d77e44f4334c130eedf7a8f03503a360127642014906b9708a3f",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
