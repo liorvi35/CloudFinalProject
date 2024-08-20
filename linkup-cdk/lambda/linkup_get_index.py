@@ -4,5 +4,5 @@ def lambda_handler(event, context):
 		'headers': {
 			'Content-Type': 'application/json'
 		},
-        'body': 'test'
+        'body': "<!DOCTYPE html><html><body><h1>LinkUp</h1></body></html>"
     }

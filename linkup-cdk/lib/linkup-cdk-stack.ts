@@ -11,41 +11,28 @@ export class LinkupCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     /* ---------- IAM ---------- */
-
-    const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
+    const labRole = iam.Role.fromRoleArn(this, "Role", "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
 
     /* ---------- S3 ---------- */
-	
 	  // S3 bucket for user's profile picture
-    const linkup_profile_pictures = new s3.Bucket(this, 'linkup_profile_pictures', {
-      bucketName: 'linkup-profile-pictures',
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-    });
-    linkup_profile_pictures.grantReadWrite(labRole);
-	
+    const linkup_profile_pictures = this.createBucket("linkup-profile-pictures", labRole);
+    	
     // S3 bucket for holding post's images
-    const linkup_post_pictures = new s3.Bucket(this, 'linkup_post_pictures', {
-        bucketName: 'linkup-post-pictures',
-        removalPolicy: cdk.RemovalPolicy.DESTROY,
-        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      });
-      linkup_post_pictures.grantReadWrite(labRole);
+    const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
 
     /* ---------- DynamoDB ---------- */
-	
 	  // DynamoDB table for holding users
-	  const linkup_users = new dynamodb.Table(this, 'linkup_users', {
-      tableName: 'linkup-users',
-      partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
+	  const linkup_users = new dynamodb.Table(this, "linkup_users", {
+      tableName: "linkup-users",
+      partitionKey: { name: "accountID", type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PROVISIONED,
       readCapacity: 1,
       writeCapacity: 1,
     });
     linkup_users.addGlobalSecondaryIndex({
-      indexName: 'email',
-      partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING },
+      indexName: "email",
+      partitionKey: { name: "email", type: dynamodb.AttributeType.STRING },
       projectionType: dynamodb.ProjectionType.ALL,
       readCapacity: 1,
       writeCapacity: 1,
@@ -53,10 +40,10 @@ export class LinkupCdkStack extends cdk.Stack {
 	  linkup_users.grantFullAccess(labRole);
 
     // DynamoDB table for holding posts
-    const linkup_posts = new dynamodb.Table(this, 'linkup_posts', {
-      tableName: 'linkup-posts',
-      partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
-      sortKey: {name:'postTime', type: dynamodb.AttributeType.STRING},
+    const linkup_posts = new dynamodb.Table(this, "linkup_posts", {
+      tableName: "linkup-posts",
+      partitionKey: { name: "accountID", type: dynamodb.AttributeType.STRING },
+      sortKey: { name:"postTime", type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PROVISIONED,
       readCapacity: 1,
@@ -65,9 +52,9 @@ export class LinkupCdkStack extends cdk.Stack {
     linkup_posts.grantFullAccess(labRole);
 
     // DynamoDB table for holding "followers"
-    const linkup_followers = new dynamodb.Table(this, 'linkup_followers', {
-      tableName: 'linkup-followers',
-      partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
+    const linkup_followers = new dynamodb.Table(this, "linkup_followers", {
+      tableName: "linkup-followers",
+      partitionKey: { name: "accountID", type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PROVISIONED,
       readCapacity: 1,
@@ -76,7 +63,6 @@ export class LinkupCdkStack extends cdk.Stack {
     linkup_followers.grantFullAccess(labRole);
 
     /* ---------- Lambda ---------- */
-
     /* db */
 
     // POST /prod/db 
@@ -107,7 +93,7 @@ export class LinkupCdkStack extends cdk.Stack {
     /* index */
 
     // GET /prod/index
-    const get_index = this.createLambda("linkup-get-index", "lambda", "index.lambda_handler", labRole);
+    const get_index = this.createLambda("linkup-get-index", "lambda", "linkup_get_index.lambda_handler", labRole);
 
     /* login */
 
@@ -147,18 +133,56 @@ export class LinkupCdkStack extends cdk.Stack {
     const get_update = this.createLambda("linkup-get-update", "lambda", "linkup_get_update.lambda_handler", labRole);
 
     /* ---------- API Gateway ---------- */
+    // api gateway for `LinkUp` Social Network
     const linkup_api_gateway = new apigateway.RestApi(this, 'linkup_api_gateway', {
       endpointTypes: [apigateway.EndpointType.REGIONAL],
       restApiName: 'linkup-api-gateway',
-      description: 'linkUp social Network.', 
+      description: 'LinkUp Social Network.', 
     });
 
-    const index_resource = linkup_api_gateway.root.addResource('index');
-    index_resource.addMethod('GET', new apigateway.LambdaIntegration(get_index));
+    const db_resource = linkup_api_gateway.root.addResource("db");
+    db_resource.addMethod("POST", new apigateway.LambdaIntegration(post_db));
+    db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db));
+    db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db));
 
-    new cdk.CfnOutput(this, 'API Endpoint', {
+    const followers_resource = linkup_api_gateway.root.addResource("followers");
+    followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers));
+    db_resource.addMethod("GET", new apigateway.LambdaIntegration(get_followers));
+    db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_followers));
+
+    const globalFeed_resource = linkup_api_gateway.root.addResource("globalFeed");
+    globalFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_globalFeed));
+
+    const index_resource = linkup_api_gateway.root.addResource("index");
+    index_resource.addMethod("GET", new apigateway.LambdaIntegration(get_index));
+
+    const postDB_resource = linkup_api_gateway.root.addResource("postDB");
+    postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB));
+    postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
+
+    const profile_resource = linkup_api_gateway.root.addResource("profile");
+    profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
+
+    const register_resource = linkup_api_gateway.root.addResource("register");
+    register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
+
+    const update_resource = linkup_api_gateway.root.addResource("update");
+    update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
+
+    new cdk.CfnOutput(this, "API Endpoint", {
       value: linkup_api_gateway.url,
     });
+  }
+
+  private createBucket(bucketName: string, role: cdk.aws_iam.IRole) {
+    const bucket = new s3.Bucket(this, bucketName, {
+      bucketName: bucketName,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+    });
+    bucket.grantReadWrite(role);
+
+    return bucket;
   }
 
   private createLambda(functionName: string, location: string, handler: string, role: cdk.aws_iam.IRole) {
