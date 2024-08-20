@@ -15,11 +15,38 @@ export class LinkupCdkStack extends cdk.Stack {
 
     const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
 	
+	// S3 bucket for user's profile picture
     const linkup_profile_pictures = new s3.Bucket(this, 'linkup_profile_pictures', {
       bucketName: 'linkup-profile-pictures',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
-    linkup_profile_pictures.grantReadWrite(labRole);
+    profilePictureBucket.grantReadWrite(labRole);
+	
+	// S3 bucket for holding post's images
+	const linkup_post_pictures = new s3.Bucket(this, 'linkup_post_pictures', {
+      bucketName: 'linkup-post-pictures',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+    });
+    profilePictureBucket.grantReadWrite(labRole);
+	
+	// DynamoDB table for holding users
+	const linkup_users = new dynamodb.Table(this, 'linkup_users', {
+      tableName: 'linkup-users',
+      partitionKey: { name: 'UserId', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
+    });
+    linkup_users.addGlobalSecondaryIndex({
+      indexName: 'emailIndex',
+      partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.ALL,
+      readCapacity: 1,
+      writeCapacity: 1,
+    });
+	linkup_users.grantFullAccess(labRole);
   }
 }
