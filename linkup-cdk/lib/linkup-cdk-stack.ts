@@ -21,7 +21,7 @@ export class LinkupCdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
-    profilePictureBucket.grantReadWrite(labRole);
+    linkup_profile_pictures.grantReadWrite(labRole);
 	
 	// S3 bucket for holding post's images
 	const linkup_post_pictures = new s3.Bucket(this, 'linkup_post_pictures', {
@@ -29,24 +29,47 @@ export class LinkupCdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
-    profilePictureBucket.grantReadWrite(labRole);
+    linkup_post_pictures.grantReadWrite(labRole);
 	
 	// DynamoDB table for holding users
 	const linkup_users = new dynamodb.Table(this, 'linkup_users', {
       tableName: 'linkup-users',
-      partitionKey: { name: 'UserId', type: dynamodb.AttributeType.STRING },
+      partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PROVISIONED,
       readCapacity: 1,
       writeCapacity: 1,
     });
     linkup_users.addGlobalSecondaryIndex({
-      indexName: 'emailIndex',
+      indexName: 'email',
       partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING },
       projectionType: dynamodb.ProjectionType.ALL,
       readCapacity: 1,
       writeCapacity: 1,
     });
 	linkup_users.grantFullAccess(labRole);
+
+  // DynamoDB table for holding posts
+    const linkup_posts = new dynamodb.Table(this, 'linkup_posts', {
+      tableName: 'linkup-posts',
+      partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
+      sortKey: {name:'postTime', type: dynamodb.AttributeType.STRING},
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 1,
+      writeCapacity: 1,
+    });
+    linkup_posts.grantFullAccess(labRole);
+
+  // DynamoDB table for holding "followers"
+  const linkup_followers = new dynamodb.Table(this, 'linkup_followers', {
+    tableName: 'linkup-followers',
+    partitionKey: { name: 'accountID', type: dynamodb.AttributeType.STRING },
+    removalPolicy: cdk.RemovalPolicy.DESTROY,
+    billingMode: dynamodb.BillingMode.PROVISIONED,
+    readCapacity: 1,
+    writeCapacity: 1,
+  });
+  linkup_followers.grantFullAccess(labRole);
   }
 }

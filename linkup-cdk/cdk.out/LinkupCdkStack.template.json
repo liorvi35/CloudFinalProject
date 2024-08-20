@@ -17,10 +17,76 @@
     "aws:cdk:path": "LinkupCdkStack/linkup_profile_pictures/Resource"
    }
   },
+  "linkuppostpicturesFECC3FE9": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "linkup-post-pictures",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "LinkupCdkStack/linkup_post_pictures/Resource"
+   }
+  },
+  "linkupusersC7FCF03D": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "UserId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "email",
+      "AttributeType": "S"
+     }
+    ],
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "emailIndex",
+      "KeySchema": [
+       {
+        "AttributeName": "email",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+       "ReadCapacityUnits": 1,
+       "WriteCapacityUnits": 1
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "UserId",
+      "KeyType": "HASH"
+     }
+    ],
+    "ProvisionedThroughput": {
+     "ReadCapacityUnits": 1,
+     "WriteCapacityUnits": 1
+    },
+    "TableName": "linkup-users"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "LinkupCdkStack/linkup_users/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzQx0zNQTCwv1k1OydbNyUzSqw4uSUzO1glKLc4vLUpO1UksL44vNtardipNzk4t0XFOy4OwakFMmKpanbz8lFS9rGL9MiMDPUNTPUPFrOLMTN2i0rySzNxUvSAIDQDprqTvcAAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zXMQQ7CIBCF4bN0D2Np1QPoDap7M8CYUFpIOmDTEO5uauPqfclL/g7U+QptgytLY72cnIbySGi8GIhjXgwJXPlVuIdyy8ZTEvd3OFSF3QLO0WooT9QT7dcPte78F6oI0RKMfPp0LagLqGZk5+SSQ3IzwXDsFzRUiFeMAAAA"
    },
    "Metadata": {
     "aws:cdk:path": "LinkupCdkStack/CDKMetadata/Default"

@@ -19,7 +19,7 @@
         "assumeRoleExternalId": "",
         "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/c56b8a8aa21c7bfdd2c0e2a919abd972d95e2b8bf4485a6fcc093058c54fded8.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/464fd9ec2a79cb10f8c2851c2c14f58f9ccd59bc19263d0caea8244db6b76f22.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -40,6 +40,26 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "linkupprofilepicturesDDC132C8"
+          }
+        ],
+        "/LinkupCdkStack/linkup_post_pictures/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "linkuppostpicturesFECC3FE9"
+          }
+        ],
+        "/LinkupCdkStack/linkup_users": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "linkupusersC7FCF03D"
+            }
+          }
+        ],
+        "/LinkupCdkStack/linkup_users/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "linkupusersC7FCF03D"
           }
         ],
         "/LinkupCdkStack/CDKMetadata/Default": [
