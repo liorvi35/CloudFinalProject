@@ -1,27 +1,29 @@
 {
  "Resources": {
-  "yoadtamar1234566EF2404B": {
+  "linkupprofilepicturesDDC132C8": {
    "Type": "AWS::S3::Bucket",
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
+   "Properties": {
+    "BucketName": "linkup-profile-pictures",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
    "Metadata": {
-    "aws:cdk:path": "LinkupCdkStack/yoad-tamar-123456/Resource"
+    "aws:cdk:path": "LinkupCdkStack/linkup_profile_pictures/Resource"
    }
   },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzQx0zNQTCwv1k1OydbNyUzSqw4uSUzO1glKLc4vLUpO1UksL44vNtardipNzk4t0XFOy4OwakFM/9KSglKwIEx9rU5efkqqXlaxfpmRgZ6hqZ6hYlZxZqZuUWleSWZuql4QhAYAZ+Nas3oAAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzQx0zNQTCwv1k1OydbNyUzSqw4uSUzO1glKLc4vLUpO1UksL44vNtardipNzk4t0XFOy4OwakFMmKpanbz8lFS9rGL9MiMDPUNTPUPFrOLMTN2i0rySzNxUvSAIDQDprqTvcAAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "LinkupCdkStack/CDKMetadata/Default"
-   }
-  }
- },
- "Outputs": {
-  "yoadtamar123456Output": {
-   "Value": {
-    "Ref": "yoadtamar1234566EF2404B"
    }
   }
  },

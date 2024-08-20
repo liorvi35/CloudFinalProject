@@ -19,7 +19,7 @@
         "assumeRoleExternalId": "",
         "assumeRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::991888206011:role/LabRole",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/f1aafc8d01c25ec5a7e5039faca46007d1f74dbd11ca1f63b1e906088cc433d0.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-991888206011-us-east-1/c56b8a8aa21c7bfdd2c0e2a919abd972d95e2b8bf4485a6fcc093058c54fded8.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -36,16 +36,10 @@
         "LinkupCdkStack.assets"
       ],
       "metadata": {
-        "/LinkupCdkStack/yoad-tamar-123456/Resource": [
+        "/LinkupCdkStack/linkup_profile_pictures/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "yoadtamar1234566EF2404B"
-          }
-        ],
-        "/LinkupCdkStack/yoad-tamar-123456-Output": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "yoadtamar123456Output"
+            "data": "linkupprofilepicturesDDC132C8"
           }
         ],
         "/LinkupCdkStack/CDKMetadata/Default": [

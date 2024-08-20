@@ -20,6 +20,6 @@ export class LinkupCdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
-    profilePictureBucket.grantReadWrite(labRole);
+    linkup_profile_pictures.grantReadWrite(labRole);
   }
 }

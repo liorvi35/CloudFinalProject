@@ -24,16 +24,24 @@
               "version": "2.146.0"
             }
           },
-          "yoad-tamar-123456": {
-            "id": "yoad-tamar-123456",
-            "path": "LinkupCdkStack/yoad-tamar-123456",
+          "linkup_profile_pictures": {
+            "id": "linkup_profile_pictures",
+            "path": "LinkupCdkStack/linkup_profile_pictures",
             "children": {
               "Resource": {
                 "id": "Resource",
-                "path": "LinkupCdkStack/yoad-tamar-123456/Resource",
+                "path": "LinkupCdkStack/linkup_profile_pictures/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
-                  "aws:cdk:cloudformation:props": {}
+                  "aws:cdk:cloudformation:props": {
+                    "bucketName": "linkup-profile-pictures",
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    }
+                  }
                 },
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
@@ -43,14 +51,6 @@
             },
             "constructInfo": {
               "fqn": "aws-cdk-lib.aws_s3.Bucket",
-              "version": "2.146.0"
-            }
-          },
-          "yoad-tamar-123456-Output": {
-            "id": "yoad-tamar-123456-Output",
-            "path": "LinkupCdkStack/yoad-tamar-123456-Output",
-            "constructInfo": {
-              "fqn": "aws-cdk-lib.CfnOutput",
               "version": "2.146.0"
             }
           },
