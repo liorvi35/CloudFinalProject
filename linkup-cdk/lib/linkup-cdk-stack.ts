@@ -147,8 +147,8 @@ export class LinkupCdkStack extends cdk.Stack {
 
     const followers_resource = linkup_api_gateway.root.addResource("followers");
     followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers));
-    db_resource.addMethod("GET", new apigateway.LambdaIntegration(get_followers));
-    db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_followers));
+    followers_resource.addMethod("GET", new apigateway.LambdaIntegration(get_followers));
+    followers_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_followers));
 
     const globalFeed_resource = linkup_api_gateway.root.addResource("globalFeed");
     globalFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_globalFeed));
