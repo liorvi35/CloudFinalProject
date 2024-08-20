@@ -16,7 +16,7 @@ export class LinkupCdkStack extends cdk.Stack {
     const labRole = iam.Role.fromRoleArn(this, 'Role', "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
 	
     const linkup_profile_pictures = new s3.Bucket(this, 'linkup_profile_pictures', {
-      bucketName: 'linkup_profile_pictures',
+      bucketName: 'linkup-profile-pictures',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
