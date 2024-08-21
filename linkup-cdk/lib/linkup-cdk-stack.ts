@@ -68,6 +68,9 @@ export class LinkupCdkStack extends cdk.Stack {
     // POST /prod/db 
     const post_db = this.createLambda("linkup-post-db", "lambda", "linkup_post_db.lambda_handler", labRole);
 
+    // GET /prod/db
+    const get_db = this.createLambda("linkup-get-db", "lambda", "linkup_get_db.lambda_handler", labRole);
+
     // PUT /prod/db 
     const put_db = this.createLambda("linkup-put-db", "lambda", "linkup_put_db.lambda_handler", labRole);
 
@@ -161,6 +164,7 @@ export class LinkupCdkStack extends cdk.Stack {
         }
       ]
     });
+    db_resource.addMethod("GET", new apigateway.LambdaIntegration(get_db));
     db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db));
     db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db));
 

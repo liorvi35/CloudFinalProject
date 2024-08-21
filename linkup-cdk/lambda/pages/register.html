@@ -81,8 +81,6 @@
                             body: JSON.stringify({ accountID, firstName, lastName, hashedPassword, email, birthDate, gender })
                         });
 
-                        console.log(responseCreateNewUser);
-
                         if(!responseCreateNewUser.ok) {
                             throw new Error(`${responseCreateNewUser.status}: ${responseCreateNewUser.statusText}`);
                         }
@@ -90,6 +88,13 @@
                         const dataCreateNewUser = await responseCreateNewUser.json();
 
                         if(dataCreateNewUser.statusCode === 200) {
+                            localStorage.setItem("accountID", accountID);
+                            localStorage.setItem("firstName", firstName);
+                            localStorage.setItem("lastName", lastName);
+                            localStorage.setItem("email", email);
+                            localStorage.setItem("birthDate", birthDate);
+                            localStorage.setItem("gender", gender);
+                            
                             window.location.href = "/prod/globalFeed";
                         } else {
                             throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUser.body}`);

@@ -7,10 +7,61 @@
         <h1>Log In to LinkUp!</h1>
         <form>
             <h2>Email:</h2>
-            <input type="email" name="email" placeholder="Your Email" required/>
+            <input type="email" id="email" placeholder="Your Email" required/>
             <h2>Password:</h2>
-            <input type="password" name="password" placeholder="Your Password" required/>
-            <input type="submit" value="Login!"/>
+            <input type="password" id="password" placeholder="Your Password" required/>
+            <input type="button" id="loginBtn" value="Login!"/>
         </form>
+        <script>
+            async function hashStringToSHA256(inputString) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(inputString);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                document.getElementById("loginBtn").addEventListener("click", async () => {
+                    try {
+                        const email = document.getElementById("email").value;
+                        const password = document.getElementById("password").value;
+                        const hashedPassword = await hashStringToSHA256(password);
+
+                        const responseGetExistingUser = await fetch(`/prod/db?email=${email}&hashedPassword=${hashedPassword}`, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+
+                        if(!responseGetExistingUser.ok) {
+                            throw new Error(`${responseGetExistingUser.status}: ${responseGetExistingUser.statusText}`);
+                        }
+
+                        const dataGetExistingUser = await responseGetExistingUser;
+
+                        if(dataGetExistingUser.status === 200) {
+                            const userItem = dataGetExistingUser.json();
+
+                            localStorage.setItem("accountID", userItem["accountID"]);
+                            localStorage.setItem("firstName", userItem["firstName"]);
+                            localStorage.setItem("lastName", userItem["lastName"]);
+                            localStorage.setItem("email", userItem["email"]);
+                            localStorage.setItem("birthDate", userItem["birthDate"]);
+                            localStorage.setItem("gender", userItem["gender"]);
+
+                            window.location.href = "/prod/globalFeed";
+                        } else {
+                            throw new Error(`${dataGetExistingUser.status}: ${dataGetExistingUser.statusText}`);
+                        }
+                    } catch(error) {
+                        console.error(error);
+                        alert(error);
+                    }
+                });
+            });
+        </script>
     </body>
 </html>
