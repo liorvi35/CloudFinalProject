@@ -169,14 +169,33 @@ export class LinkupCdkStack extends cdk.Stack {
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
 
     const register_resource = linkup_api_gateway.root.addResource("register");
-    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register));
+    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
 
     const update_resource = linkup_api_gateway.root.addResource("update");
     update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
 
     new cdk.CfnOutput(this, "API Endpoint", {
-      value: linkup_api_gateway.url + "/index",
+      value: linkup_api_gateway.url + "index",
     });
   }
 
