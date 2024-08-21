@@ -18,11 +18,11 @@ def lambda_handler(event, context):
         except KeyError as e:
             print(f"Key {str(e)} does not exists")
             return {
-                "statusCode": 404,
+                "statusCode": 400,
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "body": "Not Found"
+                "body": "Bad Request"
             }
         
         check_email_exists_users = users_table.query(IndexName="email", KeyConditionExpression=Key("email").eq(email))
@@ -48,11 +48,11 @@ def lambda_handler(event, context):
             }
 
         return {
-            "statusCode": 400,
+            "statusCode": 404,
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": "Bad Request"
+            "body": "Not Found"
         }
 
     except Exception as e:

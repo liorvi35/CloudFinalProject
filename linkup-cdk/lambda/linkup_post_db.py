@@ -29,11 +29,11 @@ def lambda_handler(event, context):
         except KeyError as e:
             print(f"Key {str(e)} does not exists")
             return {
-                "statusCode": 404,
+                "statusCode": 400,
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "body": "Not Found"
+                "body": "Bad Request"
             }
         
         check_account_id_exists_users = users_table.get_item(Key={"accountID": new_user_item["accountID"]})
