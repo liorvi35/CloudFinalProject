@@ -4,5 +4,5 @@ def lambda_handler(event, context):
 		'headers': {
 			'Content-Type': 'application/json'
 		},
-        'body': "<!DOCTYPE html><html><body><h1>GET /index HTTP</h1></body></html>"
+        'body': "<!DOCTYPE html><html><body><h1>DELETE /db HTTP</h1></body></html>"
     }
