@@ -1,8 +1,19 @@
 def lambda_handler(event, context):
-    return {
-        'statusCode': 200,
-		'headers': {
-			'Content-Type': 'application/json'
-		},
-        'body': "<!DOCTYPE html><html><body><h1>GET /index HTTP</h1></body></html>"
-    }
+    try:
+        with open("pages/index.html") as f:
+            page_contents = f.read()
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "text/html"
+            },
+            "body": page_contents
+        }
+    except:
+        return {
+            "statusCode": 500,
+            "headers": {
+                "Content-Type": "text/html"
+            },
+            "body": "<h1>Internal Server Error</h1>"
+        }

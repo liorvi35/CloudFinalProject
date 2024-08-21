@@ -156,14 +156,20 @@ export class LinkupCdkStack extends cdk.Stack {
     const index_resource = linkup_api_gateway.root.addResource("index");
     index_resource.addMethod("GET", new apigateway.LambdaIntegration(get_index));
 
+    const login_resouce = linkup_api_gateway.root.addResource("login");
+    login_resouce.addMethod("GET", new apigateway.LambdaIntegration(get_login));
+    login_resouce.addMethod("POST", new apigateway.LambdaIntegration(post_login));
+
     const postDB_resource = linkup_api_gateway.root.addResource("postDB");
     postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB));
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
 
     const profile_resource = linkup_api_gateway.root.addResource("profile");
+    profile_resource.addMethod("POST", new apigateway.LambdaIntegration(post_profile));
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
 
     const register_resource = linkup_api_gateway.root.addResource("register");
+    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register));
     register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
 
     const update_resource = linkup_api_gateway.root.addResource("update");
