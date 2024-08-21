@@ -166,7 +166,26 @@ export class LinkupCdkStack extends cdk.Stack {
     });
     db_resource.addMethod("GET", new apigateway.LambdaIntegration(get_db));
     db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db));
-    db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db));
+    db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
 
     const followers_resource = linkup_api_gateway.root.addResource("followers");
     followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers));

@@ -5,5 +5,66 @@
     </head>
     <body>
         <h1>Update My Profile</h1>
+        <h2>Delete User</h2>
+        <form>
+            <h3>To confirm deletion, enter 'DELETE' please:</h3>
+            <input type="text" id="deleteText" placeholder="DELETE"/>
+            <input type="button" id="deleteBtn" value="Delete!"/>
+        </form>
+        <hr/>
+        <h2>Update Profile Picture</h2>
+        <form>
+
+        </form>
+        <hr/>
+        <h2>Update Profile Information</h2>
+        <form>
+
+        </form>
+        <script>
+            document.addEventListener("DOMContentLoaded", async () => {
+                document.getElementById("deleteBtn").addEventListener("click", async () => {
+                    const deleteText = document.getElementById("deleteText").value;
+                    if(deleteText === "DELETE") {
+                        try {
+                            const accountID = localStorage.getItem("accountID");
+                            const responseDeleteUser = await fetch("/prod/db", {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ accountID })
+                            });
+
+                            if(!responseDeleteUser.ok) {
+                                throw new Error(`${responseDeleteUser.status}: ${responseDeleteUser.statusText}`);
+                            }
+
+                            const dataDeleteUser = await responseDeleteUser.json();
+
+                            if(dataDeleteUser.statusCode === 200) {
+                                localStorage.removeItem("accountID");
+                                localStorage.removeItem("firstName");
+                                localStorage.removeItem("lastName");
+                                localStorage.removeItem("email");
+                                localStorage.removeItem("birthDate");
+                                localStorage.removeItem("gender");
+
+                                window.location.href = "/prod/index";
+                            } else {
+                                throw new Error(`${dataDeleteUser.statusCode}: ${dataDeleteUser.body}`);
+                            }
+                        } catch(error) {
+                            console.error(error);
+                            alert(error);
+                        }
+                    } else {
+                        alert("misspelled 'DELETE'!");
+                        return;
+                    }
+                });
+            });
+
+        </script>
     </body>
 </html>
