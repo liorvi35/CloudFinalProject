@@ -40,21 +40,19 @@
                             throw new Error(`${responseGetExistingUser.status}: ${responseGetExistingUser.statusText}`);
                         }
 
-                        const dataGetExistingUser = await responseGetExistingUser;
+                        const dataGetExistingUser = await responseGetExistingUser.json();
 
-                        if(dataGetExistingUser.status === 200) {
-                            const userItem = dataGetExistingUser.json();
-
-                            localStorage.setItem("accountID", userItem["accountID"]);
-                            localStorage.setItem("firstName", userItem["firstName"]);
-                            localStorage.setItem("lastName", userItem["lastName"]);
-                            localStorage.setItem("email", userItem["email"]);
-                            localStorage.setItem("birthDate", userItem["birthDate"]);
-                            localStorage.setItem("gender", userItem["gender"]);
+                        try {
+                            localStorage.setItem("accountID", dataGetExistingUser["accountID"]);
+                            localStorage.setItem("firstName", dataGetExistingUser["firstName"]);
+                            localStorage.setItem("lastName", dataGetExistingUser["lastName"]);
+                            localStorage.setItem("email", dataGetExistingUser["email"]);
+                            localStorage.setItem("birthDate", dataGetExistingUser["birthDate"]);
+                            localStorage.setItem("gender", dataGetExistingUser["gender"]);
 
                             window.location.href = "/prod/globalFeed";
-                        } else {
-                            throw new Error(`${dataGetExistingUser.status}: ${dataGetExistingUser.statusText}`);
+                        } catch(error) {
+                            throw new Error(error);
                         }
                     } catch(error) {
                         console.error(error);
