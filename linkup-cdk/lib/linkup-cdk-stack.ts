@@ -141,7 +141,26 @@ export class LinkupCdkStack extends cdk.Stack {
     });
 
     const db_resource = linkup_api_gateway.root.addResource("db");
-    db_resource.addMethod("POST", new apigateway.LambdaIntegration(post_db));
+    db_resource.addMethod("POST", new apigateway.LambdaIntegration(post_db, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db));
     db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db));
 
@@ -169,26 +188,7 @@ export class LinkupCdkStack extends cdk.Stack {
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
 
     const register_resource = linkup_api_gateway.root.addResource("register");
-    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register, {
-      proxy: false,
-      integrationResponses: [
-        {
-          statusCode: "200",
-          responseParameters: {
-            "method.response.header.Content-Type": "'application/json'"
-          }
-        }
-      ]
-    }), {
-      methodResponses: [
-        {
-          statusCode: "200",
-          responseParameters: {
-            'method.response.header.Content-Type': true
-          }
-        }
-      ]
-    });
+    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register));
     register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
 
     const update_resource = linkup_api_gateway.root.addResource("update");

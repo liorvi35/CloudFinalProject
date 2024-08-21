@@ -73,7 +73,7 @@
 
                         const hashedPassword = await hashStringToSHA256(password);
 
-                        const responseCreateNewUser = await fetch("/prod/register", {
+                        const responseCreateNewUser = await fetch("/prod/db", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
