@@ -176,7 +176,7 @@ export class LinkupCdkStack extends cdk.Stack {
     update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
 
     new cdk.CfnOutput(this, "API Endpoint", {
-      value: linkup_api_gateway.url,
+      value: linkup_api_gateway.url + "/index",
     });
   }
 
