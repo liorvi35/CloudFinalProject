@@ -5,6 +5,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 
 export class LinkupCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -16,6 +17,7 @@ export class LinkupCdkStack extends cdk.Stack {
     /* ---------- S3 ---------- */
 	  // S3 bucket for user's profile picture
     const linkup_profile_pictures = this.createBucket("linkup-profile-pictures", labRole);
+    this.deployObjectToS3("s3_def_profile_pics", "deployFemaleDefaultProfilePicture", linkup_profile_pictures, labRole);
     	
     // S3 bucket for holding post's images
     const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
@@ -239,6 +241,14 @@ export class LinkupCdkStack extends cdk.Stack {
       code: lambda.Code.fromAsset(location),
       handler: handler,
       role: role,
+    });
+  }
+
+  private deployObjectToS3(objectPath: string, deploymentID: string, bucket: cdk.aws_s3.Bucket, role: cdk.aws_iam.IRole) {
+    new BucketDeployment(this, deploymentID, {
+      sources: [Source.asset(objectPath)],
+      destinationBucket: bucket,
+      role: role
     });
   }
 }
