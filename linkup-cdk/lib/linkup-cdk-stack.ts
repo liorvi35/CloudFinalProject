@@ -6,6 +6,10 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+
+
 
 export class LinkupCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,6 +25,15 @@ export class LinkupCdkStack extends cdk.Stack {
     	
     // S3 bucket for holding post's images
     const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
+    
+    /* ---------- SQS ---------- */
+    const rekognizeQueue = new sqs.Queue(this, 'rekognizeQueue', {
+      queueName: 'linkup-rekognize-queue',
+      visibilityTimeout: cdk.Duration.seconds(300)
+    });
+    const sqs_consumer = this.createLambda("linkup-rekognize-consumer", "lambda", "linkup_rekognize_consumer.lambda_handler", labRole);
+    sqs_consumer.addEventSource(new lambdaEventSources.SqsEventSource(rekognizeQueue));
+
 
     /* ---------- DynamoDB ---------- */
 	  // DynamoDB table for holding users

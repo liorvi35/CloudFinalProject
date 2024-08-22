@@ -10,6 +10,15 @@ s3 = boto3.client("s3")
 
 posts_pictures_bucket = "linkup-post-pictures"
 
+sqs = boto3.client("sqs")
+
+rekognize_queue = "rekognize"
+
+
+def get_queue_url(queue_name):
+    response = sqs.get_queue_url(QueueName=queue_name)
+    return response["QueueUrl"]
+
 
 def lambda_handler(event, context):
     try:
@@ -50,9 +59,11 @@ def lambda_handler(event, context):
                 "body": "Bad Request2"
             }
 
+        obj_key = None
         if is_picture:
             image_data = base64.b64decode(post_picture_base64)
             new_object_key = f"{account_id}_{post_time}.{picture_format}"
+            obj_key = new_object_key
 
             s3.put_object(
                 Bucket=posts_pictures_bucket,
@@ -77,7 +88,7 @@ def lambda_handler(event, context):
 
             if is_text:
                 post_item["postText"] = post_text
-
+                
         else:
             post_item = {
                 "accountID": account_id,
@@ -88,6 +99,13 @@ def lambda_handler(event, context):
             }
 
         posts_table.put_item(Item=post_item)
+        
+        if is_picture:
+            response = sqs.send_message(
+                QueueUrl=get_queue_url(rekognize_queue),
+                MessageBody=f"{picture_sigend_url};{obj_key}"
+            )
+
 
         return {
             "statusCode": 200,
@@ -104,5 +122,5 @@ def lambda_handler(event, context):
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": "Internal Server Error"
+            "body": str(e)
         }
