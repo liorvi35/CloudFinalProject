@@ -38,7 +38,8 @@ def lambda_handler(event, context):
                     "lastName": check_email_exists_users["Items"][0]["lastName"],
                     "email": check_email_exists_users["Items"][0]["email"],
                     "birthDate": check_email_exists_users["Items"][0]["birthDate"],
-                    "gender": check_email_exists_users["Items"][0]["gender"]
+                    "gender": check_email_exists_users["Items"][0]["gender"],
+                    "profilePicture": check_email_exists_users["Items"][0]["profilePicture"]
                 }
 
             else:
@@ -60,7 +61,8 @@ def lambda_handler(event, context):
                     "lastName": check_account_id_exists_users["Item"]["lastName"],
                     "email": check_account_id_exists_users["Item"]["email"],
                     "birthDate": check_account_id_exists_users["Item"]["birthDate"],
-                    "gender": check_account_id_exists_users["Item"]["gender"]
+                    "gender": check_account_id_exists_users["Item"]["gender"],
+                    "profilePicture": check_account_id_exists_users["Item"]["profilePicture"]
                 }
                 
             else:

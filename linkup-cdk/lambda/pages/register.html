@@ -87,6 +87,8 @@
 
                         const dataCreateNewUser = await responseCreateNewUser.json();
 
+                        const dataCreateNewUserBody = JSON.parse(dataCreateNewUser.body);
+
                         if(dataCreateNewUser.statusCode === 200) {
                             localStorage.setItem("accountID", accountID);
                             localStorage.setItem("firstName", firstName);
@@ -94,10 +96,11 @@
                             localStorage.setItem("email", email);
                             localStorage.setItem("birthDate", birthDate);
                             localStorage.setItem("gender", gender);
+                            localStorage.setItem("profilePicture", dataCreateNewUserBody.profilePicture)
                             
                             window.location.href = "/prod/globalFeed";
                         } else {
-                            throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUser.body}`);
+                            throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUserBody.message}`);
                         }
                     } catch(error) {
                         console.error(error);
