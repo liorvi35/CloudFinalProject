@@ -5,7 +5,7 @@
     </head>
     <body>
         <h1>Friends Feed</h1>
-        <input type="button" onclick="window.location.href='/prod/profile'" value="My Profile"/>
+        <input type="button" onclick="" id="profileBtn" value="My Profile"/>
         <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
         <div id="postsFeed"></div>
         <script>
@@ -26,6 +26,10 @@
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
 
+                document.getElementById("profileBtn").onclick = () => {
+                    window.location.href = `/prod/profile?accountID=${accountID}`;
+                };
+                
                 try {
                     const responseFollowing = await fetch(`/prod/followers?accountID=${accountID}`, {
                         method: "GET",
