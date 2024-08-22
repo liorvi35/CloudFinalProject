@@ -224,7 +224,26 @@ export class LinkupCdkStack extends cdk.Stack {
     login_resouce.addMethod("POST", new apigateway.LambdaIntegration(post_login));
 
     const postDB_resource = linkup_api_gateway.root.addResource("postDB");
-    postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB));
+    postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
 
     const profile_resource = linkup_api_gateway.root.addResource("profile");
@@ -247,7 +266,7 @@ export class LinkupCdkStack extends cdk.Stack {
     const bucket = new s3.Bucket(this, bucketName, {
       bucketName: bucketName,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL
     });
     bucket.grantReadWrite(role);
 

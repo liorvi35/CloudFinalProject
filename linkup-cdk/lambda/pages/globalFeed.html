@@ -9,12 +9,113 @@
         <h2>Upload Post</h2>
         <form>
             <input type="text" id="postText"/>
+            <input type="file" accept=".jpeg, .jpg, .png" id="postPicture"/>
             <input type="button" value="Post!" id="postBtn"/>
         </form>
         <script>
+            async function arrayBufferToBase64(buffer) {
+                let binary = "";
+                const bytes = new Uint8Array(buffer);
+                const len = bytes.byteLength;
+                for (let i = 0; i < len; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return window.btoa(binary);
+            }
+
             document.addEventListener("DOMContentLoaded", async () => {
+                const accountID = localStorage.getItem("accountID");
+
                 document.getElementById("postBtn").addEventListener("click", async () => {
-                    // stopping here... 06:31...
+                    const postTime = Math.floor(Date.now() / 1000);
+                    const text = document.getElementById("postText").value;
+                    const fileInput = document.getElementById("postPicture");
+                    const file = fileInput.files[0];
+                    
+                    let isText = false, isPicture = false;
+
+                    let postData = {};
+
+                    if(text.trim() !== "") {
+                        isText = true;
+                    }
+                    if(file) {
+                        isPicture = true;
+                    }
+                    if(!(isText || isPicture)) {
+                        alert("Cannot upload empty post");
+                        return;
+                    }
+
+                    if(isPicture) {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                          const base64File = await arrayBufferToBase64(reader.result);
+                          const format = file.type.split("/")[1];
+
+                          let postData = {}
+                          if(isText) {
+                            postData["postText"] = text.trim();
+                          }
+                          postData["accountID"] = accountID;
+                          postData["format"] = format;
+                          postData["postPicture"] = base64File;
+                          postData["postTime"] = postTime;
+
+                          try {
+                            const responseUploadPost = await fetch("/prod/postDB", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(postData)
+                            });
+
+                            if(!responseUploadPost.ok) {
+                                throw new Error(`${responseUploadPost.status}: ${responseUploadPost.statusText}`);
+                            }
+
+                            const dataUploadPost = await responseUploadPost.json();
+
+                            if(dataUploadPost.statusCode === 200) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(`${dataUploadPost.statusCode}: ${dataUploadPost.body}`);
+                            }
+                          } catch(error) {
+                            console.error(error);
+                            alert(error);
+                          }
+                        };
+                        reader.readAsArrayBuffer(file);
+                    } else if(isText && !isPicture) {
+                        const postData = { accountID, postTime, postText: text.trim() };
+
+                        try {
+                            const responseUploadPost = await fetch("/prod/postDB", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(postData)
+                            });
+
+                            if(!responseUploadPost.ok) {
+                                throw new Error(`${responseUploadPost.status}: ${responseUploadPost.statusText}`);
+                            }
+
+                            const dataUploadPost = await responseUploadPost.json();
+
+                            if(dataUploadPost.statusCode === 200) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(`${dataUploadPost.statusCode}: ${dataUploadPost.body}`);
+                            }
+                        } catch(error) {
+                            console.error(error);
+                            alert(error);
+                        }
+                    }
                 });
             });
         </script>
