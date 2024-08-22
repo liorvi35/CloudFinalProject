@@ -64,8 +64,9 @@
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
                 
-                document.getElementById("pictureBtn").addEventListener("click", async (event) => {
-                    const file = event.target.files[0];
+                document.getElementById("pictureBtn").addEventListener("click", async () => {
+                    const fileInput = document.getElementById("profilePicture");
+                    const file = fileInput.files[0];
                     if(!file) {
                         alert("Choose new picture!");
                         return;
@@ -79,7 +80,7 @@
 
                         try {
                             const responseUploadPicture = await fetch("/prod/db", {
-                                method: "POST",
+                                method: "PUT",
                                 headers: {
                                     "Content-Type": "application/json"
                                 },
@@ -93,7 +94,11 @@
                             const dataUploadPicture = await responseUploadPicture.json();
 
                             if(dataUploadPicture.statusCode === 200) {
-                                return;
+                                const dataUploadPictureBody = JSON.parse(dataUploadPicture.body);
+                                localStorage.setItem("profilePicture", dataUploadPictureBody["profilePicture"]);
+                                window.location.href = "/prod/profile";
+                            } else {
+                                throw new Error(`${dataUploadPicture.statusCode}: ${dataUploadPicture.body}`);
                             }
 
                         } catch(error) {
