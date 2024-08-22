@@ -17,3 +17,4 @@ def lambda_handler(event, context):
             },
             "body": "<h1>Internal Server Error</h1>"
         }
+      
