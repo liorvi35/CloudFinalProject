@@ -12,7 +12,7 @@ posts_pictures_bucket = "linkup-post-pictures"
 
 sqs = boto3.client("sqs")
 
-rekognize_queue = "rekognize"
+rekognize_queue = "linkup-rekognize-queue"
 
 
 def get_queue_url(queue_name):
