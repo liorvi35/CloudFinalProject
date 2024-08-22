@@ -5,6 +5,8 @@ dynamodb = boto3.resource("dynamodb")
 
 users_table = dynamodb.Table("linkup-users")
 
+posts_table = dynamodb.Table("linkup-posts")
+
 followers_table = dynamodb.Table("linkup-followers")
 
 
@@ -26,6 +28,18 @@ def lambda_handler(event, context):
 
         followers_table.delete_item(Key={"accountID": account_id})
 
+        response = posts_table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key("accountID").eq(account_id)
+        )
+
+        for item in response.get("Items", []):
+            posts_table.delete_item(
+                Key={
+                    "accountID": item["accountID"],
+                    "postTime": item["postTime"]
+                }
+            )
+            
         return {
             "statusCode": 200,
             "headers": {
