@@ -150,6 +150,9 @@ export class LinkupCdkStack extends cdk.Stack {
     // GET /prod/update 
     const get_update = this.createLambda("linkup-get-update", "lambda", "linkup_get_update.lambda_handler", labRole);
 
+    /* friendsFeed */
+    const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda", "linkup_get_friendsFeed.lambda_handler", labRole);
+
     /* ---------- API Gateway ---------- */
     // api gateway for `LinkUp` Social Network
     const linkup_api_gateway = new apigateway.RestApi(this, 'linkup_api_gateway', {
@@ -269,6 +272,9 @@ export class LinkupCdkStack extends cdk.Stack {
 
     const update_resource = linkup_api_gateway.root.addResource("update");
     update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
+
+    const friendsFeed_resource = linkup_api_gateway.root.addResource("friendsFeed");
+    friendsFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_friendsFeed));
 
     new cdk.CfnOutput(this, "API Endpoint", {
       value: linkup_api_gateway.url + "index",
