@@ -6,5 +6,42 @@
     <body>
         <h1>My Profile!</h1>
         <input type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
+        <h2>Profile Information</h2>
+        <div id="profileInfo"></div>
+        <hr/>
+        <h2>Followers</h2>
+        <ul id="followersList"></ul>
+        <h2>Following</h2>
+        <ul id="followingList"></ul>
+        <hr/>
+        <h2>My Posts</h2>
+        <div id="postsFeed"></div>
+        <script>
+            document.addEventListener("DOMContentLoaded", async () => {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const accountID = urlParams.get("accountID");
+
+                // 1. get my profile info
+                // 2. get my following, followers
+                // 3. get my posts
+
+                try {
+                    const responseProfileInfo = await fetch(`/prod/db?accountID=${accountID}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    const dataResponseProfileInfo = await responseProfileInfo.json();
+
+
+
+                } catch {
+
+                }
+            });
+        </script>
     </body>
 </html>

@@ -75,20 +75,22 @@
                             p_id.innerHTML = dataGetProfileByID["firstName"] + " " + dataGetProfileByID["lastName"];
                             div.appendChild(p_id);
 
-                            const p_text = document.createElement("p");
-                            p_text.innerHTML = dataGetAllPosts[i].postText;
-                            div.appendChild(p_text);
+                            if(dataGetAllPosts[i].postText) {
+                                const p_text = document.createElement("p");
+                                p_text.innerHTML = dataGetAllPosts[i].postText;
+                                div.appendChild(p_text);
+                            }
+                            if(dataGetAllPosts[i].postPicture) {
+                                const post_image = document.createElement("img");
+                                post_image.src = dataGetAllPosts[i].postPicture;
+                                post_image.style.width = "30%";
+                                post_image.style.height = "30%";
+                                div.appendChild(post_image);
 
-                            const post_image = document.createElement("img");
-                            post_image.src = dataGetAllPosts[i].postPicture;
-                            post_image.style.width = "30%";
-                            post_image.style.height = "30%";
-                            div.appendChild(post_image);
-
-                            const p_tags = document.createElement("p");
-                            p_tags.innerHTML = dataGetAllPosts[i].pictureTags;
-                            div.appendChild(p_tags);
-
+                                const p_tags = document.createElement("p");
+                                p_tags.innerHTML = dataGetAllPosts[i].pictureTags;
+                                div.appendChild(p_tags);
+                            }
                             const p_time = document.createElement("p");
                             p_time.innerHTML = await formatEpochToUTCString(dataGetAllPosts[i].postTime);
                             div.appendChild(p_time);
