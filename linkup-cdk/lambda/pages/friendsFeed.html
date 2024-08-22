@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>LinkUp - Friends Feed</title>
+    </head>
+    <body>
+        <h1>Friends Feed</h1>
+        <input type="button" onclick="" id="profileBtn" value="My Profile"/>
+        <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
+        <div id="postsFeed"></div>
+        <script>
+            async function formatEpochToUTCString(epochTime) {
+                const date = new Date(epochTime * 1000);
+                                
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                
+                return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                const accountID = localStorage.getItem("accountID");
+
+                document.getElementById("profileBtn").onclick = () => {
+                    window.location.href = `/prod/profile?accountID=${accountID}`;
+                };
+                
+                try {
+                    const responseFollowing = await fetch(`/prod/followers?accountID=${accountID}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if(!responseFollowing.ok) {
+                        throw new Error(`${responseFollowing.status}: ${responseFollowing.statusText}`);
+                    }
+
+                    const dataResponseFollowing = await responseFollowing.json();
+
+                    const responseGetAllPosts = await fetch("/prod/postDB", {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if(!responseGetAllPosts.ok) {
+                        throw new Error(`${responseGetAllPosts.status}: ${responseGetAllPosts.statusText}`);
+                    }
+
+                    const dataGetAllPosts = await responseGetAllPosts.json();
+
+                    if(dataGetAllPosts.length > 0) {
+                        const postsFeed = document.getElementById("postsFeed");
+                        for(let i = 0; i < dataGetAllPosts.length; ++i) {
+                            if(!dataResponseFollowing["following"].includes(dataGetAllPosts[i].accountID)) {
+                                continue;
+                            }
+                            const getProfileByID = await fetch(`/prod/db?accountID=${dataGetAllPosts[i].accountID}`, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            });
+
+                            const dataGetProfileByID = await getProfileByID.json();
+
+                            const div = document.createElement("div");
+                            const hr = document.createElement("hr");
+
+                            const p_id = document.createElement("p");
+                            p_id.innerHTML = dataGetProfileByID["firstName"] + " " + dataGetProfileByID["lastName"];
+                            div.appendChild(p_id);
+
+                            if(dataGetAllPosts[i].postText) {
+                                const p_text = document.createElement("p");
+                                p_text.innerHTML = dataGetAllPosts[i].postText;
+                                div.appendChild(p_text);
+                            }
+                            if(dataGetAllPosts[i].postPicture) {
+                                const post_image = document.createElement("img");
+                                post_image.src = dataGetAllPosts[i].postPicture;
+                                post_image.style.width = "30%";
+                                post_image.style.height = "30%";
+                                div.appendChild(post_image);
+
+                                const p_tags = document.createElement("p");
+                                p_tags.innerHTML = dataGetAllPosts[i].pictureTags;
+                                div.appendChild(p_tags);
+                            }
+                            const p_time = document.createElement("p");
+                            p_time.innerHTML = await formatEpochToUTCString(dataGetAllPosts[i].postTime);
+                            div.appendChild(p_time);
+
+                            postsFeed.appendChild(div);
+                            postsFeed.appendChild(hr)
+                        }
+                    }
+                } catch(error) {
+                    console.error(error);
+                    alert(error);
+                }
+            });
+        </script>
+    </body>
+</html>

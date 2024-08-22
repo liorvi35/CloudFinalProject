@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>LinkUp - Register</title>
+    </head>
+    <body>
+        <h1>Register to LinkUp!</h1>
+        <form>
+            <h2>First Name:</h2>
+            <input type="text" id="firstName" placeholder="Your First Name" required/>
+            <h2>Last Name:</h2>
+            <input type="text" id="lastName" placeholder="Your Last Name" required/>
+            <h2>Password:</h2>
+            <input type="password" id="password" placeholder="Your Password" required/>
+            <h2>Confirm Password:</h2>
+            <input type="password" id="confirmPassword" placeholder="Repeat Your Password" required/>
+            <h2>Email:</h2>
+            <input type="email" id="email" placeholder="Your Email" required/>
+            <h2>Birth Date:</h2>
+            <input type="date" id="birthDate" required/>
+            <h2>Gender:</h2>
+            <select id="gender" required>
+                <option value="" disabled selected>Your Gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+            </select>
+            <input type="button" value="Register!" id="registerBtn"/>
+        </form>
+        <script>
+            async function hashStringToSHA256(inputString) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(inputString);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                return hashHex;
+            }
+
+            async function generateRandomString(length) {
+                const chars = "0123456789abcdef";
+                let result = "";
+
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * chars.length);
+                    result += chars[randomIndex];
+                }
+
+                return result;
+            }
+
+            async function getUUID() {
+                const uuid = await generateRandomString(8) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(12);
+                return uuid;
+            }
+
+            document.addEventListener("DOMContentLoaded", async () => {
+                document.getElementById("registerBtn").addEventListener("click", async () => {
+                    try {
+                        const firstName = document.getElementById("firstName").value;
+                        const lastName = document.getElementById("lastName").value;
+                        const password = document.getElementById("password").value;
+                        const confirmPassword = document.getElementById("confirmPassword").value;
+                        const email = document.getElementById("email").value;
+                        const birthDate = document.getElementById("birthDate").value;
+                        const gender = document.getElementById("gender").value;
+
+                        if(password !== confirmPassword) {
+                            alert("Passwords not match!");
+                            return;
+                        }
+                        
+                        const accountID = await getUUID();
+
+                        const hashedPassword = await hashStringToSHA256(password);
+
+                        const responseCreateNewUser = await fetch("/prod/db", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ accountID, firstName, lastName, hashedPassword, email, birthDate, gender })
+                        });
+
+                        if(!responseCreateNewUser.ok) {
+                            throw new Error(`${responseCreateNewUser.status}: ${responseCreateNewUser.statusText}`);
+                        }
+
+                        const dataCreateNewUser = await responseCreateNewUser.json();
+
+                        const dataCreateNewUserBody = JSON.parse(dataCreateNewUser.body);
+
+                        if(dataCreateNewUser.statusCode === 200) {
+                            localStorage.setItem("accountID", accountID);
+                            localStorage.setItem("firstName", firstName);
+                            localStorage.setItem("lastName", lastName);
+                            localStorage.setItem("email", email);
+                            localStorage.setItem("birthDate", birthDate);
+                            localStorage.setItem("gender", gender);
+                            localStorage.setItem("profilePicture", dataCreateNewUserBody.profilePicture)
+                            
+                            window.location.href = "/prod/globalFeed";
+                        } else {
+                            throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUserBody.message}`);
+                        }
+                    } catch(error) {
+                        console.error(error);
+                        alert(error);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

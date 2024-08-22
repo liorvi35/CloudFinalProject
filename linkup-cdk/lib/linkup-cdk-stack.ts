@@ -5,20 +5,35 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+
+
 
 export class LinkupCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     /* ---------- IAM ---------- */
-    const labRole = iam.Role.fromRoleArn(this, "Role", "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
+    const labRole = iam.Role.fromRoleArn(this, "Role", "arn:aws:iam::903409060268:role/LabRole", { mutable: false });
 
     /* ---------- S3 ---------- */
 	  // S3 bucket for user's profile picture
     const linkup_profile_pictures = this.createBucket("linkup-profile-pictures", labRole);
+    this.deployObjectToS3("s3_def_profile_pics", "deployFemaleDefaultProfilePicture", linkup_profile_pictures, labRole);
     	
     // S3 bucket for holding post's images
     const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
+    
+    /* ---------- SQS ---------- */
+    const rekognizeQueue = new sqs.Queue(this, 'rekognizeQueue', {
+      queueName: 'linkup-rekognize-queue',
+      visibilityTimeout: cdk.Duration.seconds(300)
+    });
+    const sqs_consumer = this.createLambda("linkup-rekognize-consumer", "lambda", "linkup_rekognize_consumer.lambda_handler", labRole);
+    sqs_consumer.addEventSource(new lambdaEventSources.SqsEventSource(rekognizeQueue));
+
 
     /* ---------- DynamoDB ---------- */
 	  // DynamoDB table for holding users
@@ -67,6 +82,9 @@ export class LinkupCdkStack extends cdk.Stack {
 
     // POST /prod/db 
     const post_db = this.createLambda("linkup-post-db", "lambda", "linkup_post_db.lambda_handler", labRole);
+
+    // GET /prod/db
+    const get_db = this.createLambda("linkup-get-db", "lambda", "linkup_get_db.lambda_handler", labRole);
 
     // PUT /prod/db 
     const put_db = this.createLambda("linkup-put-db", "lambda", "linkup_put_db.lambda_handler", labRole);
@@ -132,6 +150,9 @@ export class LinkupCdkStack extends cdk.Stack {
     // GET /prod/update 
     const get_update = this.createLambda("linkup-get-update", "lambda", "linkup_get_update.lambda_handler", labRole);
 
+    /* friendsFeed */
+    const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda", "linkup_get_friendsFeed.lambda_handler", labRole);
+
     /* ---------- API Gateway ---------- */
     // api gateway for `LinkUp` Social Network
     const linkup_api_gateway = new apigateway.RestApi(this, 'linkup_api_gateway', {
@@ -141,9 +162,67 @@ export class LinkupCdkStack extends cdk.Stack {
     });
 
     const db_resource = linkup_api_gateway.root.addResource("db");
-    db_resource.addMethod("POST", new apigateway.LambdaIntegration(post_db));
-    db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db));
-    db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db));
+    db_resource.addMethod("POST", new apigateway.LambdaIntegration(post_db, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
+    db_resource.addMethod("GET", new apigateway.LambdaIntegration(get_db));
+    db_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_db, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
+    db_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_db, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
 
     const followers_resource = linkup_api_gateway.root.addResource("followers");
     followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers));
@@ -156,21 +235,49 @@ export class LinkupCdkStack extends cdk.Stack {
     const index_resource = linkup_api_gateway.root.addResource("index");
     index_resource.addMethod("GET", new apigateway.LambdaIntegration(get_index));
 
+    const login_resouce = linkup_api_gateway.root.addResource("login");
+    login_resouce.addMethod("GET", new apigateway.LambdaIntegration(get_login));
+    login_resouce.addMethod("POST", new apigateway.LambdaIntegration(post_login));
+
     const postDB_resource = linkup_api_gateway.root.addResource("postDB");
-    postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB));
+    postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
 
     const profile_resource = linkup_api_gateway.root.addResource("profile");
+    profile_resource.addMethod("POST", new apigateway.LambdaIntegration(post_profile));
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
 
     const register_resource = linkup_api_gateway.root.addResource("register");
+    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register));
     register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
 
     const update_resource = linkup_api_gateway.root.addResource("update");
     update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
 
+    const friendsFeed_resource = linkup_api_gateway.root.addResource("friendsFeed");
+    friendsFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_friendsFeed));
+
     new cdk.CfnOutput(this, "API Endpoint", {
-      value: linkup_api_gateway.url,
+      value: linkup_api_gateway.url + "index",
     });
   }
 
@@ -178,7 +285,7 @@ export class LinkupCdkStack extends cdk.Stack {
     const bucket = new s3.Bucket(this, bucketName, {
       bucketName: bucketName,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL
     });
     bucket.grantReadWrite(role);
 
@@ -191,6 +298,14 @@ export class LinkupCdkStack extends cdk.Stack {
       code: lambda.Code.fromAsset(location),
       handler: handler,
       role: role,
+    });
+  }
+
+  private deployObjectToS3(objectPath: string, deploymentID: string, bucket: cdk.aws_s3.Bucket, role: cdk.aws_iam.IRole) {
+    new BucketDeployment(this, deploymentID, {
+      sources: [Source.asset(objectPath)],
+      destinationBucket: bucket,
+      role: role
     });
   }
 }

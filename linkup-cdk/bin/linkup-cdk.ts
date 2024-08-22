@@ -61,7 +61,7 @@ new LinkupCdkStack(app, 'LinkupCdkStack', {
 
 
   // Students TODO Account Details: change the account and region to your own
-  env: { account: '991888206011', region: 'us-east-1' },
+  env: { account: '903409060268', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
