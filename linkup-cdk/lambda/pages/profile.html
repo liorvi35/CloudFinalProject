@@ -182,6 +182,16 @@
                                 followBtn.value = "unfollow";
                                 followBtn.style.display = "inline";
                                 followBtn.onclick = async () => {
+                                    const responseFollow = await fetch("/prod/followers", {
+                                        method: "PUT",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
+                                    });
+                                    if(!responseFollow.ok) {
+                                        throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
+                                    } 
                                     alert(`Successfully unfollowed: ${currentFullName}!`);
                                     window.location.reload();
                                 };

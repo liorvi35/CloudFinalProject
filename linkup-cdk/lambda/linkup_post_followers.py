@@ -32,31 +32,41 @@ def lambda_handler(event, context):
                 "body": "Bad Request"
             }
 
-        src_item = followers_table.get_item(Key={"accountID": src_account_id})
-        src_following = list(src_item["Item"]["following"])
-        if dst_account_id in src_following:
+        try:
+            src_item = followers_table.get_item(Key={"accountID": src_account_id})
+            src_following = list(src_item["Item"]["following"])
+            if dst_account_id in src_following:
+                return {
+                    "statusCode": 409,
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": "Conflict"
+                }
+            src_following.append(dst_account_id)
+            update_attribute(src_account_id, "following", src_following)
+            
+            dst_item = followers_table.get_item(Key={"accountID": dst_account_id})
+            dst_followers = list(dst_item["Item"]["followers"])
+            if src_account_id in dst_followers:
+                return {
+                    "statusCode": 409,
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": "Conflict"
+                }
+            dst_followers.append(src_account_id)
+            update_attribute(dst_account_id, "followers", dst_followers)
+        except KeyError as e:
+            print(str(e))
             return {
-                "statusCode": 409,
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "body": "Conflict"
-            }
-        src_following.append(dst_account_id)
-        update_attribute(src_account_id, "following", src_following)
-        
-        dst_item = followers_table.get_item(Key={"accountID": dst_account_id})
-        dst_followers = list(src_item["Item"]["followers"])
-        if src_account_id in dst_followers:
-            return {
-                "statusCode": 409,
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "body": "Conflict"
-            }
-        dst_followers.append(src_account_id)
-        update_attribute(dst_account_id, "followers", dst_followers)
+                    "statusCode": 404,
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": "Not Found"
+                }
         
         return {
             "statusCode": 200,
