@@ -7,38 +7,181 @@
         <h1>My Profile!</h1>
         <input type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
         <h2>Profile Information</h2>
-        <div id="profileInfo"></div>
+        <div id="profileInfo" style="display: none;"></div>
         <hr/>
         <h2>Followers</h2>
-        <ul id="followersList"></ul>
+        <ul id="followersList" style="display: none;"></ul>
         <h2>Following</h2>
-        <ul id="followingList"></ul>
+        <ul id="followingList" style="display: none;"></ul>
         <hr/>
         <h2>My Posts</h2>
-        <div id="postsFeed"></div>
+        <div id="postsFeed" style="display: none;"></div>
         <script>
+            async function formatEpochToUTCString(epochTime) {
+                const date = new Date(epochTime * 1000);
+                                
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = date.getUTCFullYear();
+                
+                const hours = String(date.getUTCHours()).padStart(2, '0');
+                const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                
+                return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+            }
+
             document.addEventListener("DOMContentLoaded", async () => {
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
                 const accountID = urlParams.get("accountID");
 
-                // 1. get my profile info
                 // 2. get my following, followers
                 // 3. get my posts
 
                 try {
+                    // get profile info
                     const responseProfileInfo = await fetch(`/prod/db?accountID=${accountID}`, {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json"
                         }
                     });
-
+                    if(!responseProfileInfo.ok) {
+                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                    }
                     const dataResponseProfileInfo = await responseProfileInfo.json();
 
-                    console.log(dataResponseProfileInfo);
-                } catch {
+                    // get followers info
+                    const responseGetFollowers = await fetch(`/prod/followers?accountID=${accountID}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if(!responseGetFollowers.ok) {
+                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                    }
+                    const dataResponseGetFollowers = await responseGetFollowers.json();
 
+                    // get all posts
+                    const responseGetAllPosts = await fetch("/prod/postDB", {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if(!responseGetAllPosts.ok) {
+                        throw new Error(`${responseGetAllPosts.status}: ${responseGetAllPosts.statusText}`);
+                    }
+                    const dataGetAllPosts = await responseGetAllPosts.json();
+
+                    // set profile info
+                    const profileInfo = document.getElementById("profileInfo");
+
+                    const profileDiv = document.createElement("div");
+
+                    const currentFullName = dataResponseProfileInfo["firstName"] + " " + dataResponseProfileInfo["lastName"]
+                    
+                    const pName = document.createElement("p");
+                    pName.innerHTML = currentFullName;
+                    profileDiv.appendChild(pName);
+
+                    const pBirthDate = document.createElement("p");
+                    pBirthDate.innerText = dataResponseProfileInfo["birthDate"];
+                    profileDiv.appendChild(pBirthDate);
+
+                    const pGender = document.createElement("p");
+                    pGender.innerHTML = dataResponseProfileInfo["gender"];
+                    profileDiv.appendChild(pGender);
+
+                    profileInfo.appendChild(profileDiv);
+
+                    // set following info
+                    const ulFollowers = document.getElementById("followersList");
+                    for(let i = 0; i < dataResponseGetFollowers["followers"].length; ++i) {
+                        const liFollowers = document.createElement("li");
+
+                        const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["followers"][i]}`, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                        if(!getUserInfo.ok) {
+                            throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                        }
+                        const userInfo = await getUserInfo.json();
+
+                        liFollowers.innerHTML = userInfo["firstName"] + " " + userInfo["lastName"];
+                        ulFollowers.appendChild(liFollowers);
+                    }
+
+                    const ulFollowing = document.getElementById("followingList");
+                    for(let i = 0; i < dataResponseGetFollowers["following"].length; ++i) {
+                        const liFollowing = document.createElement("li");
+
+                        const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["following"][i]}`, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+                        if(!getUserInfo.ok) {
+                            throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                        }
+                        const userInfo = await getUserInfo.json();
+
+
+                        liFollowing.innerHTML = userInfo["firstName"] + " " +userInfo["lastName"];
+                        ulFollowing.appendChild(liFollowing);
+                    }
+
+                    // set my posts
+                    const postsFeed = document.getElementById("postsFeed");
+                    for(let i = 0; i < dataGetAllPosts.length; ++i) {
+                        if(dataGetAllPosts[i].accountID != accountID) {
+                            continue;
+                        }
+
+                        const div = document.createElement("div");
+                        const hr = document.createElement("hr");
+
+                        const p_id = document.createElement("p");
+                        p_id.innerHTML = currentFullName;
+                        div.appendChild(p_id);
+
+                        if(dataGetAllPosts[i].postText) {
+                            const p_text = document.createElement("p");
+                            p_text.innerHTML = dataGetAllPosts[i].postText;
+                            div.appendChild(p_text);
+                        }
+                        if(dataGetAllPosts[i].postPicture) {
+                            const post_image = document.createElement("img");
+                            post_image.src = dataGetAllPosts[i].postPicture;
+                            post_image.style.width = "30%";
+                            post_image.style.height = "30%";
+                            div.appendChild(post_image);
+
+                            const p_tags = document.createElement("p");
+                            p_tags.innerHTML = dataGetAllPosts[i].pictureTags;
+                            div.appendChild(p_tags);
+                        }
+                        const p_time = document.createElement("p");
+                        p_time.innerHTML = await formatEpochToUTCString(dataGetAllPosts[i].postTime);
+                        div.appendChild(p_time);
+
+                        postsFeed.appendChild(div);
+                        postsFeed.appendChild(hr)
+                    }
+
+                    profileInfo.style.display = "block";
+                    ulFollowers.style.display = "block";
+                    ulFollowing.style.display = "block";
+                    postsFeed.style.display = "block";
+                } catch(error) {
+                    console.error(error);
+                    alert(error);
                 }
             });
         </script>

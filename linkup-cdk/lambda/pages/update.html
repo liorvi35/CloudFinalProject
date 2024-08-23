@@ -194,7 +194,7 @@
                                 localStorage.setItem("gender", gender);
                             }
 
-                            window.location.href = "/prod/profile";
+                            window.location.href = `/prod/profile?accountID=${accountID}`;
                         } else {
                             throw new Error(`${dataUpdateUserData.statusCode}: ${dataUpdateUserData.body}`);
                         }
