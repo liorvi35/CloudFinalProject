@@ -2,9 +2,54 @@
 <html lang="en">
     <head>
         <title>LinkUp - Global Feed</title>
+        <style>
+            .search-container {
+                width: 300px;
+                position: relative;
+            }
+    
+            #search-bar {
+                width: 100%;
+                padding: 10px;
+                border-radius: 4px;
+            }
+    
+            .results {
+                border: 1px solid #ccc;
+                border-top: none;
+                border-radius: 0 0 4px 4px;
+                max-height: 150px;
+                overflow-y: auto;
+                background-color: white;
+                position: absolute;
+                width: 100%;
+                z-index: 10;
+            }
+    
+            .result-item {
+                padding: 8px 10px;
+                cursor: pointer;
+                text-decoration: none;
+                color: black;
+                display: block;
+            }
+    
+            .result-item:hover {
+                background-color: #f0f0f0;
+            }
+    
+            .no-results {
+                padding: 8px 10px;
+                color: #777;
+            }
+        </style>
     </head>
     <body>
         <h1>Global Feed</h1>
+        <div class="search-container" id="search-container">
+            <input type="text" id="search-bar" placeholder="Search for new friends!">
+            <div class="results" id="results"></div>
+        </div>    
         <input type="button" onclick="" id="profileBtn" value="My Profile"/>
         <input type="button" onclick="window.location.href='/prod/friendsFeed'" value="Friends Feed"/>
         <h2>Upload Post</h2>
@@ -43,6 +88,61 @@
 
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
+
+                const responseAllUsers = await fetch("/prod/db?accountID=ALL", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!responseAllUsers.ok) {
+                    throw new Error(`${responseAllUsers.status}: ${responseAllUsers.statusText}`);
+                }
+
+                const dataResponseAllUsers = await responseAllUsers.json();
+
+                const items = dataResponseAllUsers.map(json => ({
+                    name: `${json.firstName.trim()} ${json.lastName}`,
+                    accountID: json.accountID
+                }));
+
+                const searchBar = document.getElementById("search-bar");
+                const resultsContainer = document.getElementById("results");
+                const searchContainer = document.getElementById("search-container");
+
+                searchBar.addEventListener("input", () => {
+                    const query = searchBar.value.toLowerCase();
+                    resultsContainer.innerHTML = "";
+
+                    const filteredItems = items.filter(item => item.name.toLowerCase().includes(query));
+
+                    if (filteredItems.length === 0) {
+                        resultsContainer.innerHTML = '<div class="no-results">No results found</div>';
+                    } else {
+                        filteredItems.forEach(item => {
+                            const a = document.createElement("a");
+                            a.classList.add("result-item");
+                            a.href = `/prod/profile?accountID=${item.accountID}`;
+                            a.textContent = item.name;
+                            resultsContainer.appendChild(a);
+                        });
+                    }
+
+                    resultsContainer.style.display = filteredItems.length > 0 ? "block" : "none";
+                });
+
+                document.addEventListener("click", (event) => {
+                    if (!searchContainer.contains(event.target)) {
+                        resultsContainer.style.display = "none";
+                    }
+                });
+
+                searchContainer.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    resultsContainer.style.display = "block";
+                });
+
 
                 document.getElementById("profileBtn").onclick = () => {
                     window.location.href = `/prod/profile?accountID=${accountID}`;
@@ -205,7 +305,7 @@
                         }
                     }
                 });
-            });
+            });            
         </script>
     </body>
 </html>

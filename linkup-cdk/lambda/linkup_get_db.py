@@ -52,27 +52,34 @@ def lambda_handler(event, context):
                 }
             
         else:
-            check_account_id_exists_users = users_table.get_item(Key={"accountID": account_id})
-
-            if "Item" in check_account_id_exists_users:
-                existing_user_item = {
-                    "accountID": check_account_id_exists_users["Item"]["accountID"],
-                    "firstName": check_account_id_exists_users["Item"]["firstName"],
-                    "lastName": check_account_id_exists_users["Item"]["lastName"],
-                    "email": check_account_id_exists_users["Item"]["email"],
-                    "birthDate": check_account_id_exists_users["Item"]["birthDate"],
-                    "gender": check_account_id_exists_users["Item"]["gender"],
-                    "profilePicture": check_account_id_exists_users["Item"]["profilePicture"]
-                }
+            if account_id == "ALL":
+                all_users = users_table.scan()
+                users = all_users["Items"] if all_users["Count"] > 0 else []
+                users = [{k: v for k, v in d.items() if k != "hashedPassword"} for d in users]
+                existing_user_item = users
                 
-            else:
-                return {
-                    "statusCode": 404,
-                    "headers": {
-                        "Content-Type": "application/json"
-                    },
-                    "body": "Not Found"
-                }
+            else:   
+                check_account_id_exists_users = users_table.get_item(Key={"accountID": account_id})
+
+                if "Item" in check_account_id_exists_users:
+                    existing_user_item = {
+                        "accountID": check_account_id_exists_users["Item"]["accountID"],
+                        "firstName": check_account_id_exists_users["Item"]["firstName"],
+                        "lastName": check_account_id_exists_users["Item"]["lastName"],
+                        "email": check_account_id_exists_users["Item"]["email"],
+                        "birthDate": check_account_id_exists_users["Item"]["birthDate"],
+                        "gender": check_account_id_exists_users["Item"]["gender"],
+                        "profilePicture": check_account_id_exists_users["Item"]["profilePicture"]
+                    }
+                    
+                else:
+                    return {
+                        "statusCode": 404,
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "body": "Not Found"
+                    }
 
         return {
             "statusCode": 200,

@@ -3,6 +3,24 @@
     <head>
         <title>LinkUp - Profile</title>
     </head>
+    <style>
+        .popup-form {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
     <body>
         <h1>My Profile!</h1>
         <input type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
@@ -10,10 +28,26 @@
         <h2>Profile Information</h2>
         <div id="profileInfo" style="display: none;"></div>
         <hr/>
-        <h2>Followers</h2>
-        <ul id="followersList" style="display: none;"></ul>
-        <h2>Following</h2>
-        <ul id="followingList" style="display: none;"></ul>
+        <input type="button" id="openFormButtonFollowers" value="Followers"/>
+        <div id="popupFormFollowers" class="popup-form">
+            <div class="form-container">
+                <span id="closeFormButtonFollowers" style="cursor: pointer;">&times;</span>
+                <h2>Followers</h2>
+                <ul id="followersList"></ul>
+            </div>
+        </div>
+        <input type="button" id="openFormButtonFollowing" value="Following"/>
+        <div id="popupFormFollowing" class="popup-form">
+            <div class="form-container">
+                <span id="closeFormButtonFollowing" style="cursor: pointer;">&times;</span>
+                <h2>Following</h2>
+                <ul id="followingList"></ul>
+            </div>
+        </div>
+        <!-- <h2>Followers</h2>
+        <ul id="followersList" style="display: none;"></ul> -->
+        <!-- <h2>Following</h2>
+        <ul id="followingList" style="display: none;"></ul> -->
         <hr/>
         <h2>My Posts</h2>
         <div id="postsFeed" style="display: none;"></div>
@@ -38,6 +72,37 @@
                 const accountID = urlParams.get("accountID");
 
                 const storageAccountID = localStorage.getItem("accountID");
+
+
+                const openFormButtonFollowers = document.getElementById("openFormButtonFollowers");
+                const popupFormFollowers = document.getElementById("popupFormFollowers");
+                const closeFormButtonFollowers = document.getElementById("closeFormButtonFollowers");
+                openFormButtonFollowers.addEventListener("click", () => {
+                    popupFormFollowers.style.display = "flex";
+                });
+                closeFormButtonFollowers.addEventListener("click", () => {
+                    popupFormFollowers.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == popupFormFollowers) {
+                        popupFormFollowers.style.display = "none";
+                    }
+                });
+
+                const openFormButtonFollowing = document.getElementById("openFormButtonFollowing");
+                const popupFormFollowing = document.getElementById("popupFormFollowing");
+                const closeFormButtonFollowing = document.getElementById("closeFormButtonFollowing");
+                openFormButtonFollowing.addEventListener("click", () => {
+                    popupFormFollowing.style.display = "flex";
+                });
+                closeFormButtonFollowing.addEventListener("click", () => {
+                    popupFormFollowing.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == popupFormFollowing) {
+                        popupFormFollowing.style.display = "none";
+                    }
+                });
 
                 try {
                     // get profile info
@@ -220,8 +285,8 @@
                     }
 
                     profileInfo.style.display = "block";
-                    ulFollowers.style.display = "block";
-                    ulFollowing.style.display = "block";
+                    //ulFollowers.style.display = "block";
+                    //ulFollowing.style.display = "block";
                     postsFeed.style.display = "block";
                     
                 } catch(error) {
