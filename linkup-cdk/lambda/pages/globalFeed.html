@@ -78,8 +78,12 @@
                             const hr = document.createElement("hr");
 
                             const p_id = document.createElement("p");
+                            const aLinkToProfile = document.createElement("a");
+                            aLinkToProfile.href = `/prod/profile?accountID=${dataGetAllPosts[i].accountID}`;
+                            aLinkToProfile.appendChild(p_id);
+
                             p_id.innerHTML = dataGetProfileByID["firstName"] + " " + dataGetProfileByID["lastName"];
-                            div.appendChild(p_id);
+                            div.appendChild(aLinkToProfile);
 
                             if(dataGetAllPosts[i].postText) {
                                 const p_text = document.createElement("p");
