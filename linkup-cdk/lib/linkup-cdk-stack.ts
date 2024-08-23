@@ -115,9 +115,6 @@ export class LinkupCdkStack extends cdk.Stack {
 
     /* login */
 
-    // POST /prod/login 
-    const post_login = this.createLambda("linkup-post-login", "lambda", "linkup_post_login.lambda_handler", labRole);
-
     // GET /prod/login 
     const get_login = this.createLambda("linkup-get-login", "lambda", "linkup_get_login.lambda_handler", labRole);
 
@@ -131,16 +128,10 @@ export class LinkupCdkStack extends cdk.Stack {
 
     /* profile */
 
-    // POST /prod/profile 
-    const post_profile = this.createLambda("linkup-post-profile", "lambda", "linkup_post_profile.lambda_handler", labRole);
-
     // GET /prod/profile 
     const get_profile = this.createLambda("linkup-get-profile", "lambda", "linkup_get_profile.lambda_handler", labRole);
 
     /* register */
-
-    // POST /prod/profile 
-    const post_register = this.createLambda("linkup-post-register", "lambda", "linkup_post_register.lambda_handler", labRole);
 
     // GET /prod/profile 
     const get_register = this.createLambda("linkup-get-register", "lambda", "linkup_get_register.lambda_handler", labRole);
@@ -151,6 +142,8 @@ export class LinkupCdkStack extends cdk.Stack {
     const get_update = this.createLambda("linkup-get-update", "lambda", "linkup_get_update.lambda_handler", labRole);
 
     /* friendsFeed */
+
+    // GET /prod/friendsFeed
     const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda", "linkup_get_friendsFeed.lambda_handler", labRole);
 
     /* ---------- API Gateway ---------- */
@@ -225,9 +218,47 @@ export class LinkupCdkStack extends cdk.Stack {
     });
 
     const followers_resource = linkup_api_gateway.root.addResource("followers");
-    followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers));
+    followers_resource.addMethod("POST", new apigateway.LambdaIntegration(post_followers,  {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     followers_resource.addMethod("GET", new apigateway.LambdaIntegration(get_followers));
-    followers_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_followers));
+    followers_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_followers,  {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
 
     const globalFeed_resource = linkup_api_gateway.root.addResource("globalFeed");
     globalFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_globalFeed));
@@ -237,7 +268,6 @@ export class LinkupCdkStack extends cdk.Stack {
 
     const login_resouce = linkup_api_gateway.root.addResource("login");
     login_resouce.addMethod("GET", new apigateway.LambdaIntegration(get_login));
-    login_resouce.addMethod("POST", new apigateway.LambdaIntegration(post_login));
 
     const postDB_resource = linkup_api_gateway.root.addResource("postDB");
     postDB_resource.addMethod("POST", new apigateway.LambdaIntegration(post_postDB, {
@@ -263,11 +293,9 @@ export class LinkupCdkStack extends cdk.Stack {
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
 
     const profile_resource = linkup_api_gateway.root.addResource("profile");
-    profile_resource.addMethod("POST", new apigateway.LambdaIntegration(post_profile));
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));
 
     const register_resource = linkup_api_gateway.root.addResource("register");
-    register_resource.addMethod("POST", new apigateway.LambdaIntegration(post_register));
     register_resource.addMethod("GET", new apigateway.LambdaIntegration(get_register));
 
     const update_resource = linkup_api_gateway.root.addResource("update");

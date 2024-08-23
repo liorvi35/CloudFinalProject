@@ -6,6 +6,7 @@
     <body>
         <h1>My Profile!</h1>
         <input type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
+        <input type="button" onclick="" value="" id="followBtn" style="display: none;"/>
         <h2>Profile Information</h2>
         <div id="profileInfo" style="display: none;"></div>
         <hr/>
@@ -36,8 +37,7 @@
                 const urlParams = new URLSearchParams(queryString);
                 const accountID = urlParams.get("accountID");
 
-                // 2. get my following, followers
-                // 3. get my posts
+                const storageAccountID = localStorage.getItem("accountID");
 
                 try {
                     // get profile info
@@ -175,10 +175,45 @@
                         postsFeed.appendChild(hr)
                     }
 
+                    const followBtn = document.getElementById("followBtn");
+                    if(accountID !== storageAccountID) {
+                        try {
+                            if(dataResponseGetFollowers["followers"].includes(storageAccountID)) {
+                                followBtn.value = "unfollow";
+                                followBtn.style.display = "inline";
+                                followBtn.onclick = async () => {
+                                    alert(`Successfully unfollowed: ${currentFullName}!`);
+                                    window.location.reload();
+                                };
+                            } else {
+                                followBtn.value = "follow";
+                                followBtn.style.display = "inline";
+                                followBtn.onclick = async () => {
+                                    const responseFollow = await fetch("/prod/followers", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
+                                    });
+                                    if(!responseFollow.ok) {
+                                        throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
+                                    } 
+                                    alert(`Now following: ${currentFullName}!`);
+                                    window.location.reload();
+                                }
+                            }
+                        } catch(error) {
+                            console.error(error);
+                            alert(error);
+                        }
+                    }
+
                     profileInfo.style.display = "block";
                     ulFollowers.style.display = "block";
                     ulFollowing.style.display = "block";
                     postsFeed.style.display = "block";
+                    
                 } catch(error) {
                     console.error(error);
                     alert(error);
