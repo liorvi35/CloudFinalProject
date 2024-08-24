@@ -83,7 +83,8 @@ def lambda_handler(event, context):
                 "postTime": str(post_time),
                 "postPicture": picture_sigend_url,
                 "postText": None,
-                "pictureTags": []
+                "pictureTags": [],
+                "likes": []
             }
 
             if is_text:
@@ -95,7 +96,8 @@ def lambda_handler(event, context):
                 "postTime": str(post_time),
                 "postPicture": None,
                 "postText": post_text,
-                "pictureTags": []
+                "pictureTags": [],
+                "likes": []
             }
 
         posts_table.put_item(Item=post_item)

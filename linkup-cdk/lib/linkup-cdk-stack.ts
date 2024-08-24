@@ -123,8 +123,11 @@ export class LinkupCdkStack extends cdk.Stack {
     // POST /prod/postDB 
     const post_postDB = this.createLambda("linkup-post-postDB", "lambda", "linkup_post_postDB.lambda_handler", labRole);
 
-    // GET /prod/login 
+    // GET /prod/postDB 
     const get_postDB = this.createLambda("linkup-get-postDB", "lambda", "linkup_get_postDB.lambda_handler", labRole);
+    
+    // PUT /prod/postDB
+    const put_postDB = this.createLambda("linkup-put-postDB", "lambda", "linkup_put_postDB.lambda_handler", labRole);
 
     /* profile */
 
@@ -291,6 +294,26 @@ export class LinkupCdkStack extends cdk.Stack {
       ]
     });
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
+    postDB_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_postDB, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
 
     const profile_resource = linkup_api_gateway.root.addResource("profile");
     profile_resource.addMethod("GET", new apigateway.LambdaIntegration(get_profile));

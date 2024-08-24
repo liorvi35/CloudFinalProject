@@ -86,6 +86,74 @@
                 return window.btoa(binary);
             }
 
+            async function likePost(pLikes, likeBtn, dataGetAllPosts, i, accountID) {
+                const responseSetLike = await fetch("/prod/postDB", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        isLike: true,
+                        postAccountID: dataGetAllPosts[i].accountID,
+                        postTime: dataGetAllPosts[i].postTime,
+                        likerAccountID: accountID
+                    })
+                });
+
+                if(!responseSetLike.ok) {
+                    throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
+                }
+
+                const dataResponseSetLike = await responseSetLike.json();
+
+                if(dataResponseSetLike.statusCode !== 200) {
+                    throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
+                }
+
+                likeBtn.addEventListener("click", async () => {
+                    const oldLikes = pLikes.innerHTML.split(" ")[0];
+                    const oldComments = pLikes.innerHTML.split(" ")[2];
+                    const oldShares = pLikes.innerHTML.split(" ")[4];
+                    pLikes.innerHTML = `${parseInt(oldLikes) + 1} Likes, ${parseInt(oldComments)} Comments, ${parseInt(oldShares)} Shares`;
+                    likeBtn.value = "Unlike";
+                    likeBtn.onclick = await removeLikePost(pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                });
+            }
+
+            async function removeLikePost(pLikes, likeBtn, dataGetAllPosts, i, accountID) {
+                const responseSetLike = await fetch("/prod/postDB", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        isLike: false,
+                        postAccountID: dataGetAllPosts[i].accountID,
+                        postTime: dataGetAllPosts[i].postTime,
+                        likerAccountID: accountID
+                    })
+                });
+
+                if(!responseSetLike.ok) {
+                    throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
+                }
+
+                const dataResponseSetLike = await responseSetLike.json();
+
+                if(dataResponseSetLike.statusCode !== 200) {
+                    throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
+                }
+
+                likeBtn.addEventListener("click", async () => {
+                    const oldLikes = pLikes.innerHTML.split(" ")[0];
+                    const oldComments = pLikes.innerHTML.split(" ")[2];
+                    const oldShares = pLikes.innerHTML.split(" ")[4];
+                    pLikes.innerHTML = `${parseInt(oldLikes) + 1} Likes, ${parseInt(oldComments)} Comments, ${parseInt(oldShares)} Shares`;
+                    likeBtn.value = "Like";
+                    likeBtn.onclick = await likePost(pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                });
+            }
+
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
 
@@ -204,6 +272,27 @@
                             const p_time = document.createElement("p");
                             p_time.innerHTML = await formatEpochToUTCString(dataGetAllPosts[i].postTime);
                             div.appendChild(p_time);
+
+                            const likeBtn = document.createElement("input");
+                            likeBtn.type = "button";
+
+                            const likes = dataGetAllPosts[i].likes.length;
+                            const comments = 0;
+                            const shares = 0;
+
+                            const pLikes = document.createElement("p");
+                            pLikes.innerHTML = `${likes} Likes, ${comments} Comments, ${shares} Shares`;
+
+                            if(dataGetAllPosts[i].likes.includes(accountID)) {
+                                likeBtn.value = "Unlike";
+                                likeBtn.onclick = await likePost(false, pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                            } else {
+                                likeBtn.value = "Like";
+                                likeBtn.onclick = await likePost(true, pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                            }
+
+                            div.appendChild(pLikes);
+                            div.appendChild(likeBtn);
 
                             postsFeed.appendChild(div);
                             postsFeed.appendChild(hr)
