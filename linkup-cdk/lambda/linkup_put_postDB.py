@@ -5,6 +5,7 @@ posts_table = dynamodb.Table("linkup-posts")
 
 def lambda_handler(event, context):
     try:
+        # Extract necessary fields
         try:
             post_account_id = event["postAccountID"]
             post_time = event["postTime"]
@@ -19,19 +20,27 @@ def lambda_handler(event, context):
                 "body": "Bad Request"
             }
 
+        # Get parameters from the event
         is_like = event.get("isLike")
         comment_text = event.get("commentText")
-        comment_time = str(event.get("commentTime"))
+        comment_time = event.get("commentTime")
+        
+        print(f"isLike: {is_like}, commentText: {comment_text}, commentTime: {comment_time}")
 
-        if not (is_like or (comment_text and comment_time)) or (is_like and (comment_text or comment_time)):
+        # Validate input based on the new conditions
+        if (is_like is not None and comment_text is None and comment_time is None) or \
+           (is_like is None and comment_text is not None and comment_time is not None):
+            pass
+        else:
             return {
                 "statusCode": 400,
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "body": "Bad Request"
+                "body": "Bad Request1"
             }
 
+        # Retrieve the post item from DynamoDB
         post_item = posts_table.get_item(
             Key={
                 "accountID": post_account_id,
@@ -88,22 +97,30 @@ def lambda_handler(event, context):
             )
 
         else:
+            comment_time = str(comment_time)
             comments = post.get("comments", [])
             new_comment = {liker_account_id: {comment_time: comment_text}}
 
-            user_comments = next((comment for comment in comments if liker_account_id in comment), None)
-            if user_comments:
-                if comment_time in user_comments[liker_account_id]:
-                    return {
-                        "statusCode": 409,
-                        "headers": {
-                            "Content-Type": "application/json"
-                        },
-                        "body": "Conflict"
-                    }
-                user_comments[liker_account_id].update(new_comment[liker_account_id])
-            else:
-                comments.append(new_comment)
+            # Ensure that `comments` is a list of dictionaries
+            updated_comments = []
+            user_comments_updated = False
+
+            for comment in comments:
+                if liker_account_id in comment:
+                    if comment_time in comment[liker_account_id]:
+                        return {
+                            "statusCode": 409,
+                            "headers": {
+                                "Content-Type": "application/json"
+                            },
+                            "body": "Conflict"
+                        }
+                    comment[liker_account_id][comment_time] = comment_text
+                    user_comments_updated = True
+                updated_comments.append(comment)
+
+            if not user_comments_updated:
+                updated_comments.append(new_comment)
 
             posts_table.update_item(
                 Key={
@@ -112,7 +129,7 @@ def lambda_handler(event, context):
                 },
                 UpdateExpression="SET comments = :newComments",
                 ExpressionAttributeValues={
-                    ":newComments": comments
+                    ":newComments": updated_comments
                 },
                 ReturnValues="UPDATED_NEW"
             )
