@@ -248,18 +248,16 @@
                         const likes = dataGetAllPosts[i].likes.length;
 
                         let comments = 0;
-                            let commentsList = dataGetAllPosts[i].comments;
-                            for (let j = 0; j < commentsList.length; ++j) {
-                                let commentObject = commentsList[j];
-                                for (let uuid in commentObject) {
-                                    comments += Object.keys(commentObject[uuid]).length;
-                                }
+                        let commentsList = dataGetAllPosts[i].comments;
+                        for (let j = 0; j < commentsList.length; ++j) {
+                            let commentObject = commentsList[j];
+                            for (let uuid in commentObject) {
+                                comments += Object.keys(commentObject[uuid]).length;
                             }
-
-                        const shares = 0;
+                        }
 
                         const pLikes = document.createElement("p");
-                        pLikes.innerHTML = `${likes} Likes, ${comments} Comments, ${shares} Shares`;
+                        pLikes.innerHTML = `${likes} Likes, ${comments} Comments`;
 
                         const likeBtn = document.createElement("input");
                         likeBtn.type = "button";
@@ -309,16 +307,16 @@
                             }
                         };
 
-                        const isLiked = dataGetAllPosts[i].likes.includes(storageAccountID);
+                        const isLiked = dataGetAllPosts[i].likes.includes(accountID);
                         let currentLike = isLiked ? unlike : like;
                         likeBtn.value = isLiked ? "Unlike" : "Like";
 
                         likeBtn.addEventListener("click", async () => {
                             likeBtn.value = (currentLike === like) ? "Unlike" : "Like";
                             await currentLike();
-                            const [oldLikes, , oldComments, , oldShares] = pLikes.textContent.split(" ");
+                            const [oldLikes, , oldComments, , ,] = pLikes.textContent.split(" ");
                             const newLikes = (currentLike === like) ? parseInt(oldLikes) + 1 : parseInt(oldLikes) - 1;
-                            pLikes.innerHTML = `${newLikes} Likes, ${oldComments} Comments, ${oldShares} Shares`;
+                            pLikes.innerHTML = `${newLikes} Likes, ${oldComments} Comments`;
                             currentLike = (currentLike === like) ? unlike : like;
                         });
 
@@ -361,10 +359,117 @@
 
                             const oldLikes = pLikes.textContent.split(" ")[0];
                             const oldComments = pLikes.textContent.split(" ")[2];
-                            const oldShares = pLikes.textContent.split(" ")[4];
-                            pLikes.innerHTML = `${oldLikes} Likes, ${parseInt(oldComments) + 1} Comments, ${oldShares} Shares`;
+                            pLikes.innerHTML = `${oldLikes} Likes, ${parseInt(oldComments) + 1} Comments`;
                             commentInput.value = "";
                         };
+
+                        div.appendChild(pLikes);
+                        div.appendChild(likeBtn);
+
+                        div.appendChild(commentInput);
+                        div.appendChild(commentBtn);
+
+                        for(let j = 0; j < 2; ++j) {
+                            const showLikesBtn = document.createElement("input");
+                            showLikesBtn.type = "button";
+                            showLikesBtn.id = (j == 0 ? "openFormButtonLikes" : "openFormButtonComments");
+                            showLikesBtn.value = (j == 0 ? "Show Likes" : "Show Comments");
+
+                            const showLikesDiv = document.createElement("div");
+                            showLikesDiv.id = (j == 0 ? "popupFormLikes" : "popupFormComments");
+                            showLikesDiv.className = "popup-form";
+
+                            const showLikesDivInner = document.createElement("div");
+                            showLikesDivInner.className = "form-container";
+
+                            const spanLikes = document.createElement("span");
+                            spanLikes.id = (j == 0 ? "closeFormButtonLikes" : "closeFormButtonComments");
+                            spanLikes.style.cursor = "pointer";
+                            spanLikes.innerHTML = "&times;";
+
+                            const h2Likes = document.createElement("h2");
+                            h2Likes.innerHTML = (j == 0 ? "Likes" : "Comments");;
+
+                            const ulLikes = document.createElement("ul");
+                            ulLikes.id = (j == 0 ? "LikesList" : "CommentsList");
+
+                            if(j == 0) {
+                                for(let k = 0; k < dataGetAllPosts[i].likes.length; ++k) {
+                                    const liLikes = document.createElement("li");
+
+                                    const responseGetName = await fetch(`/prod/db?accountID=${dataGetAllPosts[i].likes[k]}`, {
+                                        method: "GET",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        }
+                                    });
+                                    if(!responseGetName.ok) {
+                                        throw new Error(`${responseGetName.status}: ${responseGetName.statusText}`);
+                                    }
+                                    const dataResponseGetName = await responseGetName.json();
+
+                                    liLikes.innerHTML = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
+                                    ulLikes.appendChild(liLikes);
+                                }
+                            } else {
+                                const comments = dataGetAllPosts[i].comments;
+                                comments.forEach(commentObject => {
+                                    const accountID = Object.keys(commentObject)[0];
+                                    const commentDetails = commentObject[accountID];
+                                    Object.entries(commentDetails).forEach(async ([timestamp, commentText]) => {
+                                        const responseGetName = await fetch(`/prod/db?accountID=${accountID}`, {
+                                            method: "GET",
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            }
+                                        });
+                                        if(!responseGetName.ok) {
+                                            throw new Error(`${responseGetName.status}: ${responseGetName.statusText}`);
+                                        }
+                                        const dataResponseGetName = await responseGetName.json();
+
+                                        const li = document.createElement("li");
+                                        const div = document.createElement("div");
+
+                                        const accountIDP = document.createElement("p");
+                                        accountIDP.textContent = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
+
+                                        const commentP = document.createElement("p");
+                                        commentP.textContent = commentText;
+
+                                        const unixTimeP = document.createElement("p");
+                                        unixTimeP.textContent = await formatEpochToUTCString(timestamp);
+                                        
+                                        div.appendChild(accountIDP);
+                                        div.appendChild(commentP);
+                                        div.appendChild(unixTimeP);
+                                        li.appendChild(div);
+                                        ulLikes.appendChild(li);
+                                    });
+                                });
+                            }
+
+                            showLikesBtn.addEventListener("click", () => {
+                                showLikesDiv.style.display = "flex";
+                            });
+                            spanLikes.addEventListener("click", () => {
+                                showLikesDiv.style.display = "none";
+                            });
+                            window.addEventListener("click", (event) => {
+                                if (event.target == showLikesDiv) {
+                                    showLikesDiv.style.display = "none";
+                                }
+                            });
+
+                            showLikesDivInner.appendChild(spanLikes);
+                            showLikesDivInner.appendChild(h2Likes);
+                            showLikesDivInner.appendChild(ulLikes);
+
+                            showLikesDiv.appendChild(showLikesDivInner);
+
+                            div.appendChild(showLikesBtn);
+                            div.appendChild(showLikesDiv);
+                        }
 
                         const deleteBtn = document.createElement("input");
                         deleteBtn.type = "button";
@@ -390,20 +495,13 @@
                             window.location.reload();
                         };
 
-                        div.appendChild(pLikes);
-                        div.appendChild(likeBtn);
-
-                        div.appendChild(commentInput);
-                        div.appendChild(commentBtn);
-
                         if(accountID === storageAccountID) {
                             div.appendChild(deleteBtn);
                         }
-
+                        
                         postsFeed.appendChild(div);
                         postsFeed.appendChild(hr)
                     }
-
 
                     const followBtn = document.getElementById("followBtn");
                     if(accountID !== storageAccountID) {
