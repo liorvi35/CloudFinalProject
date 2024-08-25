@@ -209,7 +209,18 @@
                             likeBtn.type = "button";
 
                             const likes = dataGetAllPosts[i].likes.length;
-                            const comments = 0;
+
+                            let comments = 0;
+                            for (let j = 0; j < dataGetAllPosts.length; ++j) {
+                                let commentsList = dataGetAllPosts[j].comments;
+                                for (let k = 0; k < commentsList.length; ++k) {
+                                    let commentObject = commentsList[k];
+                                    for (let uuid in commentObject) {
+                                        comments += Object.keys(commentObject[uuid]).length;
+                                    }
+                                }
+                            }
+
                             const shares = 0;
 
                             const pLikes = document.createElement("p");
@@ -272,9 +283,40 @@
                             commentBtn.value = "Comment";
                             commentBtn.onclick = async () => {
                                 const commentTime = Math.floor(Date.now() / 1000);
-                                
-                            };
+                                const commentText = commentInput.value.trim();
 
+                                if(commentText === "") {
+                                    alert("Comment cannot be empty!");
+                                    return;
+                                }
+
+                                const responseNewComment = await fetch("/prod/postDB", {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        postAccountID: dataGetAllPosts[i].accountID,
+                                        postTime: dataGetAllPosts[i].postTime,
+                                        likerAccountID: accountID,
+                                        commentText,
+                                        commentTime
+                                    })
+                                });
+                                if(!responseNewComment.ok) {
+                                    throw new Error(`${responseNewComment.status}: ${responseNewComment.statusText}`);
+                                }
+                                const dataResponseNewComment = await responseNewComment.json();
+                                if(dataResponseNewComment.statusCode !== 200) {
+                                    throw new Error(`${dataResponseNewComment.statusCode}: ${dataResponseNewComment.body}`);
+                                }
+
+                                const oldLikes = pLikes.textContent.split(" ")[0];
+                                const oldComments = pLikes.textContent.split(" ")[2];
+                                const oldShares = pLikes.textContent.split(" ")[4];
+                                pLikes.innerHTML = `${oldLikes} Likes, ${parseInt(oldComments) + 1} Comments, ${oldShares} Shares`;
+                                commentInput.value = "";
+                            };
 
                             div.appendChild(pLikes);
                             div.appendChild(likeBtn);
