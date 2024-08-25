@@ -86,74 +86,6 @@
                 return window.btoa(binary);
             }
 
-            async function likePost(pLikes, likeBtn, dataGetAllPosts, i, accountID) {
-                const responseSetLike = await fetch("/prod/postDB", {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        isLike: true,
-                        postAccountID: dataGetAllPosts[i].accountID,
-                        postTime: dataGetAllPosts[i].postTime,
-                        likerAccountID: accountID
-                    })
-                });
-
-                if(!responseSetLike.ok) {
-                    throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
-                }
-
-                const dataResponseSetLike = await responseSetLike.json();
-
-                if(dataResponseSetLike.statusCode !== 200) {
-                    throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
-                }
-
-                likeBtn.addEventListener("click", async () => {
-                    const oldLikes = pLikes.innerHTML.split(" ")[0];
-                    const oldComments = pLikes.innerHTML.split(" ")[2];
-                    const oldShares = pLikes.innerHTML.split(" ")[4];
-                    pLikes.innerHTML = `${parseInt(oldLikes) + 1} Likes, ${parseInt(oldComments)} Comments, ${parseInt(oldShares)} Shares`;
-                    likeBtn.value = "Unlike";
-                    likeBtn.onclick = await removeLikePost(pLikes, likeBtn, dataGetAllPosts, i, accountID);
-                });
-            }
-
-            async function removeLikePost(pLikes, likeBtn, dataGetAllPosts, i, accountID) {
-                const responseSetLike = await fetch("/prod/postDB", {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        isLike: false,
-                        postAccountID: dataGetAllPosts[i].accountID,
-                        postTime: dataGetAllPosts[i].postTime,
-                        likerAccountID: accountID
-                    })
-                });
-
-                if(!responseSetLike.ok) {
-                    throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
-                }
-
-                const dataResponseSetLike = await responseSetLike.json();
-
-                if(dataResponseSetLike.statusCode !== 200) {
-                    throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
-                }
-
-                likeBtn.addEventListener("click", async () => {
-                    const oldLikes = pLikes.innerHTML.split(" ")[0];
-                    const oldComments = pLikes.innerHTML.split(" ")[2];
-                    const oldShares = pLikes.innerHTML.split(" ")[4];
-                    pLikes.innerHTML = `${parseInt(oldLikes) + 1} Likes, ${parseInt(oldComments)} Comments, ${parseInt(oldShares)} Shares`;
-                    likeBtn.value = "Like";
-                    likeBtn.onclick = await likePost(pLikes, likeBtn, dataGetAllPosts, i, accountID);
-                });
-            }
-
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
 
@@ -285,14 +217,70 @@
 
                             if(dataGetAllPosts[i].likes.includes(accountID)) {
                                 likeBtn.value = "Unlike";
-                                likeBtn.onclick = await likePost(false, pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                                likeBtn.onclick = async () => {
+                                    const responseSetLike = await fetch("/prod/postDB", {
+                                        method: "PUT",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            isLike: false,
+                                            postAccountID: dataGetAllPosts[i].accountID,
+                                            postTime: dataGetAllPosts[i].postTime,
+                                            likerAccountID: accountID
+                                        })
+                                    });
+                                    if(!responseSetLike.ok) {
+                                        throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
+                                    }
+                                    const dataResponseSetLike = await responseSetLike.json();
+                                    if(dataResponseSetLike.statusCode !== 200) {
+                                        throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
+                                    }
+                                };
                             } else {
                                 likeBtn.value = "Like";
-                                likeBtn.onclick = await likePost(true, pLikes, likeBtn, dataGetAllPosts, i, accountID);
+                                likeBtn.onclick = async () => {
+                                    const responseSetLike = await fetch("/prod/postDB", {
+                                        method: "PUT",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            isLike: true,
+                                            postAccountID: dataGetAllPosts[i].accountID,
+                                            postTime: dataGetAllPosts[i].postTime,
+                                            likerAccountID: accountID
+                                        })
+                                    });
+                                    if(!responseSetLike.ok) {
+                                        throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
+                                    }
+                                    const dataResponseSetLike = await responseSetLike.json();
+                                    if(dataResponseSetLike.statusCode !== 200) {
+                                        throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
+                                    }
+                                };
                             }
+
+                            const commentInput = document.createElement("input");
+                            commentInput.type = "text";
+                            commentInput.placeholder = "Write Your Comment";
+
+                            const commentBtn = document.createElement("input");
+                            commentBtn.type = "button";
+                            commentBtn.value = "Comment";
+                            commentBtn.onclick = async () => {
+                                const commentTime = Math.floor(Date.now() / 1000);
+                                
+                            };
+
 
                             div.appendChild(pLikes);
                             div.appendChild(likeBtn);
+
+                            div.appendChild(commentInput);
+                            div.appendChild(commentBtn);
 
                             postsFeed.appendChild(div);
                             postsFeed.appendChild(hr)

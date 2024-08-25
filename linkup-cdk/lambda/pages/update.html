@@ -96,7 +96,7 @@
                             if(dataUploadPicture.statusCode === 200) {
                                 const dataUploadPictureBody = JSON.parse(dataUploadPicture.body);
                                 localStorage.setItem("profilePicture", dataUploadPictureBody["profilePicture"]);
-                                window.location.href = "/prod/profile";
+                                window.location.href = `/prod/profile?accountID=${accountID}`;
                             } else {
                                 throw new Error(`${dataUploadPicture.statusCode}: ${dataUploadPicture.body}`);
                             }
