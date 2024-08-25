@@ -129,6 +129,9 @@ export class LinkupCdkStack extends cdk.Stack {
     // PUT /prod/postDB
     const put_postDB = this.createLambda("linkup-put-postDB", "lambda", "linkup_put_postDB.lambda_handler", labRole);
 
+    // DELETE /prod/postDB
+    const delete_postDB = this.createLambda("linkup-delete-postDB", "lambda", "linkup_delete_postDB.lambda_handler", labRole);
+
     /* profile */
 
     // GET /prod/profile 
@@ -295,6 +298,26 @@ export class LinkupCdkStack extends cdk.Stack {
     });
     postDB_resource.addMethod("GET", new apigateway.LambdaIntegration(get_postDB));
     postDB_resource.addMethod("PUT", new apigateway.LambdaIntegration(put_postDB, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
+    postDB_resource.addMethod("DELETE", new apigateway.LambdaIntegration(delete_postDB, {
       proxy: false,
       integrationResponses: [
         {
