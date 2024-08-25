@@ -208,13 +208,11 @@
                             const likes = dataGetAllPosts[i].likes.length;
 
                             let comments = 0;
-                            for (let j = 0; j < dataGetAllPosts.length; ++j) {
-                                let commentsList = dataGetAllPosts[j].comments;
-                                for (let k = 0; k < commentsList.length; ++k) {
-                                    let commentObject = commentsList[k];
-                                    for (let uuid in commentObject) {
-                                        comments += Object.keys(commentObject[uuid]).length;
-                                    }
+                            let commentsList = dataGetAllPosts[i].comments;
+                            for (let j = 0; j < commentsList.length; ++j) {
+                                let commentObject = commentsList[j];
+                                for (let uuid in commentObject) {
+                                    comments += Object.keys(commentObject[uuid]).length;
                                 }
                             }
 
