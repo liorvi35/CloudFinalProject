@@ -21,9 +21,11 @@ export class LinkupCdkStack extends cdk.Stack {
     /* ---------- S3 ---------- */
 	  // S3 bucket for user's profile picture
     const linkup_profile_pictures = this.createBucket("linkup-profile-pictures", labRole);
-    this.deployObjectToS3("s3_def_profile_pics", "deployFemaleDefaultProfilePicture", linkup_profile_pictures, labRole);
+    this.deployObjectToS3("s3_def_profile_pics", "deployDefaultProfilePicture", linkup_profile_pictures, labRole);
 
-    	
+    const linkup_pip_packages_zip_files = this.createBucket("linkup-pip-packages-zip-files", labRole);
+    this.deployObjectToS3("s3_pip_openai", "deployOpenAIPythonModule", linkup_pip_packages_zip_files, labRole);
+
     // S3 bucket for holding post's images
     const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
     
@@ -39,25 +41,16 @@ export class LinkupCdkStack extends cdk.Stack {
     // comming soon
 
     /* ---------- PIP INSTALL ---------- */
-    const linkup_pip_packages_zip_files = this.createBucket("linkup-pip-packages-zip-files", labRole);
-
-    // const pip_install_openai = new lambda.Function(this, "pip_install_openai", {
-    //   runtime: lambda.Runtime.PYTHON_3_12,
-    //   code: lambda.Code.fromAsset("lambda/pip_install_openai"),
-    //   handler: "pip_install_openai.lambda_handler",
-    //   role: labRole,
-    //   timeout: cdk.Duration.seconds(3000),
-    //   memorySize: 3000,
-    //   ephemeralStorageSize:cdk.Size.mebibytes(3072),
-    // });
-
-    const pip_install_openai_layer = new lambda.LayerVersion(this, "pip_install_openai_layer", {
-      code: lambda.Code.fromAsset("lambda/pip_install_openai"),
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
-      compatibleArchitectures: [lambda.Architecture.X86_64],
+    const pip_install_openai_layer = new lambda.CfnLayerVersion(this, "pip_install_openai_layer", {
+      layerName: "pip-install-openai",
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12.name],
+      compatibleArchitectures: [lambda.Architecture.X86_64.name],
+      content: {
+        s3Bucket: "linkup-pip-packages-zip-files",
+        s3Key: "python_package_openai.zip",
+      },
     });
     
-
     /* ---------- DynamoDB ---------- */
 	  // DynamoDB table for holding users
 	  const linkup_users = new dynamodb.Table(this, "linkup_users", {
@@ -150,8 +143,16 @@ export class LinkupCdkStack extends cdk.Stack {
     const get_postDB = this.createLambda("linkup-get-postDB", "lambda/linkup_get_postDB", "linkup_get_postDB.lambda_handler", labRole);
     
     // PUT /prod/postDB
-    const put_postDB = this.createLambda("linkup-put-postDB", "lambda/linkup_put_postDB", "linkup_put_postDB.lambda_handler", labRole);
-
+    const put_postDB = new lambda.Function(this, "linkup-put-postDB", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromAsset("lambda/linkup_put_postDB"),
+      handler: "linkup_put_postDB.lambda_handler",
+      role: labRole,
+      timeout: cdk.Duration.seconds(60),
+      memorySize: 128,
+      layers: [lambda.LayerVersion.fromLayerVersionArn(this, "pip_install_openai_layer_ref", `arn:aws:lambda:${this.region}:${this.account}:layer:pip-install-openai:1`)]
+    });
+    
     // DELETE /prod/postDB
     const delete_postDB = this.createLambda("linkup-delete-postDB", "lambda/linkup_delete_postDB", "linkup_delete_postDB.lambda_handler", labRole);
 
