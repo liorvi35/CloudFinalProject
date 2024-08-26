@@ -372,6 +372,8 @@ export class LinkupCdkStack extends cdk.Stack {
       code: lambda.Code.fromAsset(location),
       handler: handler,
       role: role,
+      timeout: cdk.Duration.seconds(60),
+      memorySize: 128,
     });
   }
 
