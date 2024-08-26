@@ -22,6 +22,7 @@ export class LinkupCdkStack extends cdk.Stack {
 	  // S3 bucket for user's profile picture
     const linkup_profile_pictures = this.createBucket("linkup-profile-pictures", labRole);
     this.deployObjectToS3("s3_def_profile_pics", "deployFemaleDefaultProfilePicture", linkup_profile_pictures, labRole);
+
     	
     // S3 bucket for holding post's images
     const linkup_post_pictures = this.createBucket("linkup-post-pictures", labRole);
@@ -31,9 +32,31 @@ export class LinkupCdkStack extends cdk.Stack {
       queueName: 'linkup-rekognize-queue',
       visibilityTimeout: cdk.Duration.seconds(300)
     });
-    const sqs_consumer = this.createLambda("linkup-rekognize-consumer", "lambda", "linkup_rekognize_consumer.lambda_handler", labRole);
+    const sqs_consumer = this.createLambda("linkup-rekognize-consumer", "lambda/linkup_rekognize_consumer", "linkup_rekognize_consumer.lambda_handler", labRole);
     sqs_consumer.addEventSource(new lambdaEventSources.SqsEventSource(rekognizeQueue));
 
+    /* ---------- Event Bridge ---------- */
+    // comming soon
+
+    /* ---------- PIP INSTALL ---------- */
+    const linkup_pip_packages_zip_files = this.createBucket("linkup-pip-packages-zip-files", labRole);
+
+    // const pip_install_openai = new lambda.Function(this, "pip_install_openai", {
+    //   runtime: lambda.Runtime.PYTHON_3_12,
+    //   code: lambda.Code.fromAsset("lambda/pip_install_openai"),
+    //   handler: "pip_install_openai.lambda_handler",
+    //   role: labRole,
+    //   timeout: cdk.Duration.seconds(3000),
+    //   memorySize: 3000,
+    //   ephemeralStorageSize:cdk.Size.mebibytes(3072),
+    // });
+
+    const pip_install_openai_layer = new lambda.LayerVersion(this, "pip_install_openai_layer", {
+      code: lambda.Code.fromAsset("lambda/pip_install_openai"),
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
+      compatibleArchitectures: [lambda.Architecture.X86_64],
+    });
+    
 
     /* ---------- DynamoDB ---------- */
 	  // DynamoDB table for holding users
@@ -81,76 +104,76 @@ export class LinkupCdkStack extends cdk.Stack {
     /* db */
 
     // POST /prod/db 
-    const post_db = this.createLambda("linkup-post-db", "lambda", "linkup_post_db.lambda_handler", labRole);
+    const post_db = this.createLambda("linkup-post-db", "lambda/linkup_post_db", "linkup_post_db.lambda_handler", labRole);
 
     // GET /prod/db
-    const get_db = this.createLambda("linkup-get-db", "lambda", "linkup_get_db.lambda_handler", labRole);
+    const get_db = this.createLambda("linkup-get-db", "lambda/linkup_get_db", "linkup_get_db.lambda_handler", labRole);
 
     // PUT /prod/db 
-    const put_db = this.createLambda("linkup-put-db", "lambda", "linkup_put_db.lambda_handler", labRole);
+    const put_db = this.createLambda("linkup-put-db", "lambda/linkup_put_db", "linkup_put_db.lambda_handler", labRole);
 
     // DELETE /prod/db 
-    const delete_db = this.createLambda("linkup-delete-db", "lambda", "linkup_delete_db.lambda_handler", labRole);
+    const delete_db = this.createLambda("linkup-delete-db", "lambda/linkup_delete_db", "linkup_delete_db.lambda_handler", labRole);
 
     /* followers */
 
     // POST /prod/followers 
-    const post_followers = this.createLambda("linkup-post-followers", "lambda", "linkup_post_followers.lambda_handler", labRole);
+    const post_followers = this.createLambda("linkup-post-followers", "lambda/linkup_post_followers", "linkup_post_followers.lambda_handler", labRole);
 
     // GET /prod/followers 
-    const get_followers = this.createLambda("linkup-get-followers", "lambda", "linkup_get_followers.lambda_handler", labRole);
+    const get_followers = this.createLambda("linkup-get-followers", "lambda/linkup_get_followers", "linkup_get_followers.lambda_handler", labRole);
 
     // PUT /prod/followers 
-    const put_followers = this.createLambda("linkup-put-followers", "lambda", "linkup_put_followers.lambda_handler", labRole);
+    const put_followers = this.createLambda("linkup-put-followers", "lambda/linkup_put_followers", "linkup_put_followers.lambda_handler", labRole);
 
     /* globalFeed */
 
     // GET /prod/globalFeed 
-    const get_globalFeed = this.createLambda("linkup-get-globalFeed", "lambda", "linkup_get_globalFeed.lambda_handler", labRole);
+    const get_globalFeed = this.createLambda("linkup-get-globalFeed", "lambda/linkup_get_globalFeed", "linkup_get_globalFeed.lambda_handler", labRole);
 
     /* index */
 
     // GET /prod/index
-    const get_index = this.createLambda("linkup-get-index", "lambda", "linkup_get_index.lambda_handler", labRole);
+    const get_index = this.createLambda("linkup-get-index", "lambda/linkup_get_index", "linkup_get_index.lambda_handler", labRole);
 
     /* login */
 
     // GET /prod/login 
-    const get_login = this.createLambda("linkup-get-login", "lambda", "linkup_get_login.lambda_handler", labRole);
+    const get_login = this.createLambda("linkup-get-login", "lambda/linkup_get_login", "linkup_get_login.lambda_handler", labRole);
 
     /* postDB */
 
     // POST /prod/postDB 
-    const post_postDB = this.createLambda("linkup-post-postDB", "lambda", "linkup_post_postDB.lambda_handler", labRole);
+    const post_postDB = this.createLambda("linkup-post-postDB", "lambda/linkup_post_postDB", "linkup_post_postDB.lambda_handler", labRole);
 
     // GET /prod/postDB 
-    const get_postDB = this.createLambda("linkup-get-postDB", "lambda", "linkup_get_postDB.lambda_handler", labRole);
+    const get_postDB = this.createLambda("linkup-get-postDB", "lambda/linkup_get_postDB", "linkup_get_postDB.lambda_handler", labRole);
     
     // PUT /prod/postDB
-    const put_postDB = this.createLambda("linkup-put-postDB", "lambda", "linkup_put_postDB.lambda_handler", labRole);
+    const put_postDB = this.createLambda("linkup-put-postDB", "lambda/linkup_put_postDB", "linkup_put_postDB.lambda_handler", labRole);
 
     // DELETE /prod/postDB
-    const delete_postDB = this.createLambda("linkup-delete-postDB", "lambda", "linkup_delete_postDB.lambda_handler", labRole);
+    const delete_postDB = this.createLambda("linkup-delete-postDB", "lambda/linkup_delete_postDB", "linkup_delete_postDB.lambda_handler", labRole);
 
     /* profile */
 
     // GET /prod/profile 
-    const get_profile = this.createLambda("linkup-get-profile", "lambda", "linkup_get_profile.lambda_handler", labRole);
+    const get_profile = this.createLambda("linkup-get-profile", "lambda/linkup_get_profile", "linkup_get_profile.lambda_handler", labRole);
 
     /* register */
 
     // GET /prod/profile 
-    const get_register = this.createLambda("linkup-get-register", "lambda", "linkup_get_register.lambda_handler", labRole);
+    const get_register = this.createLambda("linkup-get-register", "lambda/linkup_get_register", "linkup_get_register.lambda_handler", labRole);
   
     /* update */
 
     // GET /prod/update 
-    const get_update = this.createLambda("linkup-get-update", "lambda", "linkup_get_update.lambda_handler", labRole);
+    const get_update = this.createLambda("linkup-get-update", "lambda/linkup_get_update", "linkup_get_update.lambda_handler", labRole);
 
     /* friendsFeed */
 
     // GET /prod/friendsFeed
-    const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda", "linkup_get_friendsFeed.lambda_handler", labRole);
+    const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda/linkup_get_friendsFeed", "linkup_get_friendsFeed.lambda_handler", labRole);
 
     /* ---------- API Gateway ---------- */
     // api gateway for `LinkUp` Social Network

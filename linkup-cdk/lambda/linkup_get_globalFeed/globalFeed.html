@@ -405,7 +405,7 @@
                                     comments.forEach(commentObject => {
                                         const accountID = Object.keys(commentObject)[0];
                                         const commentDetails = commentObject[accountID];
-                                        Object.entries(commentDetails).forEach(async ([timestamp, commentText]) => {
+                                        Object.entries(commentDetails).forEach(async ([timestamp, commentList]) => {
                                             const responseGetName = await fetch(`/prod/db?accountID=${accountID}`, {
                                                 method: "GET",
                                                 headers: {
@@ -424,7 +424,16 @@
                                             accountIDP.textContent = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
 
                                             const commentP = document.createElement("p");
-                                            commentP.textContent = commentText;
+                                            commentP.textContent = commentList[0];
+                            
+                                            let commentColor = commentList[1];
+                                            if(commentColor && commentColor.trim() === "Positive") {
+                                                commentP.style.color = "#00ff08";
+                                            } else if(commentColor && commentColor.trim() === "Negative") {
+                                                commentP.style.color = "#ff0000";
+                                            } else if(commentColor && commentColor.trim() === "Neutral") {
+                                                commentP.style.color = "#ff00dd";
+                                            }
 
                                             const unixTimeP = document.createElement("p");
                                             unixTimeP.textContent = await formatEpochToUTCString(timestamp);

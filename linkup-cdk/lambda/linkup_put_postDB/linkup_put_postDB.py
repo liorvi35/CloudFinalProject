@@ -1,7 +1,31 @@
 import boto3
+from openai import AzureOpenAI
+import re
 
 dynamodb = boto3.resource("dynamodb")
 posts_table = dynamodb.Table("linkup-posts")
+
+
+def ask_gpt(prompt, deployment_name="prod"):
+    client = AzureOpenAI(
+        api_key="ffeab3c02a40418ba5fc5ad00fac007a",
+        api_version="2024-02-01",
+        azure_endpoint="https://linkup-openai.openai.azure.com/"
+    )
+
+    response = client.completions.create(
+        model=deployment_name,
+        prompt=f"Classify this sentence: {prompt} -  is it 'Positive', 'Neutral' or 'Negative'?",
+        temperature=0.2,
+        max_tokens=((len(prompt) + len("Classify this sentence:  -  is it 'Positive', 'Neutral' or 'Negative'?")) // 4) + 100,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        best_of=1,
+        stop=None
+    )
+
+    return response.choices[0].text
 
 def lambda_handler(event, context):
     try:
@@ -99,7 +123,13 @@ def lambda_handler(event, context):
         else:
             comment_time = str(comment_time)
             comments = post.get("comments", [])
-            new_comment = {liker_account_id: {comment_time: comment_text}}
+
+            classification = ask_gpt(comment_text)
+            classification = classification.replace("\n", "")
+
+            print(f"Classification of {comment_text} is {classification}")
+
+            new_comment = {liker_account_id: {comment_time: [comment_text, classification]}}
 
             # Ensure that `comments` is a list of dictionaries
             updated_comments = []
@@ -115,7 +145,9 @@ def lambda_handler(event, context):
                             },
                             "body": "Conflict"
                         }
-                    comment[liker_account_id][comment_time] = comment_text
+                    comment[liker_account_id][comment_time] = []
+                    comment[liker_account_id][comment_time].append(comment_text)
+                    comment[liker_account_id][comment_time].append(classification)
                     user_comments_updated = True
                 updated_comments.append(comment)
 

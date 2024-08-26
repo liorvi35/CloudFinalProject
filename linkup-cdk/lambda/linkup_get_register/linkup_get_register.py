@@ -1,6 +1,6 @@
 def lambda_handler(event, context):
     try:
-        with open("pages/register.html") as f:
+        with open("register.html") as f:
             page_contents = f.read()
         return {
             "statusCode": 200,

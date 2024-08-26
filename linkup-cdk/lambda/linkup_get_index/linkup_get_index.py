@@ -1,6 +1,6 @@
 def lambda_handler(event, context):
     try:
-        with open("pages/login.html") as f:
+        with open("index.html") as f:
             page_contents = f.read()
         return {
             "statusCode": 200,
@@ -17,3 +17,4 @@ def lambda_handler(event, context):
             },
             "body": "<h1>Internal Server Error</h1>"
         }
+      

@@ -1,6 +1,6 @@
 def lambda_handler(event, context):
     try:
-        with open("pages/globalFeed.html") as f:
+        with open("friendsFeed.html") as f:
             page_contents = f.read()
         return {
             "statusCode": 200,
