@@ -139,6 +139,7 @@
                     throw new Error(`${responseAllUsers.status}: ${responseAllUsers.statusText}`);
                 }
 
+                
                 document.getElementById("profilePic").src=localStorage.getItem("profilePicture");
                 document.getElementById("profileLink").href=`/prod/profile?accountID=${accountID}`
 
