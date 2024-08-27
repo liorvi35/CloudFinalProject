@@ -25,6 +25,7 @@
         <h1>Friends Feed</h1>
         <input type="button" onclick="" id="profileBtn" value="My Profile"/>
         <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
+        <input type="button" onclick="" value="Summerize!" disabled="" id="emailBtn"/>
         <input type="button" onclick="logOut()" value="Log Out"/>
         <div id="postsFeed"></div>
         <script>
@@ -32,7 +33,6 @@
                 localStorage.clear();
                 window.location.href="/prod/index";
             }
-
 
             async function formatEpochToUTCString(epochTime) {
                 const date = new Date(epochTime * 1000);
@@ -57,6 +57,27 @@
 
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
+
+                const emailBtn = document.getElementById("emailBtn");
+                emailBtn.disabled = true;
+
+                document.getElementById("emailBtn").onclick = async () => {
+                    const responseSendEmail = await fetch("/prod/friendsFeed", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ accountID })
+                    });
+                    if(!responseSendEmail.ok) {
+                        throw new Error(`${responseSendEmail.status}: ${responseSendEmail.statusText}`);
+                    }
+                    const dataResponseSendEmail = await responseSendEmail.json();
+                    if(dataResponseSendEmail.statusCode !== 200) {
+                        throw new Error(`${dataResponseSendEmail.statusCode}: ${dataResponseSendEmail.body}`);
+                    }
+                    alert("Successfully send Email!");
+                };
 
                 document.getElementById("profileBtn").onclick = () => {
                     window.location.href = `/prod/profile?accountID=${accountID}`;
@@ -366,6 +387,8 @@
                             postsFeed.appendChild(div);
                             postsFeed.appendChild(hr)
                         }
+
+                        emailBtn.disabled = false;
                     }
                 } catch(error) {
                     console.error(error);

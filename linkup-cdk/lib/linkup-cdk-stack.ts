@@ -10,7 +10,6 @@ import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 
 
-
 export class LinkupCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -41,14 +40,10 @@ export class LinkupCdkStack extends cdk.Stack {
     // comming soon
 
     /* ---------- PIP INSTALL ---------- */
-    const pip_install_openai_layer = new lambda.CfnLayerVersion(this, "pip_install_openai_layer", {
-      layerName: "pip-install-openai",
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12.name],
-      compatibleArchitectures: [lambda.Architecture.X86_64.name],
-      content: {
-        s3Bucket: "linkup-pip-packages-zip-files",
-        s3Key: "python_package_openai.zip",
-      },
+    const pip_install_openai_layer = new lambda.LayerVersion(this, 'pip_install_openai_layer', {
+      code: lambda.Code.fromBucket(linkup_pip_packages_zip_files, 'python_package_openai.zip'),
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
+      compatibleArchitectures: [lambda.Architecture.X86_64],
     });
     
     /* ---------- DynamoDB ---------- */
@@ -150,7 +145,7 @@ export class LinkupCdkStack extends cdk.Stack {
       role: labRole,
       timeout: cdk.Duration.seconds(60),
       memorySize: 128,
-      layers: [lambda.LayerVersion.fromLayerVersionArn(this, "pip_install_openai_layer_ref", `arn:aws:lambda:${this.region}:${this.account}:layer:pip-install-openai:1`)]
+      layers: [pip_install_openai_layer]
     });
     
     // DELETE /prod/postDB
@@ -172,6 +167,17 @@ export class LinkupCdkStack extends cdk.Stack {
     const get_update = this.createLambda("linkup-get-update", "lambda/linkup_get_update", "linkup_get_update.lambda_handler", labRole);
 
     /* friendsFeed */
+
+    // POST /prod/friendsFeed
+    const post_friendsFeed = new lambda.Function(this, "linkup-post-friendsFeed", {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      code: lambda.Code.fromAsset("lambda/linkup_post_friendsFeed"),
+      handler: "linkup_post_friendsFeed.lambda_handler",
+      role: labRole,
+      timeout: cdk.Duration.seconds(600),
+      memorySize: 128,
+      layers: [pip_install_openai_layer]
+    });
 
     // GET /prod/friendsFeed
     const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda/linkup_get_friendsFeed", "linkup_get_friendsFeed.lambda_handler", labRole);
@@ -372,6 +378,26 @@ export class LinkupCdkStack extends cdk.Stack {
     update_resource.addMethod("GET", new apigateway.LambdaIntegration(get_update));
 
     const friendsFeed_resource = linkup_api_gateway.root.addResource("friendsFeed");
+    friendsFeed_resource.addMethod("POST", new apigateway.LambdaIntegration(post_friendsFeed, {
+      proxy: false,
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'"
+          }
+        }
+      ]
+    }), {
+      methodResponses: [
+        {
+          statusCode: "200",
+          responseParameters: {
+            'method.response.header.Content-Type': true
+          }
+        }
+      ]
+    });
     friendsFeed_resource.addMethod("GET", new apigateway.LambdaIntegration(get_friendsFeed));
 
     new cdk.CfnOutput(this, "API Endpoint", {
