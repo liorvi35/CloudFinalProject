@@ -484,6 +484,7 @@
                                 });
 
                                 if(accountID === storageAccountID) {
+
                                     let maxRange = '';
                                     let maxCount = 0;
                                     for (const [range, count] of Object.entries(hourRanges)) {
@@ -492,11 +493,15 @@
                                             maxCount = count;
                                         }
                                     }
-                                    const sHour = (parseInt((maxRange.split("-")[0]).split(":")[0]) + 3) % 24;
-                                    const eHour = (parseInt((maxRange.split("-")[1]).split(":")[0]) + 3) % 24;
 
-                                    pStats.style.display = "block";
-                                    pStats.innerHTML = `Best time to upload posts is ${sHour}:00-${eHour}:00!`;
+                                    console.log(`max range: ${maxRange}`);
+                                    console.log(hourRanges);
+                                    if(maxRange) {
+                                        const sHour = (parseInt((maxRange.split("-")[0]).split(":")[0]) + 3) % 24;
+                                        const eHour = (parseInt((maxRange.split("-")[1]).split(":")[0]) + 3) % 24;
+                                        pStats.style.display = "block";
+                                        pStats.innerHTML = `Best time to upload posts is ${sHour}:00-${eHour}:00!`;
+                                    }
                                 }
                             }
 

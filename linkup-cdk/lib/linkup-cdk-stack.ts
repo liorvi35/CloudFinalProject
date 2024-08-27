@@ -45,6 +45,7 @@ export class LinkupCdkStack extends cdk.Stack {
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_12],
       compatibleArchitectures: [lambda.Architecture.X86_64],
     });
+    pip_install_openai_layer.node.addDependency(linkup_pip_packages_zip_files);
     
     /* ---------- DynamoDB ---------- */
 	  // DynamoDB table for holding users
@@ -147,6 +148,7 @@ export class LinkupCdkStack extends cdk.Stack {
       memorySize: 128,
       layers: [pip_install_openai_layer]
     });
+    put_postDB.node.addDependency(pip_install_openai_layer);
     
     // DELETE /prod/postDB
     const delete_postDB = this.createLambda("linkup-delete-postDB", "lambda/linkup_delete_postDB", "linkup_delete_postDB.lambda_handler", labRole);
@@ -178,6 +180,7 @@ export class LinkupCdkStack extends cdk.Stack {
       memorySize: 128,
       layers: [pip_install_openai_layer]
     });
+    post_friendsFeed.node.addDependency(pip_install_openai_layer);
 
     // GET /prod/friendsFeed
     const get_friendsFeed = this.createLambda("linkup-get-friendsFeed", "lambda/linkup_get_friendsFeed", "linkup_get_friendsFeed.lambda_handler", labRole);

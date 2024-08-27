@@ -115,11 +115,12 @@ def lambda_handler(event, context):
             if int(response["Count"]) <= 0:
                 continue
             for item in response["Items"]:
-                if (int(time.time) - int(item["postTime"])) > 86400:
+                if (int(time.time()) - int(item["postTime"])) > 86400:
                     continue
                 friends_posts.append(item)
 
         friends_posts = sorted(friends_posts, key=lambda x: int(x["postTime"]))
+        friends_posts.reverse()
 
         contents = f"<!DOCTYPE html><html><body><h1>Hi, {user_item["firstName"]} {user_item["lastName"]}!</h1><h2>Here is the TL;DR for your friends feed:</h2><div>"
 
