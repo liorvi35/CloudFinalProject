@@ -1,247 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>LinkUp - Update</title>
-    </head>
-    <body>
-        <h1>Update My Profile</h1>
-        <h2>Delete User</h2>
-        <form>
-            <h3>To confirm deletion, enter 'DELETE' please:</h3>
-            <input type="text" id="deleteText" placeholder="DELETE"/>
-            <input type="button" id="deleteBtn" value="Delete!"/>
-        </form>
-        <hr/>
-        <h2>Update Profile Picture</h2>
-        <form>
-            <h3>Upload New Profile Picture:</h3>
-            <input type="file" accept=".jpeg, .jpg, .png" id="profilePicture"/>
-            <input type="button" id="pictureBtn" value="Update Picture!"/>
-        </form>
-        <hr/>
-        <h2>Update Profile Information</h2>
-        <form>
-            <h2>First Name:</h2>
-            <input type="text" id="firstName" placeholder="Your First Name"/>
-            <h2>Last Name:</h2>
-            <input type="text" id="lastName" placeholder="Your Last Name"/>
-            <h2>Password:</h2>
-            <input type="password" id="password" placeholder="Your Password"/>
-            <h2>Confirm Password:</h2>
-            <input type="password" id="confirmPassword" placeholder="Repeat Your Password"/>
-            <h2>Email:</h2>
-            <input type="email" id="email" placeholder="Your Email" />
-            <h2>Birth Date:</h2>
-            <input type="date" id="birthDate" />
-            <h2>Gender:</h2>
-            <select id="gender" >
-                <option value="" disabled selected>Your Gender</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-            </select>
-            <input type="button" value="Update!" id="updateBtn"/>
-        </form>
-        <script>
-            async function hashStringToSHA256(inputString) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(inputString);
-                const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-                return hashHex;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUp - Update</title>
+    <style>
+        body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #333;
+}
 
-            async function arrayBufferToBase64(buffer) {
-                let binary = "";
-                const bytes = new Uint8Array(buffer);
-                const len = bytes.byteLength;
-                for (let i = 0; i < len; i++) {
-                    binary += String.fromCharCode(bytes[i]);
+.header {
+    width: 96.8%;
+    background-color: #ffffff;
+    color: #333;
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.header nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 16px;
+    position: relative;
+}
+
+.header nav a:hover {
+    color: #007bff;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px 20px;
+    background-color: #f0f2f5;
+    flex: 1;
+    width: 100%;
+    max-width: 680px;
+    margin: auto;
+}
+
+h1, h2, h3 {
+    color: #333;
+    text-align: center;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group.row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-group.row .half-width {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+}
+
+.form-group input[type="submit"],
+.form-group input[type="button"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    padding: 10px 25px;
+    border-radius: 30px;
+    margin-top: 15px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input[type="submit"]:hover,
+.form-group input[type="button"]:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.form-group input[type="submit"]:active,
+.form-group input[type="button"]:active {
+    background-color: #004494;
+    transform: scale(0.98);
+}
+
+.custom-file-input {
+    display: none;
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 10px 25px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+.custom-file-label:active {
+    background-color: #004494;
+}
+
+#profile-pic-preview {
+    display: block;
+    margin: 15px auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.action-button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.update-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.update-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.update-button:active {
+    background-color: #1e7e34;
+    transform: scale(0.98);
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+.delete-button:active {
+    background-color: #bd2130;
+    transform: scale(0.98);
+}
+
+.picture-button {
+    background-color: #dc00ff;
+    color: #fff;
+}
+
+.picture-button:hover {
+    background-color: #c300e2;
+    transform: scale(1.05);
+}
+
+.picture-button:active {
+    background-color: #b300cf;
+    transform: scale(0.98);
+}
+
+.form-container {
+    display: none;
+}
+
+.footer {
+    background-color: #ffffff;
+    color: #333;
+    text-align: center;
+    padding: 15px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: auto;
+    width: 100%;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#profile-pic {
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+#profile-pic:hover {
+    border-color: #aaa;
+}
+
+    </style>
+</head>
+<body>
+	<header class="header">
+        <a id="profileLink">
+            <img class="profile-picture" id="profilePic" src="" alt="Profile Picture">
+        </a>
+        <nav>
+            <a href="/prod/globalFeed">Feed</a>
+            <a href="/prod/friendsFeed">Friend's Feed</a>
+            <a href="/prod/index" onclick="logOut()">Log Out</a>
+        </nav>
+    </header>
+    <h1>Update My Profile</h1>
+
+    <div id="updateFormContainer" class="form-container">
+        <form id="updateForm">
+            <h2>Update Profile Information</h2>
+            <div class="form-group">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" placeholder="Your First Name"/>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" placeholder="Your Last Name"/>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Your Password"/>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" placeholder="Repeat Your Password"/>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" placeholder="Your Email"/>
+            </div>
+            <div class="form-group">
+                <label for="birthDate">Birth Date:</label>
+                <input type="date" id="birthDate"/>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender">
+                    <option value="" disabled selected>Your Gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                </select>
+            </div>
+            <input type="button" value="Update!" id="updateBtn" class="update-button"/>
+        </form>
+    </div>
+
+    <div id="deleteFormContainer" class="form-container">
+        <form id="deleteForm">
+            <h2>Delete User</h2>
+            <div class="form-group">
+                <label for="deleteText">To confirm deletion, enter 'DELETE' please:</label>
+                <input type="text" id="deleteText" placeholder="DELETE"/>
+            </div>
+            <input type="button" id="deleteBtn" value="Delete!" class="delete-button"/>
+        </form>
+    </div>
+
+    <div id="profilePicContainer" class="form-container">
+        <form id="profilePicForm" enctype="multipart/form-data">
+            <h2>Update Profile Picture</h2>
+            <div class="form-group">
+                <label for="profilePicture">Upload New Profile Picture:</label>
+                <input type="file" accept=".jpeg, .jpg, .png" id="profilePicture"/>
+            </div>
+            <input type="button" id="pictureBtn" value="Update Picture!" class="picture-button"/>
+        </form>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-button update-button" onclick="showForm('updateFormContainer')">Update Profile</button>
+        <button class="action-button delete-button" onclick="showForm('deleteFormContainer')">Delete Account</button>
+        <button class="action-button picture-button" onclick="showForm('profilePicContainer')">Update Profile Picture</button>
+    </div>
+    
+	<footer class="footer">
+        <p>&copy; 2024 LinkUp. All rights reserved.</p>
+        <p>"Big Data & Cloud Computing" course at Ariel University.</p>
+        <p style="font-weight: bold;">Lior Vinman & Yoad Tamar</p>
+    </footer>
+
+    <script>
+        function logOut() {
+            localStorage.clear();
+            window.location.href="/prod/index";
+        }
+
+        function showForm(formId) {
+            const forms = document.querySelectorAll('.form-container');
+            forms.forEach(form => form.style.display = 'none');
+            document.getElementById(formId).style.display = 'block';
+        }
+        
+        async function hashStringToSHA256(inputString) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(inputString);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+            return hashHex;
+        }
+
+        async function arrayBufferToBase64(buffer) {
+            let binary = "";
+            const bytes = new Uint8Array(buffer);
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const accountID = localStorage.getItem("accountID");
+
+            document.getElementById("profilePic").src=localStorage.getItem("profilePicture");
+            document.getElementById("profileLink").href=`/prod/profile?accountID=${accountID}`
+            
+            document.getElementById("pictureBtn").addEventListener("click", async () => {
+                const fileInput = document.getElementById("profilePicture");
+                const file = fileInput.files[0];
+                if(!file) {
+                    alert("Choose new picture!");
+                    return;
                 }
-                return window.btoa(binary);
-            }
 
-            document.addEventListener("DOMContentLoaded", async () => {
-                const accountID = localStorage.getItem("accountID");
-                
-                document.getElementById("pictureBtn").addEventListener("click", async () => {
-                    const fileInput = document.getElementById("profilePicture");
-                    const file = fileInput.files[0];
-                    if(!file) {
-                        alert("Choose new picture!");
-                        return;
-                    }
+                const reader = new FileReader();
 
-                    const reader = new FileReader();
-
-                    reader.onloadend = async () => {
-                        const base64File = await arrayBufferToBase64(reader.result);
-                        const format = file.type.split("/")[1];
-
-                        try {
-                            const responseUploadPicture = await fetch("/prod/db", {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({ accountID, base64File, format })
-                            });
-
-                            if(!responseUploadPicture.ok) {
-                                throw new Error(`${responseUploadPicture.status}: ${responseUploadPicture.statusText}`);
-                            }
-
-                            const dataUploadPicture = await responseUploadPicture.json();
-
-                            if(dataUploadPicture.statusCode === 200) {
-                                const dataUploadPictureBody = JSON.parse(dataUploadPicture.body);
-                                localStorage.setItem("profilePicture", dataUploadPictureBody["profilePicture"]);
-                                window.location.href = `/prod/profile?accountID=${accountID}`;
-                            } else {
-                                throw new Error(`${dataUploadPicture.statusCode}: ${dataUploadPicture.body}`);
-                            }
-                        } catch(error) {
-                            console.error(error);
-                        }
-                    };
-
-                    reader.readAsArrayBuffer(file);
-                });
-
-                document.getElementById("updateBtn").addEventListener("click", async () => {
-                    const firstNameInput = document.getElementById("firstName");
-                    const lastNameInput = document.getElementById("lastName");
-                    const passwordInput = document.getElementById("password");
-                    const confirmPasswordInput = document.getElementById("confirmPassword");
-                    const emailInput = document.getElementById("email");
-                    const birthDateInput = document.getElementById("birthDate");
-                    const genderInput = document.getElementById("gender");
-
-                    let count = 0;
-                    let firstName = null, lastName = null, password = null, confirmPassword = null, email = null, birthDate = null, gender = null;
-                    let updateData = { accountID };
-                    if(firstNameInput.value.trim() !== "") {
-                        firstName = firstNameInput.value.trim();
-                        updateData["firstName"] = firstName;
-                        count++;
-                    } 
-                    if(lastNameInput.value.trim() !== "") {
-                        lastName = lastNameInput.value.trim();
-                        updateData["lastName"] = lastName;
-                        count++;
-                    }
-                    if(passwordInput.value.trim() !== "" && confirmPasswordInput.value.trim() !== "") {
-                        password = passwordInput.value.trim();
-                        confirmPassword = confirmPasswordInput.value.trim();
-                        if(password !== confirmPassword) {
-                            alert("Passwords not match!");
-                            return;
-                        }
-                        updateData["hashedPassword"] = await hashStringToSHA256(password);
-                        count++;
-                    }
-                    if(emailInput.value.trim() !== "") {
-                        email = emailInput.value.trim();
-                        updateData["email"] = email;
-                        count++;
-                    }
-                    if(birthDateInput.value.trim() !== "") {
-                        birthDate = birthDateInput.value.trim();
-                        updateData["birthDate"] = birthDate;
-                        count++;
-                    }
-                    if(genderInput.value.trim() !== "") {
-                        gender = genderInput.value.trim();
-                        updateData["gender"] = gender;
-                        count++;
-                    }
-
-                    if(count == 0) {
-                        alert("Fill at least one input!");
-                        return;
-                    }
+                reader.onloadend = async () => {
+                    const base64File = await arrayBufferToBase64(reader.result);
+                    const format = file.type.split("/")[1];
 
                     try {
-                        const responseUpdateUserData = await fetch("/prod/db", {
+                        const responseUploadPicture = await fetch("/prod/db", {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
                             },
-                            body: JSON.stringify(updateData)
+                            body: JSON.stringify({ accountID, base64File, format })
                         });
 
-                        if(!responseUpdateUserData.ok) {
-                            throw new Error(`${responseUpdateUserData.status}: ${responseUpdateUserData.statusText}`);
+                        if(!responseUploadPicture.ok) {
+                            throw new Error(`${responseUploadPicture.status}: ${responseUploadPicture.statusText}`);
                         }
 
-                        const dataUpdateUserData = await responseUpdateUserData.json();
+                        const dataUploadPicture = await responseUploadPicture.json();
 
-                        if(dataUpdateUserData.statusCode === 200) {
-                            if(firstName !== null) {
-                                localStorage.setItem("firstName", firstName);
-                            }
-                            if(lastName !== null) {
-                                localStorage.setItem("lastName", lastName);
-                            }
-                            if(email !== null) {
-                                localStorage.setItem("email", email);
-                            }
-                            if(birthDate !== null) {
-                                localStorage.setItem("birthDate", birthDate);
-                            }
-                            if(gender !== null) {
-                                localStorage.setItem("gender", gender);
-                            }
-
+                        if(dataUploadPicture.statusCode === 200) {
+                            const dataUploadPictureBody = JSON.parse(dataUploadPicture.body);
+                            localStorage.setItem("profilePicture", dataUploadPictureBody["profilePicture"]);
                             window.location.href = `/prod/profile?accountID=${accountID}`;
                         } else {
-                            throw new Error(`${dataUpdateUserData.statusCode}: ${dataUpdateUserData.body}`);
+                            throw new Error(`${dataUploadPicture.statusCode}: ${dataUploadPicture.body}`);
                         }
                     } catch(error) {
                         console.error(error);
                     }
-                });
+                };
 
-                document.getElementById("deleteBtn").addEventListener("click", async () => {
-                    const deleteText = document.getElementById("deleteText").value;
-                    if(deleteText === "DELETE") {
-                        try {
-                            const responseDeleteUser = await fetch("/prod/db", {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({ accountID })
-                            });
-
-                            if(!responseDeleteUser.ok) {
-                                throw new Error(`${responseDeleteUser.status}: ${responseDeleteUser.statusText}`);
-                            }
-
-                            const dataDeleteUser = await responseDeleteUser.json();
-
-                            if(dataDeleteUser.statusCode === 200) {
-                                localStorage.removeItem("accountID");
-                                localStorage.removeItem("firstName");
-                                localStorage.removeItem("lastName");
-                                localStorage.removeItem("email");
-                                localStorage.removeItem("birthDate");
-                                localStorage.removeItem("gender");
-
-                                window.location.href = "/prod/index";
-                            } else {
-                                throw new Error(`${dataDeleteUser.statusCode}: ${dataDeleteUser.body}`);
-                            }
-                        } catch(error) {
-                            console.error(error);
-                        }
-                    } else {
-                        alert("misspelled 'DELETE'!");
-                        return;
-                    }
-                });
+                reader.readAsArrayBuffer(file);
             });
 
-        </script>
-    </body>
+            document.getElementById("updateBtn").addEventListener("click", async () => {
+                const firstNameInput = document.getElementById("firstName");
+                const lastNameInput = document.getElementById("lastName");
+                const passwordInput = document.getElementById("password");
+                const confirmPasswordInput = document.getElementById("confirmPassword");
+                const emailInput = document.getElementById("email");
+                const birthDateInput = document.getElementById("birthDate");
+                const genderInput = document.getElementById("gender");
+
+                let count = 0;
+                let firstName = null, lastName = null, password = null, confirmPassword = null, email = null, birthDate = null, gender = null;
+                let updateData = { accountID };
+                if(firstNameInput.value.trim() !== "") {
+                    firstName = firstNameInput.value.trim();
+                    updateData["firstName"] = firstName;
+                    count++;
+                } 
+                if(lastNameInput.value.trim() !== "") {
+                    lastName = lastNameInput.value.trim();
+                    updateData["lastName"] = lastName;
+                    count++;
+                }
+                if(passwordInput.value.trim() !== "" && confirmPasswordInput.value.trim() !== "") {
+                    password = passwordInput.value.trim();
+                    confirmPassword = confirmPasswordInput.value.trim();
+                    if(password !== confirmPassword) {
+                        alert("Passwords not match!");
+                        return;
+                    }
+                    updateData["hashedPassword"] = await hashStringToSHA256(password);
+                    count++;
+                }
+                if(emailInput.value.trim() !== "") {
+                    email = emailInput.value.trim();
+                    updateData["email"] = email;
+                    count++;
+                }
+                if(birthDateInput.value.trim() !== "") {
+                    birthDate = birthDateInput.value.trim();
+                    updateData["birthDate"] = birthDate;
+                    count++;
+                }
+                if(genderInput.value.trim() !== "") {
+                    gender = genderInput.value.trim();
+                    updateData["gender"] = gender;
+                    count++;
+                }
+
+                if(count == 0) {
+                    alert("Fill at least one input!");
+                    return;
+                }
+
+                try {
+                    const responseUpdateUserData = await fetch("/prod/db", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    if(!responseUpdateUserData.ok) {
+                        throw new Error(`${responseUpdateUserData.status}: ${responseUpdateUserData.statusText}`);
+                    }
+
+                    const dataUpdateUserData = await responseUpdateUserData.json();
+
+                    if(dataUpdateUserData.statusCode === 200) {
+                        if(firstName !== null) {
+                            localStorage.setItem("firstName", firstName);
+                        }
+                        if(lastName !== null) {
+                            localStorage.setItem("lastName", lastName);
+                        }
+                        if(email !== null) {
+                            localStorage.setItem("email", email);
+                        }
+                        if(birthDate !== null) {
+                            localStorage.setItem("birthDate", birthDate);
+                        }
+                        if(gender !== null) {
+                            localStorage.setItem("gender", gender);
+                        }
+
+                        window.location.href = `/prod/profile?accountID=${accountID}`;
+                    } else {
+                        throw new Error(`${dataUpdateUserData.statusCode}: ${dataUpdateUserData.body}`);
+                    }
+                } catch(error) {
+                    console.error(error);
+                }
+            });
+
+            document.getElementById("deleteBtn").addEventListener("click", async () => {
+                const deleteText = document.getElementById("deleteText").value;
+                if(deleteText === "DELETE") {
+                    try {
+                        const responseDeleteUser = await fetch("/prod/db", {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ accountID })
+                        });
+
+                        if(!responseDeleteUser.ok) {
+                            throw new Error(`${responseDeleteUser.status}: ${responseDeleteUser.statusText}`);
+                        }
+
+                        const dataDeleteUser = await responseDeleteUser.json();
+
+                        if(dataDeleteUser.statusCode === 200) {
+                            localStorage.clear();
+                            window.location.href = "/prod/index";
+                        } else {
+                            throw new Error(`${dataDeleteUser.statusCode}: ${dataDeleteUser.body}`);
+                        }
+                    } catch(error) {
+                        console.error(error);
+                    }
+                } else {
+                    alert("misspelled 'DELETE'!");
+                    return;
+                }
+            });
+        });
+    
+        
+    </script>
+</body>
 </html>
