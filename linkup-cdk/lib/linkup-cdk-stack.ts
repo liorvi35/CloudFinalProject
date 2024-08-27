@@ -15,7 +15,7 @@ export class LinkupCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     /* ---------- IAM ---------- */
-    const labRole = iam.Role.fromRoleArn(this, "Role", "arn:aws:iam::903409060268:role/LabRole", { mutable: false });
+    const labRole = iam.Role.fromRoleArn(this, "Role", "arn:aws:iam::991888206011:role/LabRole", { mutable: false });
 
     /* ---------- S3 ---------- */
 	  // S3 bucket for user's profile picture

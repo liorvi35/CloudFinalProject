@@ -23,7 +23,7 @@
     </style>
     <body>
         <h1>My Profile!</h1>
-        <input type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
+        <input style="display: none;" id="update_profile" type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
         <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
         <input type="button" onclick="window.location.href='/prod/friendsFeed'" value="Friends Feed"/>
         <input type="button" onclick="logOut()" value="Log Out"/>
@@ -96,6 +96,9 @@
 
                 const storageAccountID = localStorage.getItem("accountID");
 
+                if(accountID === storageAccountID){
+                    document.getElementById("update_profile").style.display="inline";
+                }
 
                 const openFormButtonFollowers = document.getElementById("openFormButtonFollowers");
                 const popupFormFollowers = document.getElementById("popupFormFollowers");
@@ -232,6 +235,7 @@
                     // set my posts
                     const postsFeed = document.getElementById("postsFeed");
                     const hourRanges = {};
+
                     for(let i = 0; i < dataGetAllPosts.length; ++i) {
                         if(dataGetAllPosts[i].accountID !== accountID) {
                             continue;
@@ -448,10 +452,7 @@
                                 comments.forEach(commentObject => {
                                     const accountID = Object.keys(commentObject)[0];
                                     const commentDetails = commentObject[accountID];
-                                    Object.entries(commentDetails).forEach(async ([timestamp, commentText]) => {
-                                        const range = getHourRange(timestamp);
-                                        hourRanges[range] = (hourRanges[range] || 0) + 1;
-
+                                    Object.entries(commentDetails).forEach(async ([timestamp, commentList]) => {
                                         const responseGetName = await fetch(`/prod/db?accountID=${accountID}`, {
                                             method: "GET",
                                             headers: {
@@ -470,7 +471,16 @@
                                         accountIDP.textContent = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
 
                                         const commentP = document.createElement("p");
-                                        commentP.textContent = commentText;
+                                        commentP.textContent = commentList[0];
+                        
+                                        let commentColor = commentList[1];
+                                        if(commentColor && commentColor.trim() === "Positive") {
+                                            commentP.style.color = "#00ff08";
+                                        } else if(commentColor && commentColor.trim() === "Negative") {
+                                            commentP.style.color = "#ff0000";
+                                        } else if(commentColor && commentColor.trim() === "Neutral") {
+                                            commentP.style.color = "#ff00dd";
+                                        }
 
                                         const unixTimeP = document.createElement("p");
                                         unixTimeP.textContent = await formatEpochToUTCString(timestamp);
@@ -504,6 +514,7 @@
                                     }
                                 }
                             }
+
 
                             showLikesBtn.addEventListener("click", () => {
                                 showLikesDiv.style.display = "flex";
