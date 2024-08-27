@@ -19,11 +19,20 @@
                 padding: 20px;
                 border-radius: 5px;
             }
+
+            .profile-picture {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
         </style>
     </head>
     <body>
         <h1>Friends Feed</h1>
-        <input type="button" onclick="" id="profileBtn" value="My Profile"/>
+        <a id="profileLink">
+            <img class="profile-picture" id="profilePic" src="" alt="Profile Picture">
+        </a>
         <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
         <input type="button" onclick="" value="Summerize!" disabled="" id="emailBtn"/>
         <input type="button" onclick="logOut()" value="Log Out"/>
@@ -55,11 +64,15 @@
                 return formattedDate;
             }
 
+
             document.addEventListener("DOMContentLoaded", async () => {
                 const accountID = localStorage.getItem("accountID");
 
                 const emailBtn = document.getElementById("emailBtn");
                 emailBtn.disabled = true;
+
+                document.getElementById("profilePic").src=localStorage.getItem("profilePicture");
+                document.getElementById("profileLink").href=`/prod/profile?accountID=${accountID}`
 
                 document.getElementById("emailBtn").onclick = async () => {
                     const responseSendEmail = await fetch("/prod/friendsFeed", {
@@ -77,10 +90,6 @@
                         throw new Error(`${dataResponseSendEmail.statusCode}: ${dataResponseSendEmail.body}`);
                     }
                     alert("Successfully send Email!");
-                };
-
-                document.getElementById("profileBtn").onclick = () => {
-                    window.location.href = `/prod/profile?accountID=${accountID}`;
                 };
                 
                 try {

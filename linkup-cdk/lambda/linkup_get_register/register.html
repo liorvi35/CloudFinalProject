@@ -1,112 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>LinkUp - Register</title>
-    </head>
-    <body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUp - Register</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header, .footer {
+            width: 96.8%;
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1, .footer p {
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            background-color: #f0f2f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 400;
+            color: #555;
+        }
+
+        form input[type="text"],
+        form input[type="password"],
+        form input[type="email"],
+        form input[type="date"],
+        form select {
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        form input[type="button"] {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        form input[type="button"]:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        form input[type="button"]:active {
+            background-color: #004494;
+            transform: scale(0.98);
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>LinkUp</h1>
+    </header>
+
+    <div class="main-content">
         <h1>Register to LinkUp!</h1>
         <form>
             <h2>First Name:</h2>
-            <input type="text" id="firstName" placeholder="Your First Name" required/>
+            <input type="text" id="firstName" placeholder="Your First Name" required />
             <h2>Last Name:</h2>
-            <input type="text" id="lastName" placeholder="Your Last Name" required/>
+            <input type="text" id="lastName" placeholder="Your Last Name" required />
             <h2>Password:</h2>
-            <input type="password" id="password" placeholder="Your Password" required/>
+            <input type="password" id="password" placeholder="Your Password" required />
             <h2>Confirm Password:</h2>
-            <input type="password" id="confirmPassword" placeholder="Repeat Your Password" required/>
+            <input type="password" id="confirmPassword" placeholder="Repeat Your Password" required />
             <h2>Email:</h2>
-            <input type="email" id="email" placeholder="Your Email" required/>
+            <input type="email" id="email" placeholder="Your Email" required />
             <h2>Birth Date:</h2>
-            <input type="date" id="birthDate" required/>
+            <input type="date" id="birthDate" required />
             <h2>Gender:</h2>
             <select id="gender" required>
                 <option value="" disabled selected>Your Gender</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
             </select>
-            <input type="button" value="Register!" id="registerBtn"/>
+            <input type="button" value="Register!" id="registerBtn" />
         </form>
-        <script>
-            async function hashStringToSHA256(inputString) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(inputString);
-                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                return hashHex;
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 LinkUp. All rights reserved.</p>
+            <p>"Big Data & Cloud Computing" course at Ariel University.</p>
+            <p style="font-weight: bold;">Lior Vinman & Yoad Tamar</p>
+        </div>
+    </footer>
+
+    <script>
+        async function hashStringToSHA256(inputString) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(inputString);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function generateRandomString(length) {
+            const chars = "0123456789abcdef";
+            let result = "";
+
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                result += chars[randomIndex];
             }
 
-            async function generateRandomString(length) {
-                const chars = "0123456789abcdef";
-                let result = "";
+            return result;
+        }
 
-                for (let i = 0; i < length; i++) {
-                    const randomIndex = Math.floor(Math.random() * chars.length);
-                    result += chars[randomIndex];
-                }
+        async function getUUID() {
+            const uuid = await generateRandomString(8) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(12);
+            return uuid;
+        }
 
-                return result;
-            }
+        document.addEventListener("DOMContentLoaded", async () => {
+            document.getElementById("registerBtn").addEventListener("click", async () => {
+                try {
+                    const firstName = document.getElementById("firstName").value;
+                    const lastName = document.getElementById("lastName").value;
+                    const password = document.getElementById("password").value;
+                    const confirmPassword = document.getElementById("confirmPassword").value;
+                    const email = document.getElementById("email").value;
+                    const birthDate = document.getElementById("birthDate").value;
+                    const gender = document.getElementById("gender").value;
 
-            async function getUUID() {
-                const uuid = await generateRandomString(8) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(4) + "-" + await generateRandomString(12);
-                return uuid;
-            }
-
-            document.addEventListener("DOMContentLoaded", async () => {
-                document.getElementById("registerBtn").addEventListener("click", async () => {
-                    try {
-                        const firstName = document.getElementById("firstName").value;
-                        const lastName = document.getElementById("lastName").value;
-                        const password = document.getElementById("password").value;
-                        const confirmPassword = document.getElementById("confirmPassword").value;
-                        const email = document.getElementById("email").value;
-                        const birthDate = document.getElementById("birthDate").value;
-                        const gender = document.getElementById("gender").value;
-
-                        if(password !== confirmPassword) {
-                            alert("Passwords not match!");
-                            return;
-                        }
-                        
-                        const accountID = await getUUID();
-
-                        const hashedPassword = await hashStringToSHA256(password);
-
-                        const responseCreateNewUser = await fetch("/prod/db", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({ accountID, firstName, lastName, hashedPassword, email, birthDate, gender })
-                        });
-
-                        if(!responseCreateNewUser.ok) {
-                            throw new Error(`${responseCreateNewUser.status}: ${responseCreateNewUser.statusText}`);
-                        }
-
-                        const dataCreateNewUser = await responseCreateNewUser.json();
-
-                        const dataCreateNewUserBody = JSON.parse(dataCreateNewUser.body);
-
-                        if(dataCreateNewUser.statusCode === 200) {
-                            localStorage.setItem("accountID", accountID);
-                            localStorage.setItem("firstName", firstName);
-                            localStorage.setItem("lastName", lastName);
-                            localStorage.setItem("email", email);
-                            localStorage.setItem("birthDate", birthDate);
-                            localStorage.setItem("gender", gender);
-                            localStorage.setItem("profilePicture", dataCreateNewUserBody.profilePicture)
-                            
-                            window.location.href = "/prod/globalFeed";
-                        } else {
-                            throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUserBody.message}`);
-                        }
-                    } catch(error) {
-                        console.error(error);
+                    if (password !== confirmPassword) {
+                        alert("Passwords do not match!");
+                        return;
                     }
-                });
+
+                    const accountID = await getUUID();
+
+                    const hashedPassword = await hashStringToSHA256(password);
+
+                    const responseCreateNewUser = await fetch("/prod/db", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ accountID, firstName, lastName, hashedPassword, email, birthDate, gender })
+                    });
+
+                    if (!responseCreateNewUser.ok) {
+                        throw new Error(`${responseCreateNewUser.status}: ${responseCreateNewUser.statusText}`);
+                    }
+
+                    const dataCreateNewUser = await responseCreateNewUser.json();
+
+                    const dataCreateNewUserBody = JSON.parse(dataCreateNewUser.body);
+
+                    if (dataCreateNewUser.statusCode === 200) {
+                        localStorage.setItem("accountID", accountID);
+                        localStorage.setItem("firstName", firstName);
+                        localStorage.setItem("lastName", lastName);
+                        localStorage.setItem("email", email);
+                        localStorage.setItem("birthDate", birthDate);
+                        localStorage.setItem("gender", gender);
+                        localStorage.setItem("profilePicture", dataCreateNewUserBody.profilePicture)
+
+                        window.location.href = "/prod/globalFeed";
+                    } else {
+                        throw new Error(`${dataCreateNewUser.statusCode}: ${dataCreateNewUserBody.message}`);
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
             });
-        </script>
-    </body>
+        });
+    </script>
+</body>
+
 </html>

@@ -1,11 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>LinkUp - Home</title>
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUp - Home</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header, .footer {
+            width: 96.8%;
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1, .footer p {
+            margin: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            background-color: #f0f2f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: 500;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .button-container input {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .button-container input:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .button-container input:active {
+            background-color: #004494;
+            transform: scale(0.98);
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>LinkUp</h1>
+    </header>
+
+    <div class="main-content">
         <h1>Welcome to LinkUp!</h1>
-        <input type="button" onclick="window.location.href='/prod/login'" value="Log-In"/>
-        <input type="button" onclick="window.location.href='/prod/register'" value="Register"/>
-    </body>
+        <div class="button-container">
+            <input type="button" onclick="window.location.href='/prod/login'" value="Log-In"/>
+            <input type="button" onclick="window.location.href='/prod/register'" value="Register"/>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 LinkUp. All rights reserved.</p>
+            <p>"Big Data & Cloud Computing" course at Ariel University.</p>
+            <p style="font-weight: bold;">Lior Vinman & Yoad Tamar</p>
+        </div>
+    </footer>
+</body>
 </html>

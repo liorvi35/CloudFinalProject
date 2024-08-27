@@ -76,7 +76,6 @@
             <input type="text" id="search-bar" placeholder="Search for new friends!">
             <div class="results" id="results"></div>
         </div>    
-        <input type="button" onclick="" id="profileBtn" value="My Profile"/>
         <input type="button" onclick="window.location.href='/prod/friendsFeed'" value="Friends Feed"/>
         <input type="button" onclick="logOut()" value="Log Out"/>
         <h2>Upload Post</h2>
@@ -138,8 +137,7 @@
                 if (!responseAllUsers.ok) {
                     throw new Error(`${responseAllUsers.status}: ${responseAllUsers.statusText}`);
                 }
-
-                
+              
                 document.getElementById("profilePic").src=localStorage.getItem("profilePicture");
                 document.getElementById("profileLink").href=`/prod/profile?accountID=${accountID}`
 
@@ -186,10 +184,6 @@
                     resultsContainer.style.display = "block";
                 });
 
-
-                document.getElementById("profileBtn").onclick = () => {
-                    window.location.href = `/prod/profile?accountID=${accountID}`;
-                };
 
                 try {
                     const responseGetAllPosts = await fetch("/prod/postDB", {
