@@ -13,6 +13,13 @@
                 padding: 10px;
                 border-radius: 4px;
             }
+
+            .profile-picture {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
     
             .results {
                 border: 1px solid #ccc;
@@ -62,6 +69,9 @@
     </head>
     <body>
         <h1>Global Feed</h1>
+        <a id="profileLink">
+            <img class="profile-picture" id="profilePic" src="" alt="Profile Picture">
+        </a>
         <div class="search-container" id="search-container">
             <input type="text" id="search-bar" placeholder="Search for new friends!">
             <div class="results" id="results"></div>
@@ -129,6 +139,9 @@
                     throw new Error(`${responseAllUsers.status}: ${responseAllUsers.statusText}`);
                 }
 
+                document.getElementById("profilePic").src=localStorage.getItem("profilePicture");
+                document.getElementById("profileLink").href=`/prod/profile?accountID=${accountID}`
+
                 const dataResponseAllUsers = await responseAllUsers.json();
 
                 const items = dataResponseAllUsers.map(json => ({
@@ -190,7 +203,6 @@
                     }
 
                     const dataGetAllPosts = await responseGetAllPosts.json();
-
                     if(dataGetAllPosts.length > 0) {
                         const postsFeed = document.getElementById("postsFeed");
                         for(let i = 0; i < dataGetAllPosts.length; ++i) {
