@@ -258,7 +258,7 @@
             padding: 2px 4px;
             font-family: monospace;
         }
-        
+
     </style>
 </head>
 <body>
@@ -502,6 +502,7 @@
                 commentInputContainer.appendChild(commentInput);
                 commentInputContainer.appendChild(commentSubmitButton);
                 newPost.appendChild(commentInputContainer);
+                likeCount.textContent = dateAllPosts[i].likes.length;
 
                 postList.appendChild(newPost);
 
@@ -528,16 +529,17 @@
                     }
                 };
 
-                const isLiked = dateAllPosts[i].likes.includes(accountID);
-                let currentLike = isLiked ? like(false) : like(true);
+                let isLiked = dateAllPosts[i].likes.includes(accountID);
+                let currentLike = isLiked ? () => like(false) : () => like(true);
                 iLike.innerHTML = isLiked ? "&#x2764;" : "&#9825;";
 
                 likeButton.addEventListener("click", async () => {
-                    iLike.innerHTML = (currentLike === like) ? "&#x2764;" : "&#9825;";
+                    iLike.innerHTML = (isLiked) ? "&#9825;" : "&#x2764;";
                     await currentLike();
                     const currentLikes = parseInt(likeCount.textContent);
-                    likeCount.textContent = currentLikes + 1;
-                    currentLike = (currentLike === like) ? like(false) : like(true);
+                    likeCount.textContent = isLiked ? currentLikes - 1 : currentLikes + 1;
+                    isLiked = !isLiked;
+                    currentLike = isLiked ? () => like(false) : () => like(true);
                 });
 
                 commentCount.addEventListener("click", async () => {});
