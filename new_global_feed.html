@@ -258,6 +258,24 @@
             font-family: monospace;
         }
 
+        .popup-form {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -441,7 +459,35 @@
                 const likeCount = document.createElement("span");
                 likeCount.classList.add("like-count");
                 likeCount.textContent = "0";
-                likeCount.style = "font-size: 22px";
+                likeCount.style.fontSize = "22px";
+                const divPopUpFormLike = document.createElement("div");
+                divPopUpFormLike.className = "popup-form";
+                divPopUpFormLike.style.display = "none";
+                const divFormContainerLike = document.createElement("div");
+                divFormContainerLike.className = "form-container";
+                const spanLike = document.createElement("span");
+                spanLike.style.cursor = "pointer";
+                spanLike.innerHTML = "&times;";
+                const h2Like = document.createElement("h2");
+                h2Like.textContent = "Likes";
+                const ul = document.createElement("ul");
+                divFormContainerLike.appendChild(spanLike);
+                divFormContainerLike.appendChild(h2Like);
+                divFormContainerLike.appendChild(ul);
+                divPopUpFormLike.appendChild(divFormContainerLike);
+                newPost.appendChild(divPopUpFormLike);
+
+                likeCount.addEventListener("click", () => {
+                    divPopUpFormLike.style.display = "flex";
+                });
+                spanLike.addEventListener("click", () => {
+                    divPopUpFormLike.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == divPopUpFormLike) {
+                        divPopUpFormLike.style.display = "none";
+                    }
+                });
 
                 const commentContainer = document.createElement("span");
                 const commentButton = document.createElement("button");
@@ -581,6 +627,8 @@
             console.error(e);
         }
     });
+
+
 
     // function addPost() {
     //     const postContent = document.getElementById("postContent").value.trim();
