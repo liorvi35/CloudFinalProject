@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Network</title>
-    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <!-- <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script> -->
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -380,7 +380,7 @@
             }
             const dateAllPosts = await allPosts.json();
             const postList = document.getElementById("postList");
-            for(let i = 0; i < dateAllPosts; ++i) {
+            for(let i = 0; i < dateAllPosts.length; ++i) {
                 const profileByID = await fetch(`/prod/db?accountID=${dateAllPosts[i].accountID}`, {
                     method: "GET",
                     headers: {
@@ -409,12 +409,12 @@
 
                 const postTime = document.createElement("span");
                 postTime.classList.add("post-time");
-                postTime.textContent = formatEpochToUTCString(dataAllPosts[i].postTime);
+                postTime.textContent = formatEpochToUTCString(dateAllPosts[i].postTime);
                 postTime.style.marginLeft = "10px";
 
                 const postText = document.createElement("p");
                 postText.classList.add("post-content");
-                postText.textContent = dataAllPosts[i].postText;
+                postText.textContent = dateAllPosts[i].postText;
 
                 const likeContainer = document.createElement("span");
                 const likeButton = document.createElement("button");
@@ -497,8 +497,8 @@
                         },
                         body: JSON.stringify({
                             isLike: isLike,
-                            postAccountID: dataAllPosts[i].accountID,
-                            postTime: dataAllPosts[i].postTime,
+                            postAccountID: dateAllPosts[i].accountID,
+                            postTime: dateAllPosts[i].postTime,
                             likerAccountID: accountID
                         })
                     });
@@ -512,7 +512,7 @@
                     }
                 };
 
-                const isLiked = dataAllPosts[i].like.includes(accountID);
+                const isLiked = dateAllPosts[i].likes.includes(accountID);
                 let currentLike = isLiked ? like(false) : like(true);
                 iLike.innerHTML = isLiked ? "&#x2764;" : "&#9825;";
 
@@ -541,8 +541,8 @@
                             "Content-Type": "application/json"
                         },
                         body: JSON.stringify({
-                            postAccountID: dataAllPosts[i].accountID,
-                            postTime: dataAllPosts[i].postTime,
+                            postAccountID: dateAllPosts[i].accountID,
+                            postTime: dateAllPosts[i].postTime,
                             likerAccountID: accountID,
                             commentText,
                             commentTime
