@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Network</title>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            width: 96.8%;
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .header nav a:hover {
+            color: #007bff;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            background-color: #f0f2f5;
+            flex: 1;
+        }
+
+        .feed-container {
+            width: 100%;
+            max-width: 680px;
+        }
+
+        .search-container {
+            width: 100%;
+            position: relative;
+        }
+
+        .post-input-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .post-input {
+            width: 95%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .post-input:focus {
+            border-color: #007bff;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-actions label,
+        .post-actions button {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .comment-btn {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+        }
+        
+        .comment-btn:hover {
+                    background-color: #0056b3;
+
+        }
+
+        .post-actions label:hover,
+        .post-actions button:hover {
+            background-color: #0056b3;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .post-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-header .user-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .post-header .post-time {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .post-content {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .interaction-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+
+        .interaction-bar button {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .interaction-bar button:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            color: #333;
+            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        
+        #search-bar {
+            width: calc(50%);
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 16px; 
+            outline: none; 
+            transition: border-color 0.3s ease;
+        }
+
+        #search-bar:focus {
+            border-color: #007bff; 
+        }
+
+        .results {
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            position: absolute;
+            width: calc(100% - 2px);
+            left: 0; 
+            top: 100%; 
+            transform: translateY(10px); 
+            z-index: 10;
+            display: none; 
+        }
+
+        .result-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .no-results {
+            padding: 8px 10px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a id="profilePictureLink" href="">
+            <img id="profilePicture" src="" alt="Profile Picture">
+        </a>
+        <nav>
+            <a href="/prod/friendsFeed">Friends Feed</a>
+            <a href="/prod/index" onclick="logOut()">Log Out</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="feed-container">
+            <div class="search-container" id="search-container">
+                <center>
+                <input type="text" id="search-bar" placeholder="Search for new friends!">
+                <div class="results" id="results"></div>
+                </center>
+            </div>
+		    <br/>
+            <div class="post-input-container">
+                <input class="post-input" type="text" id="postContent" placeholder="What's on your mind?">
+                <div class="post-actions">
+                    <label for="postImg">Photo/Video</label>
+                    <input type="file" id="postImg" style="display: none;"/>
+                    <button onclick="addPost()">Post</button>
+                </div>
+                <img id="filePreview" alt="Image Preview" />
+            </div>
+
+            <ul class="post-list" id="postList"></ul>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>linkup</p>
+    </footer>
+<script>
+    function logOut() {
+        localStorage.clear();
+        window.location.href = "/prod/index";
+    }
+
+    function formatEpochToUTCString(epochTime) {
+        const date = new Date(epochTime * 1000);
+        const options = {
+            timeZone: "Asia/Tel_Aviv",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        };
+        const formattedDate = date.toLocaleString("en-IL", options);
+        return formattedDate;
+    }
+
+    document.addEventListener("DOMContentLoaded", async (event) => {
+        try {
+            // getting local storage
+            const accountID = localStorage.getItem("accountID");
+            const profilePicture = localStorage.getItem("profilePicture");
+
+            // setting profile's picture and link
+            document.getElementById("profilePictureLink").href = `/prod/profile?accountID=${accountID}`;
+            document.getElementById("profilePicture").src = profilePicture;
+
+            const allUsers = await fetch("/prod/db?accountID=ALL", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if(!allUsers.ok) {
+                throw new Error(`${allUsers.status}: ${allUsers.statusText}`);
+            }
+            const dataAllUsers = await allUsers.json();
+
+            // search bar
+            const items = dataAllUsers.map(json => ({
+                name: `${json.firstName} ${json.lastName}`,
+                accountID: json.accountID
+            }));
+            const searchBar = document.getElementById("search-bar");
+            const resultsContainer = document.getElementById("results");
+            const searchContainer = document.getElementById("search-container");
+            searchBar.addEventListener("input", () => {
+                const query = searchBar.value.toLowerCase();
+                resultsContainer.innerHTML = "";
+                const filteredItems = items.filter(item => item.name.toLowerCase().includes(query));
+                if (filteredItems.length === 0) {
+                    resultsContainer.innerHTML = '<div class="no-results">No results found</div>';
+                } else {
+                    filteredItems.forEach(item => {
+                        const a = document.createElement("a");
+                        a.classList.add("result-item");
+                        a.href = `/prod/profile?accountID=${item.accountID}`;
+                        a.textContent = item.name;
+                        resultsContainer.appendChild(a);
+                    });
+                }
+                resultsContainer.style.display = filteredItems.length > 0 ? "block" : "none";
+            });
+            document.addEventListener("click", (event) => {
+                if (!searchContainer.contains(event.target)) {
+                    resultsContainer.style.display = "none";
+                }
+            });
+            searchContainer.addEventListener("click", (event) => {
+                event.stopPropagation();
+                resultsContainer.style.display = "block";
+            });
+
+            // getting all posts
+            const allPosts = await fetch("/prod/postDB", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            if(!allPosts.ok) {
+                throw new Error(`${allPosts.status}: ${allPosts.statusText}`);
+            }
+            const dateAllPosts = await allPosts.json();
+            const postList = document.getElementById("postList");
+            for(let i = 0; i < dateAllPosts; ++i) {
+                const profileByID = await fetch(`/prod/db?accountID=${dateAllPosts[i].accountID}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const dataProfileByID = await profileByID.json();
+                
+                // add post logic
+                const postList = document.getElementById("postList");
+                const newPost = document.createElement("li");
+                newPost.classList.add("post-item");
+                const posterInfo = document.createElement("div");
+                posterInfo.classList.add("post-header");
+
+                const posterLink = document.createElement("a");
+                const posterImg = document.createElement("img");
+                const posterName = document.createElement("span");
+
+                posterLink.href = `/prod/profile?accountID=${dateAllPosts[i].accountID}`;
+                posterImg.src = dateAllPosts[i].profilePicture;
+                posterImg.alt = `${dateAllPosts[i].firstName} ${dateAllPosts[i].lastName}'s profile picture`;
+                posterImg.classList.add("profile-picture");
+                posterName.textContent = `${dateAllPosts[i].firstName} ${dateAllPosts[i].lastName}`;
+                posterName.classList.add("user-name");
+
+                const postTime = document.createElement("span");
+                postTime.classList.add("post-time");
+                postTime.textContent = formatEpochToUTCString(dataAllPosts[i].postTime);
+                postTime.style.marginLeft = "10px";
+
+                const postText = document.createElement("p");
+                postText.classList.add("post-content");
+                postText.textContent = dataAllPosts[i].postText;
+
+                const likeContainer = document.createElement("span");
+                const likeButton = document.createElement("button");
+                const iLike = document.createElement("i");
+                iLike.style = "font-size:30px";
+                iLike.className = "far";
+                iLike.innerHTML = "&#9825;";
+                likeButton.appendChild(iLike);
+                likeButton.classList.add("like-button");
+
+                const likeCount = document.createElement("span");
+                likeCount.classList.add("like-count");
+                likeCount.textContent = "0";
+                likeCount.style = "font-size: 22px";
+
+                const commentContainer = document.createElement("span");
+                const commentButton = document.createElement("button");
+                const iComment = document.createElement("i");
+                iComment.style = "font-size:30px";
+                iComment.className = "far";
+                iComment.innerHTML = "&#xf4ad;";
+                commentButton.appendChild(iComment);
+                commentButton.classList.add("comment-button");
+
+                const commentCount = document.createElement("span");
+                commentCount.classList.add("comment-count");
+                commentCount.textContent = "0";
+                commentCount.style = "font-size: 22px";
+                
+                likeContainer.appendChild(likeButton);
+                likeContainer.appendChild(likeCount);
+
+                commentContainer.appendChild(commentButton);
+                commentContainer.appendChild(commentCount);
+
+                const interactionBar = document.createElement("div");
+                interactionBar.classList.add("interaction-bar");
+
+                interactionBar.appendChild(likeContainer);
+                interactionBar.appendChild(commentContainer);
+
+                posterLink.appendChild(posterImg);
+                posterInfo.appendChild(posterLink);
+                posterInfo.appendChild(posterName);
+                posterInfo.appendChild(postTime);
+
+                newPost.appendChild(posterInfo);
+                newPost.appendChild(postText);
+                newPost.appendChild(interactionBar);
+
+                const commentInputContainer = document.createElement("div");
+                commentInputContainer.style.display = "flex";
+                commentInputContainer.style.alignItems = "center";
+                commentInputContainer.style.marginTop = "10px";
+
+                const commentInput = document.createElement("input");
+                commentInput.type = "text";
+                commentInput.placeholder = "Add a comment...";
+                commentInput.classList.add("post-input");
+                commentInput.style.flexGrow = "1"; 
+
+                const commentSubmitButton = document.createElement("input");
+                commentSubmitButton.type = "button";
+                commentSubmitButton.value = "Post";
+                commentSubmitButton.className = "comment-btn";
+                commentSubmitButton.style.marginLeft = "10px";
+                commentSubmitButton.classList.add("post-actions");
+
+                commentInputContainer.appendChild(commentInput);
+                commentInputContainer.appendChild(commentSubmitButton);
+                newPost.appendChild(commentInputContainer);
+
+                postList.appendChild(newPost);
+
+                const like = async (isLike) => {
+                    const setLike = await fetch("/prod/postDB", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            isLike: isLike,
+                            postAccountID: dataAllPosts[i].accountID,
+                            postTime: dataAllPosts[i].postTime,
+                            likerAccountID: accountID
+                        })
+                    });
+                    if(!setLike.ok) {
+                        throw new Error(`${setLike.status}: ${setLike.statusText}`);
+                    }
+                    const dataSetLike = await setLike.json();
+                    if(dataSetLike.statusCode !== 200) {
+                        alert(`Cannot ${(isLike) ? 'like' : 'unlike'} at this time!`);
+                        throw new Error(`${dataSetLike.statusCode}: ${dataSetLike.body}`);
+                    }
+                };
+
+                const isLiked = dataAllPosts[i].like.includes(accountID);
+                let currentLike = isLiked ? like(false) : like(true);
+                iLike.innerHTML = isLiked ? "&#x2764;" : "&#9825;";
+
+                likeButton.addEventListener("click", async () => {
+                    iLike.innerHTML = (currentLike === like) ? "&#x2764;" : "&#9825;";
+                    await currentLike();
+                    const currentLikes = parseInt(likeCount.textContent);
+                    likeCount.textContent = currentLikes + 1;
+                    currentLike = (currentLike === like) ? like(false) : like(true);
+                });
+
+                commentCount.addEventListener("click", async () => {});
+
+                commentButton.addEventListener("click", async () => {});
+
+                commentSubmitButton.addEventListener("click", async () => {
+                    const commentTime = Math.floor(Date.now() / 1000); 
+                    const commentText = commentInput.value.trim();
+                    if (commentText === "") {
+                        alert("Cannot post empty comment!");
+                        return;
+                    }
+                    const newComment = await fetch("/prod/postDB", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            postAccountID: dataAllPosts[i].accountID,
+                            postTime: dataAllPosts[i].postTime,
+                            likerAccountID: accountID,
+                            commentText,
+                            commentTime
+                        })
+                    });
+                    if(!newComment.ok) {
+                        throw new Error(`${newComment.status}: ${newComment.statusText}`);
+                    }
+                    const dataNewComment = await newComment.json();
+                    if(dataNewComment.statusCode !== 200) {
+                        throw new Error(`${dataNewComment.statusCode}: ${dataNewComment.body}`);
+                    }
+                    const currentComments = parseInt(commentCount.textContent);
+                    commentCount.textContent = currentComments + 1;
+                    commentInput.value = "";
+                }); 
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    });
+
+    // function addPost() {
+    //     const postContent = document.getElementById("postContent").value.trim();
+    //     const postList = document.getElementById("postList");
+    //     const newPost = document.createElement("li");
+    //     newPost.classList.add("post-item");
+
+    //     const posterInfo = document.createElement("div");
+    //     posterInfo.classList.add("post-header");
+
+    //     const posterLink = document.createElement("a");
+    //     const posterImg = document.createElement("img");
+    //     const posterName = document.createElement("span");
+
+    //     posterLink.href = "#";
+    //     posterImg.src = "poster.jpg";
+    //     posterImg.alt = "Poster Image";
+    //     posterImg.classList.add("profile-picture");
+    //     posterName.textContent = "Poster Name";
+    //     posterName.classList.add("user-name");
+
+    //     const postTime = document.createElement("span");
+    //     postTime.classList.add("post-time");
+    //     postTime.textContent = "Just now";
+    //     postTime.style.marginLeft = "10px";  // Add space between name and time
+
+    //     const postText = document.createElement("p");
+    //     postText.classList.add("post-content");
+    //     postText.textContent = postContent;
+
+    //     // Create like and comment elements with Unicode symbols
+    //     const likeContainer = document.createElement("span");
+    //     const likeButton = document.createElement("button");
+    //     const iLike = document.createElement("i");
+    //     iLike.style = "font-size:30px";
+    //     iLike.className = "far";
+    //     iLike.innerHTML = "&#9825;";
+    //     likeButton.appendChild(iLike);
+    //     likeButton.classList.add("like-button");
+
+    //     const likeCount = document.createElement("span");
+    //     likeCount.classList.add("like-count");
+    //     likeCount.textContent = "0";
+
+    //     const commentContainer = document.createElement("span");
+    //     const commentButton = document.createElement("button");
+    //     const iComment = document.createElement("i");
+    //     iComment.style = "font-size:30px";
+    //     iComment.className = "far";
+    //     iComment.innerHTML = "&#xf4ad;";
+    //     commentButton.appendChild(iComment);
+    //     commentButton.classList.add("comment-button");
+
+    //     const commentCount = document.createElement("span");
+    //     commentCount.classList.add("comment-count");
+    //     commentCount.textContent = "0";
+        
+    //     likeContainer.appendChild(likeButton);
+    //     likeContainer.appendChild(likeCount);
+
+    //     commentContainer.appendChild(commentButton);
+    //     commentContainer.appendChild(commentCount);
+
+    //     const interactionBar = document.createElement("div");
+    //     interactionBar.classList.add("interaction-bar");
+
+    //     // Append like and comment containers to the interaction bar
+    //     interactionBar.appendChild(likeContainer);
+    //     interactionBar.appendChild(commentContainer);
+
+    //     posterLink.appendChild(posterImg);
+    //     posterInfo.appendChild(posterLink);
+    //     posterInfo.appendChild(posterName);
+    //     posterInfo.appendChild(postTime);  // Add postTime right next to posterName
+
+    //     newPost.appendChild(posterInfo);
+    //     newPost.appendChild(postText);
+    //     newPost.appendChild(interactionBar);
+
+    //     // Create a container for comment input and button
+    //     const commentInputContainer = document.createElement("div");
+    //     commentInputContainer.style.display = "flex";
+    //     commentInputContainer.style.alignItems = "center";
+    //     commentInputContainer.style.marginTop = "10px";
+
+    //     // Add a comment input field for each post
+    //     const commentInput = document.createElement("input");
+    //     commentInput.type = "text";
+    //     commentInput.placeholder = "Add a comment...";
+    //     commentInput.classList.add("post-input");
+    //     commentInput.style.flexGrow = "1"; // Makes the input take available space
+
+    //     // Add a submit button next to the comment input
+    //     const commentSubmitButton = document.createElement("input");
+    //     commentSubmitButton.type = "button";
+    //     commentSubmitButton.value = "Post";
+    //     commentSubmitButton.className = "comment-btn";
+    //     commentSubmitButton.style.marginLeft = "10px"; // Adds space between input and button
+    //     commentSubmitButton.classList.add("post-actions"); // Apply the same style as the post button
+
+    //     commentInputContainer.appendChild(commentInput);
+    //     commentInputContainer.appendChild(commentSubmitButton);
+    //     newPost.appendChild(commentInputContainer);
+
+    //     postList.appendChild(newPost);
+    //     document.getElementById("postContent").value = "";
+
+    //     // Add event listeners for like and comment functionality
+    //     likeButton.addEventListener("click", function () {
+    //         const currentLikes = parseInt(likeCount.textContent);
+    //         likeCount.textContent = currentLikes + 1;
+    //     });
+
+    //     commentButton.addEventListener("click", function () {
+    //         const currentComments = parseInt(commentCount.textContent);
+    //         commentCount.textContent = currentComments + 1;
+    //     });
+
+    //     // Add event listener for the comment submit button
+    //     commentSubmitButton.addEventListener("click", function () {
+    //         const commentText = commentInput.value;
+    //         if (commentText.trim() !== "") {
+    //             console.log("New comment:", commentText); // Replace this with the logic to handle the new comment
+    //             commentInput.value = ""; // Clear the input field after submitting the comment
+    //         }
+    //     });
+    // }
+</script>
+
+
+</body>
+</html>
