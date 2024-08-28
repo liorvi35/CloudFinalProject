@@ -400,6 +400,7 @@
                 const posterImg = document.createElement("img");
                 const posterName = document.createElement("span");
                 const postImage = document.createElement("img");
+                const postImageTags = document.createElement("p");
 
                 posterLink.href = `/prod/profile?accountID=${dateAllPosts[i].accountID}`;
                 posterImg.src = dataProfileByID.profilePicture;         
@@ -408,7 +409,9 @@
                 posterName.textContent = `${dataProfileByID.firstName} ${dataProfileByID.lastName}`;
                 posterName.classList.add("user-name");
 
-                postImage.src = dateAllPosts[i].postPicutre;
+                postImage.src = dateAllPosts[i]["postPicture"];
+
+                postImageTags.innerHTML = dateAllPosts[i]["pictureTags"].map(item => `<code>${item}</code>`).join(" ");
 
                 const postTime = document.createElement("span");
                 postTime.classList.add("post-time");
