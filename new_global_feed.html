@@ -251,6 +251,14 @@
             padding: 8px 10px;
             color: #777;
         }
+
+        code {
+            background-color: #f4f4f4;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-family: monospace;
+        }
+        
     </style>
 </head>
 <body>
@@ -470,6 +478,7 @@
                 newPost.appendChild(posterInfo);
                 newPost.appendChild(postText);
                 newPost.appendChild(postImage);
+                newPost.appendChild(postImageTags);
                 newPost.appendChild(interactionBar);
 
                 const commentInputContainer = document.createElement("div");
