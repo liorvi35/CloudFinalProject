@@ -256,7 +256,7 @@
 <body>
     <header class="header">
         <a id="profilePictureLink" href="">
-            <img id="profilePicture" src="" alt="Profile Picture">
+            <img id="profilePicture" src="" alt="Profile Picture" class="profile-picture"/>
         </a>
         <nav>
             <a href="/prod/friendsFeed">Friends Feed</a>
@@ -268,8 +268,8 @@
         <div class="feed-container">
             <div class="search-container" id="search-container">
                 <center>
-                <input type="text" id="search-bar" placeholder="Search for new friends!">
-                <div class="results" id="results"></div>
+                    <input type="text" id="search-bar" placeholder="Search for new friends!">
+                    <div class="results" id="results"></div>
                 </center>
             </div>
 		    <br/>
@@ -399,13 +399,16 @@
                 const posterLink = document.createElement("a");
                 const posterImg = document.createElement("img");
                 const posterName = document.createElement("span");
+                const postImage = document.createElement("img");
 
                 posterLink.href = `/prod/profile?accountID=${dateAllPosts[i].accountID}`;
-                posterImg.src = dateAllPosts[i].profilePicture;
-                posterImg.alt = `${dateAllPosts[i].firstName} ${dateAllPosts[i].lastName}'s profile picture`;
+                posterImg.src = dataProfileByID.profilePicture;         
+                posterImg.alt = `${dataProfileByID.firstName} ${dataProfileByID.lastName}'s profile picture`;
                 posterImg.classList.add("profile-picture");
-                posterName.textContent = `${dateAllPosts[i].firstName} ${dateAllPosts[i].lastName}`;
+                posterName.textContent = `${dataProfileByID.firstName} ${dataProfileByID.lastName}`;
                 posterName.classList.add("user-name");
+
+                postImage.src = dateAllPosts[i].postPicutre;
 
                 const postTime = document.createElement("span");
                 postTime.classList.add("post-time");
@@ -463,6 +466,7 @@
 
                 newPost.appendChild(posterInfo);
                 newPost.appendChild(postText);
+                newPost.appendChild(postImage);
                 newPost.appendChild(interactionBar);
 
                 const commentInputContainer = document.createElement("div");
