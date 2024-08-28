@@ -258,6 +258,7 @@
             font-family: monospace;
         }
 
+        /* Popup form styling */
         .popup-form {
             display: none;
             position: fixed;
@@ -268,12 +269,74 @@
             background-color: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+            overflow-y: auto; /* Allow scrolling */
         }
 
+        /* Form container styling */
         .form-container {
-            background-color: white;
+            background-color: #fff;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            max-height: 80%; /* Set max height for scrolling */
+            overflow-y: auto; /* Enable scrolling inside the form */
+        }
+
+        /* Comments styling */
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-container ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .form-container li {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-container li div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container li p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .form-container li p:first-child {
+            font-weight: bold;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .form-container li p:last-child {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* Close button styling */
+        .form-container span {
+            display: block;
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
     </style>
@@ -460,21 +523,68 @@
                 likeCount.classList.add("like-count");
                 likeCount.textContent = "0";
                 likeCount.style.fontSize = "22px";
+
                 const divPopUpFormLike = document.createElement("div");
                 divPopUpFormLike.className = "popup-form";
                 divPopUpFormLike.style.display = "none";
+
                 const divFormContainerLike = document.createElement("div");
                 divFormContainerLike.className = "form-container";
+
                 const spanLike = document.createElement("span");
-                spanLike.style.cursor = "pointer";
                 spanLike.innerHTML = "&times;";
+                spanLike.onclick = () => {
+                    divPopUpFormLike.classList.remove("show");
+                    setTimeout(() => divPopUpFormLike.style.display = "none", 300);
+                };
+
                 const h2Like = document.createElement("h2");
                 h2Like.textContent = "Likes";
+
                 const ul = document.createElement("ul");
+
                 divFormContainerLike.appendChild(spanLike);
                 divFormContainerLike.appendChild(h2Like);
                 divFormContainerLike.appendChild(ul);
                 divPopUpFormLike.appendChild(divFormContainerLike);
+
+                for (let j = 0; j < dateAllPosts[i].likes.length; j++) {
+                    const likeName = await fetch(`/prod/db?accountID=${dateAllPosts[i].likes[j]}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (!likeName.ok) {
+                        throw new Error(`${likeName.status}: ${likeName.statusText}`);
+                    }
+
+                    const name = await likeName.json();
+                    const liElem = document.createElement("li");
+                    const divElement = document.createElement("div");
+
+                    const a = document.createElement("a");
+                    a.href = `/prod/profile?accountID=${name.accountID}`;
+
+                    const picElem = document.createElement("img");
+                    picElem.src = name["profilePicture"];
+                    picElem.className = "profile-picture";
+                    picElem.alt = `${name["firstName"]} ${name["lastName"]}'s profile picture`;
+
+
+                    const pElem = document.createElement("p");
+                    pElem.textContent = `${name["firstName"]} ${name["lastName"]}`;
+
+                    a.appendChild(picElem);
+                    a.appendChild(pElem);
+
+                    divElement.appendChild(a);
+                    liElem.appendChild(divElement);
+                    ul.appendChild(liElem);
+                }
+
+
                 newPost.appendChild(divPopUpFormLike);
 
                 likeCount.addEventListener("click", () => {
@@ -500,8 +610,109 @@
 
                 const commentCount = document.createElement("span");
                 commentCount.classList.add("comment-count");
-                commentCount.textContent = "0";
-                commentCount.style = "font-size: 22px";
+                let count = 0;
+
+                for (const dict of dateAllPosts[i].comments) {
+                    for (const [uuid, timestamps] of Object.entries(dict)) {
+                        count += Object.keys(timestamps).length;
+                    }
+                }
+
+                commentCount.textContent = count;
+                commentCount.style.fontSize = "22px";
+
+                const divPopUpFormComment = document.createElement("div");
+                divPopUpFormComment.className = "popup-form";
+                divPopUpFormComment.style.display = "none";
+
+                const divFormContainerComment = document.createElement("div");
+                divFormContainerComment.className = "form-container";
+
+                const spanComment = document.createElement("span");
+                spanComment.innerHTML = "&times;";
+                spanComment.onclick = () => {
+                    divPopUpFormComment.style.display = "none";
+                };
+
+                const h2Comment = document.createElement("h2");
+                h2Comment.textContent = "Comments";
+
+                const ul2 = document.createElement("ul");
+
+                divFormContainerComment.appendChild(spanComment);
+                divFormContainerComment.appendChild(h2Comment);
+                divFormContainerComment.appendChild(ul2);
+                divPopUpFormComment.appendChild(divFormContainerComment);
+
+                for (const dict of dateAllPosts[i].comments) {
+                    for (const [uuid, timestamps] of Object.entries(dict)) {
+                        for (const [timestamp, [text, classification]] of Object.entries(timestamps)) {
+                            const commentName = await fetch(`/prod/db?accountID=${uuid}`, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            });
+
+                            if (!commentName.ok) {
+                                throw new Error(`${commentName.status}: ${commentName.statusText}`);
+                            }
+
+                            const name = await commentName.json();
+                            const liElem = document.createElement("li");
+                            const divElement = document.createElement("div");
+
+                            const a = document.createElement("a");
+                            a.href = `/prod/profile?accountID=${name.accountID}`;
+
+                            const picElem = document.createElement("img");
+                            picElem.src = name["profilePicture"];
+                            picElem.className = "profile-picture";
+                            picElem.alt = `${name["firstName"]} ${name["lastName"]}'s profile picture`;
+
+                            const pNameElem = document.createElement("p");
+                            pNameElem.textContent = `${name["firstName"]} ${name["lastName"]}`;
+
+                            const pTimeElem = document.createElement("p");
+                            pTimeElem.textContent = formatEpochToUTCString(timestamp);
+
+                            const pText = document.createElement("p");
+                            pText.textContent = text;
+
+                            if (classification === "Positive") pText.style.color = "green";
+                            else if (classification === "Negative") pText.style.color = "red";
+                            else if (classification === "Neutral") pText.style.color = "purple";
+                            else pText.style.color = "black";
+
+                            a.appendChild(picElem);
+                            a.appendChild(pNameElem);
+
+                            divElement.appendChild(a);
+                            divElement.appendChild(pTimeElem);
+                            divElement.appendChild(pText);
+
+                            liElem.appendChild(divElement);
+                            ul2.appendChild(liElem);
+                        }
+                    }
+                }
+
+
+
+
+                newPost.appendChild(divPopUpFormComment);
+
+                commentCount.addEventListener("click", () => {
+                    divPopUpFormComment.style.display = "flex";
+                });
+                spanComment.addEventListener("click", () => {
+                    divPopUpFormComment.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == divPopUpFormComment) {
+                        divPopUpFormComment.style.display = "none";
+                    }
+                });
                 
                 likeContainer.appendChild(likeButton);
                 likeContainer.appendChild(likeCount);
@@ -522,8 +733,11 @@
 
                 newPost.appendChild(posterInfo);
                 newPost.appendChild(postText);
-                newPost.appendChild(postImage);
-                newPost.appendChild(postImageTags);
+                if(dateAllPosts[i]["postPicture"])
+                {
+                    newPost.appendChild(postImage);
+                    newPost.appendChild(postImageTags);
+                }
                 newPost.appendChild(interactionBar);
 
                 const commentInputContainer = document.createElement("div");
