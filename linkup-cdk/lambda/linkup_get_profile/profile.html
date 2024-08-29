@@ -1,9 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>LinkUp - Profile</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
     <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            width: 96.8%;
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .header nav a:hover {
+            color: #007bff;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            background-color: #f0f2f5;
+            flex: 1;
+        }
+
+        .profile-sidebar {
+            width: 30%;
+            padding-right: 20px;
+            border-right: 1px solid #ddd;
+        }
+
+        .profile-picture-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .profile-info h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .profile-info p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .feed-container {
+            width: 70%;
+            padding-left: 20px;
+        }
+
+        .post-input-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .post-input {
+            width: 95%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .post-input:focus {
+            border-color: #007bff;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-actions label,
+        .post-actions button {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .comment-btn {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .comment-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .post-actions label:hover,
+        .post-actions button:hover {
+            background-color: #0056b3;
+        }
+
+        .post-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .post-item {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-header .user-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .post-header .post-time {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .post-content {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .interaction-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+
+        .interaction-bar button {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .interaction-bar button:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            color: #333;
+            text-align: center;
+            padding: 15px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        
+        #search-bar {
+            width: calc(50%);
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            font-size: 16px; 
+            outline: none; 
+            transition: border-color 0.3s ease;
+        }
+
+        #search-bar:focus {
+            border-color: #007bff; 
+        }
+
+        .results {
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: white;
+            position: absolute;
+            width: calc(100% - 2px);
+            left: 0; 
+            top: 100%; 
+            transform: translateY(10px); 
+            z-index: 10;
+            display: none; 
+        }
+
+        .result-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+            display: block;
+        }
+
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .no-results {
+            padding: 8px 10px;
+            color: #777;
+        }
+
+        code {
+            background-color: #f4f4f4;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-family: monospace;
+        }
+
+        /* Popup form styling */
         .popup-form {
             display: none;
             position: fixed;
@@ -14,563 +291,163 @@
             background-color: rgba(0, 0, 0, 0.5);
             align-items: center;
             justify-content: center;
+            z-index: 1000;
+            overflow-y: auto; /* Allow scrolling */
         }
+
+        /* Form container styling */
         .form-container {
-            background-color: white;
+            background-color: #fff;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            max-height: 80%; /* Set max height for scrolling */
+            overflow-y: auto; /* Enable scrolling inside the form */
+        }
+
+        /* Comments styling */
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-container ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .form-container li {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-container li div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container li p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .form-container li p:first-child {
+            font-weight: bold;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .form-container li p:last-child {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* Close button styling */
+        .form-container span {
+            display: block;
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #filePreview {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            border: 2px solid #ddd; /* Border around the preview */
+            object-fit: cover; /* Ensure the image covers the area without distortion */
+            width: 100%; /* Ensures the image fits within the container */
+            max-width: 400px; /* Limit the maximum width */
+            height: auto; /* Maintain aspect ratio */
         }
     </style>
-    <body>
-        <h1>My Profile!</h1>
-        <input style="display: none;" id="update_profile" type="button" onclick="window.location.href='/prod/update'" value="Update Profile"/>
-        <input type="button" onclick="window.location.href='/prod/globalFeed'" value="Global Feed"/>
-        <input type="button" onclick="window.location.href='/prod/friendsFeed'" value="Friends Feed"/>
-        <input type="button" onclick="logOut()" value="Log Out"/>
-        <input type="button" onclick="" value="" id="followBtn" style="display: none;"/>
-        <h2>Profile Information</h2>
-        <div id="profileInfo" style="display: none;"></div>
-        <hr/>
-        <input type="button" id="openFormButtonFollowers" value="Followers"/>
-        <div id="popupFormFollowers" class="popup-form">
-            <div class="form-container">
-                <span id="closeFormButtonFollowers" style="cursor: pointer;">&times;</span>
-                <h2>Followers</h2>
-                <ul id="followersList"></ul>
+</head>
+<body>
+    <header class="header">
+        <a id="profilePictureLink" href="">
+            <img id="profilePicture" src="" alt="Profile Picture" class="profile-picture"/>
+        </a>
+        <nav>
+            <a href="/prod/update" style="display: none;" id="update_profile">Update Profile</a>
+            <a href="/prod/globalFeed">Feed</a>
+            <a href="/prod/friendsFeed">Friends Feed</a>
+            <a href="/prod/index" onclick="logOut()">Log Out</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="profile-sidebar">
+            <img id="profilePictureLarge" src="" alt="Profile Picture" class="profile-picture-large"/>
+            <div id="profileInfo" class="profile-info">
+                <h2>Profile Information</h2>
+                <p id="name"></p>
+                <p id="birthDate"></p>
+                <p id="gender"></p>
             </div>
+            <input type="button" id="followBtn" value="Follow" style="display: none;"/>
         </div>
-        <input type="button" id="openFormButtonFollowing" value="Following"/>
-        <div id="popupFormFollowing" class="popup-form">
-            <div class="form-container">
-                <span id="closeFormButtonFollowing" style="cursor: pointer;">&times;</span>
-                <h2>Following</h2>
-                <ul id="followingList"></ul>
+
+        <div class="feed-container">
+            <h1 id="profileName">My Profile</h1>
+            <input type="button" onclick="" value="" id="followBtn" style="display: none;"/>
+            <input type="button" id="openFormButtonFollowers" value="Followers"/>
+            <div id="popupFormFollowers" class="popup-form">
+                <div class="form-container">
+                    <span id="closeFormButtonFollowers">&times;</span>
+                    <h2>Followers</h2>
+                    <ul id="followersList"></ul>
+                </div>
             </div>
+            <div>
+                <input type="button" id="openFormButtonFollowing" value="Following"/>
+            </div>
+            <div id="popupFormFollowing" class="popup-form">
+                <div class="form-container">
+                    <span id="closeFormButtonFollowing">&times;</span>
+                    <h2>Following</h2>
+                    <ul id="followingList"></ul>
+                </div>
+            </div>
+            <hr/>
+            <ul class="post-list" id="postList"></ul>
         </div>
-        <hr/>
-        <h2>My Posts</h2>
-        <div id="postsFeed" style="display: none;"></div>
-        <script>
-            function logOut() {
-                localStorage.clear();
-                window.location.href="/prod/index";
-            }
+    </main>
 
-            async function formatEpochToUTCString(epochTime) {
-                const date = new Date(epochTime * 1000);
-                
-                // Define options for the Israel Time (UTC+3) formatting
-                const options = {
-                    timeZone: 'Asia/Tel_Aviv', // Israel Time Zone
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false // Use 24-hour format
-                };
+    <footer class="footer">
+        <p>linkup</p>
+    </footer>
 
-                // Format the date in Israel Time
-                const formattedDate = date.toLocaleString('en-IL', options);
-                
-                return formattedDate;
-            }
+    <script>
 
-            function getHourRange(timestamp) {
-                const date = new Date(timestamp * 1000);
-                const hours = date.getUTCHours();
-
-                if (hours === 23) {
-                    return '23:00-00:00';
-                } else {
-                    return `${String(hours).padStart(2, '0')}:00-${String(hours + 1).padStart(2, '0')}:00`;
-                }
-            }
+        function logOut() {
+            localStorage.clear();
+            window.location.href = "/prod/index";
+        }
 
 
-            document.addEventListener("DOMContentLoaded", async () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+            try{
                 const queryString = window.location.search;
                 const urlParams = new URLSearchParams(queryString);
                 const accountID = urlParams.get("accountID");
 
                 const storageAccountID = localStorage.getItem("accountID");
 
-                if(accountID === storageAccountID){
-                    document.getElementById("update_profile").style.display="inline";
-                }
-
-                const openFormButtonFollowers = document.getElementById("openFormButtonFollowers");
-                const popupFormFollowers = document.getElementById("popupFormFollowers");
-                const closeFormButtonFollowers = document.getElementById("closeFormButtonFollowers");
-                openFormButtonFollowers.addEventListener("click", () => {
-                    popupFormFollowers.style.display = "flex";
-                });
-                closeFormButtonFollowers.addEventListener("click", () => {
-                    popupFormFollowers.style.display = "none";
-                });
-                window.addEventListener("click", (event) => {
-                    if (event.target == popupFormFollowers) {
-                        popupFormFollowers.style.display = "none";
-                    }
-                });
-
-                const openFormButtonFollowing = document.getElementById("openFormButtonFollowing");
-                const popupFormFollowing = document.getElementById("popupFormFollowing");
-                const closeFormButtonFollowing = document.getElementById("closeFormButtonFollowing");
-                openFormButtonFollowing.addEventListener("click", () => {
-                    popupFormFollowing.style.display = "flex";
-                });
-                closeFormButtonFollowing.addEventListener("click", () => {
-                    popupFormFollowing.style.display = "none";
-                });
-                window.addEventListener("click", (event) => {
-                    if (event.target == popupFormFollowing) {
-                        popupFormFollowing.style.display = "none";
-                    }
-                });
-
-                try {
-                    // get profile info
-                    const responseProfileInfo = await fetch(`/prod/db?accountID=${accountID}`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    if(!responseProfileInfo.ok) {
-                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
-                    }
-                    const dataResponseProfileInfo = await responseProfileInfo.json();
-
-                    // get followers info
-                    const responseGetFollowers = await fetch(`/prod/followers?accountID=${accountID}`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    if(!responseGetFollowers.ok) {
-                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
-                    }
-                    const dataResponseGetFollowers = await responseGetFollowers.json();
-
-                    // get all posts
-                    const responseGetAllPosts = await fetch("/prod/postDB", {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    });
-                    if(!responseGetAllPosts.ok) {
-                        throw new Error(`${responseGetAllPosts.status}: ${responseGetAllPosts.statusText}`);
-                    }
-                    const dataGetAllPosts = await responseGetAllPosts.json();
-
-                    // set profile info
-                    const profileInfo = document.getElementById("profileInfo");
-
-                    const profileDiv = document.createElement("div");
-
-                    const currentFullName = dataResponseProfileInfo["firstName"] + " " + dataResponseProfileInfo["lastName"]
-                    
-                    const pName = document.createElement("p");
-                    pName.innerHTML = currentFullName;
-                    profileDiv.appendChild(pName);
-
-                    const pBirthDate = document.createElement("p");
-                    pBirthDate.innerText = dataResponseProfileInfo["birthDate"];
-                    profileDiv.appendChild(pBirthDate);
-
-                    const pGender = document.createElement("p");
-                    pGender.innerHTML = dataResponseProfileInfo["gender"];
-                    profileDiv.appendChild(pGender);
-
-                    const pStats = document.createElement("p");
-                    pStats.style.display = "none";
-                    profileDiv.appendChild(pStats);
-
-                    profileInfo.appendChild(profileDiv);
-
-                    // set following info
-                    const ulFollowers = document.getElementById("followersList");
-                    for(let i = 0; i < dataResponseGetFollowers["followers"].length; ++i) {
-                        const liFollowers = document.createElement("li");
-
-                        const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["followers"][i]}`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
-                        });
-                        if(!getUserInfo.ok) {
-                            throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
-                        }
-                        const userInfo = await getUserInfo.json();
-
-                        liFollowers.innerHTML = userInfo["firstName"] + " " + userInfo["lastName"];
-                        ulFollowers.appendChild(liFollowers);
-                    }
-
-                    const ulFollowing = document.getElementById("followingList");
-                    for(let i = 0; i < dataResponseGetFollowers["following"].length; ++i) {
-                        const liFollowing = document.createElement("li");
-
-                        const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["following"][i]}`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
-                        });
-                        if(!getUserInfo.ok) {
-                            throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
-                        }
-                        const userInfo = await getUserInfo.json();
-
-
-                        liFollowing.innerHTML = userInfo["firstName"] + " " +userInfo["lastName"];
-                        ulFollowing.appendChild(liFollowing);
-                    }
-
-                    // set my posts
-                    const postsFeed = document.getElementById("postsFeed");
-                    const hourRanges = {};
-
-                    for(let i = 0; i < dataGetAllPosts.length; ++i) {
-                        if(dataGetAllPosts[i].accountID !== accountID) {
-                            continue;
-                        }
-
-                        const getProfileByID = await fetch(`/prod/db?accountID=${dataGetAllPosts[i].accountID}`, {
-                            method: "GET",
-                            headers: {
-                                "Content-Type": "application/json"
-                            }
-                        });
-
-                        const dataGetProfileByID = await getProfileByID.json();
-
-                        const div = document.createElement("div");
-                        const hr = document.createElement("hr");
-
-                        const p_id = document.createElement("p");
-                        const aLinkToProfile = document.createElement("a");
-                        aLinkToProfile.href = `/prod/profile?accountID=${dataGetAllPosts[i].accountID}`;
-                        aLinkToProfile.appendChild(p_id);
-
-                        p_id.innerHTML = dataGetProfileByID["firstName"] + " " + dataGetProfileByID["lastName"];
-                        div.appendChild(aLinkToProfile);
-
-                        if(dataGetAllPosts[i].postText) {
-                            const p_text = document.createElement("p");
-                            p_text.innerHTML = dataGetAllPosts[i].postText;
-                            div.appendChild(p_text);
-                        }
-                        if(dataGetAllPosts[i].postPicture) {
-                            const post_image = document.createElement("img");
-                            post_image.src = dataGetAllPosts[i].postPicture;
-                            post_image.style.width = "30%";
-                            post_image.style.height = "30%";
-                            div.appendChild(post_image);
-
-                            const p_tags = document.createElement("p");
-                            p_tags.innerHTML = dataGetAllPosts[i].pictureTags;
-                            div.appendChild(p_tags);
-                        }
-                        const p_time = document.createElement("p");
-                        p_time.innerHTML = await formatEpochToUTCString(dataGetAllPosts[i].postTime);
-                        div.appendChild(p_time);
-
-                        const likes = dataGetAllPosts[i].likes.length;
-
-                        let comments = 0;
-                        let commentsList = dataGetAllPosts[i].comments;
-                        for (let j = 0; j < commentsList.length; ++j) {
-                            let commentObject = commentsList[j];
-                            for (let uuid in commentObject) {
-                                comments += Object.keys(commentObject[uuid]).length;
-                            }
-                        }
-
-                        const pLikes = document.createElement("p");
-                        pLikes.innerHTML = `${likes} Likes, ${comments} Comments`;
-
-                        const likeBtn = document.createElement("input");
-                        likeBtn.type = "button";
-                        likeBtn.value = "Like";
-
-                        const like = async () => {
-                            const responseSetLike = await fetch("/prod/postDB", {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    isLike: true,
-                                    postAccountID: dataGetAllPosts[i].accountID,
-                                    postTime: dataGetAllPosts[i].postTime,
-                                    likerAccountID: accountID
-                                })
-                            });
-                            if(!responseSetLike.ok) {
-                                throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
-                            }
-                            const dataResponseSetLike = await responseSetLike.json();
-                            if(dataResponseSetLike.statusCode !== 200) {
-                                throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
-                            }
-                        };
-
-                        const unlike = async () => {
-                            const responseSetLike = await fetch("/prod/postDB", {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    isLike: false,
-                                    postAccountID: dataGetAllPosts[i].accountID,
-                                    postTime: dataGetAllPosts[i].postTime,
-                                    likerAccountID: accountID
-                                })
-                            });
-                            if(!responseSetLike.ok) {
-                                throw new Error(`${responseSetLike.status}: ${responseSetLike.statusText}`);
-                            }
-                            const dataResponseSetLike = await responseSetLike.json();
-                            if(dataResponseSetLike.statusCode !== 200) {
-                                throw new Error(`${dataResponseSetLike.statusCode}: ${dataResponseSetLike.body}`);
-                            }
-                        };
-
-                        const isLiked = dataGetAllPosts[i].likes.includes(accountID);
-                        let currentLike = isLiked ? unlike : like;
-                        likeBtn.value = isLiked ? "Unlike" : "Like";
-
-                        likeBtn.addEventListener("click", async () => {
-                            likeBtn.value = (currentLike === like) ? "Unlike" : "Like";
-                            await currentLike();
-                            const [oldLikes, , oldComments, , ,] = pLikes.textContent.split(" ");
-                            const newLikes = (currentLike === like) ? parseInt(oldLikes) + 1 : parseInt(oldLikes) - 1;
-                            pLikes.innerHTML = `${newLikes} Likes, ${oldComments} Comments`;
-                            currentLike = (currentLike === like) ? unlike : like;
-                        });
-
-                        const commentInput = document.createElement("input");
-                        commentInput.type = "text";
-                        commentInput.placeholder = "Write Your Comment";
-
-                        const commentBtn = document.createElement("input");
-                        commentBtn.type = "button";
-                        commentBtn.value = "Comment";
-                        commentBtn.onclick = async () => {
-                            const commentTime = Math.floor(Date.now() / 1000);
-                            const commentText = commentInput.value.trim();
-
-                            if(commentText === "") {
-                                alert("Comment cannot be empty!");
-                                return;
-                            }
-
-                            const responseNewComment = await fetch("/prod/postDB", {
-                                method: "PUT",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    postAccountID: dataGetAllPosts[i].accountID,
-                                    postTime: dataGetAllPosts[i].postTime,
-                                    likerAccountID: accountID,
-                                    commentText,
-                                    commentTime
-                                })
-                            });
-                            if(!responseNewComment.ok) {
-                                throw new Error(`${responseNewComment.status}: ${responseNewComment.statusText}`);
-                            }
-                            const dataResponseNewComment = await responseNewComment.json();
-                            if(dataResponseNewComment.statusCode !== 200) {
-                                throw new Error(`${dataResponseNewComment.statusCode}: ${dataResponseNewComment.body}`);
-                            }
-
-                            const oldLikes = pLikes.textContent.split(" ")[0];
-                            const oldComments = pLikes.textContent.split(" ")[2];
-                            pLikes.innerHTML = `${oldLikes} Likes, ${parseInt(oldComments) + 1} Comments`;
-                            commentInput.value = "";
-                        };
-
-                        div.appendChild(pLikes);
-                        div.appendChild(likeBtn);
-
-                        div.appendChild(commentInput);
-                        div.appendChild(commentBtn);
-
-                        for(let j = 0; j < 2; ++j) {
-                            const showLikesBtn = document.createElement("input");
-                            showLikesBtn.type = "button";
-                            showLikesBtn.id = (j == 0 ? "openFormButtonLikes" : "openFormButtonComments");
-                            showLikesBtn.value = (j == 0 ? "Show Likes" : "Show Comments");
-
-                            const showLikesDiv = document.createElement("div");
-                            showLikesDiv.id = (j == 0 ? "popupFormLikes" : "popupFormComments");
-                            showLikesDiv.className = "popup-form";
-
-                            const showLikesDivInner = document.createElement("div");
-                            showLikesDivInner.className = "form-container";
-
-                            const spanLikes = document.createElement("span");
-                            spanLikes.id = (j == 0 ? "closeFormButtonLikes" : "closeFormButtonComments");
-                            spanLikes.style.cursor = "pointer";
-                            spanLikes.innerHTML = "&times;";
-
-                            const h2Likes = document.createElement("h2");
-                            h2Likes.innerHTML = (j == 0 ? "Likes" : "Comments");;
-
-                            const ulLikes = document.createElement("ul");
-                            ulLikes.id = (j == 0 ? "LikesList" : "CommentsList");
-
-                            if(j == 0) {
-                                for(let k = 0; k < dataGetAllPosts[i].likes.length; ++k) {
-                                    const liLikes = document.createElement("li");
-
-                                    const responseGetName = await fetch(`/prod/db?accountID=${dataGetAllPosts[i].likes[k]}`, {
-                                        method: "GET",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        }
-                                    });
-                                    if(!responseGetName.ok) {
-                                        throw new Error(`${responseGetName.status}: ${responseGetName.statusText}`);
-                                    }
-                                    const dataResponseGetName = await responseGetName.json();
-
-                                    liLikes.innerHTML = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
-                                    ulLikes.appendChild(liLikes);
-                                }
-                            } else {
-                                const comments = dataGetAllPosts[i].comments;
-                                comments.forEach(commentObject => {
-                                    const accountID = Object.keys(commentObject)[0];
-                                    const commentDetails = commentObject[accountID];
-                                    Object.entries(commentDetails).forEach(async ([timestamp, commentList]) => {
-                                        const responseGetName = await fetch(`/prod/db?accountID=${accountID}`, {
-                                            method: "GET",
-                                            headers: {
-                                                "Content-Type": "application/json"
-                                            }
-                                        });
-                                        if(!responseGetName.ok) {
-                                            throw new Error(`${responseGetName.status}: ${responseGetName.statusText}`);
-                                        }
-                                        const dataResponseGetName = await responseGetName.json();
-
-                                        const li = document.createElement("li");
-                                        const div = document.createElement("div");
-
-                                        const accountIDP = document.createElement("p");
-                                        accountIDP.textContent = `${dataResponseGetName.firstName} ${dataResponseGetName.lastName}`;
-
-                                        const commentP = document.createElement("p");
-                                        commentP.textContent = commentList[0];
-                        
-                                        let commentColor = commentList[1];
-                                        if(commentColor && commentColor.trim() === "Positive") {
-                                            commentP.style.color = "#00ff08";
-                                        } else if(commentColor && commentColor.trim() === "Negative") {
-                                            commentP.style.color = "#ff0000";
-                                        } else if(commentColor && commentColor.trim() === "Neutral") {
-                                            commentP.style.color = "#ff00dd";
-                                        }
-
-                                        const unixTimeP = document.createElement("p");
-                                        unixTimeP.textContent = await formatEpochToUTCString(timestamp);
-                                        
-                                        div.appendChild(accountIDP);
-                                        div.appendChild(commentP);
-                                        div.appendChild(unixTimeP);
-                                        li.appendChild(div);
-                                        ulLikes.appendChild(li);
-                                    });
-                                });
-
-                                if(accountID === storageAccountID) {
-
-                                    let maxRange = '';
-                                    let maxCount = 0;
-                                    for (const [range, count] of Object.entries(hourRanges)) {
-                                        if (count > maxCount) {
-                                            maxRange = range;
-                                            maxCount = count;
-                                        }
-                                    }
-
-                                    console.log(`max range: ${maxRange}`);
-                                    console.log(hourRanges);
-                                    if(maxRange) {
-                                        const sHour = (parseInt((maxRange.split("-")[0]).split(":")[0]) + 3) % 24;
-                                        const eHour = (parseInt((maxRange.split("-")[1]).split(":")[0]) + 3) % 24;
-                                        pStats.style.display = "block";
-                                        pStats.innerHTML = `Best time to upload posts is ${sHour}:00-${eHour}:00!`;
-                                    }
-                                }
-                            }
-
-
-                            showLikesBtn.addEventListener("click", () => {
-                                showLikesDiv.style.display = "flex";
-                            });
-                            spanLikes.addEventListener("click", () => {
-                                showLikesDiv.style.display = "none";
-                            });
-                            window.addEventListener("click", (event) => {
-                                if (event.target == showLikesDiv) {
-                                    showLikesDiv.style.display = "none";
-                                }
-                            });
-
-                            showLikesDivInner.appendChild(spanLikes);
-                            showLikesDivInner.appendChild(h2Likes);
-                            showLikesDivInner.appendChild(ulLikes);
-
-                            showLikesDiv.appendChild(showLikesDivInner);
-
-                            div.appendChild(showLikesBtn);
-                            div.appendChild(showLikesDiv);
-                        }
-
-                        const deleteBtn = document.createElement("input");
-                        deleteBtn.type = "button";
-                        deleteBtn.value = "Delete Post";
-                        deleteBtn.onclick = async () => {
-                            const reponseDeletePost = await fetch ("/prod/postDB", {
-                                method: "DELETE",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                    postAccountID: dataGetAllPosts[i].accountID,
-                                    postTime: dataGetAllPosts[i].postTime
-                                })
-                            });
-                            if(!reponseDeletePost.ok) {
-                                throw new Error(`${reponseDeletePost.status}: ${reponseDeletePost.statusText}`);
-                            }
-                            const dataResponsDeletePost = await reponseDeletePost.json();
-                            if(dataResponsDeletePost.statusCode !== 200) {
-                                throw new Error(`${dataResponsDeletePost.statusCode}: ${dataResponsDeletePost.body}`);
-                            }
-                            window.location.reload();
-                        };
-
-                        if(accountID === storageAccountID) {
-                            div.appendChild(deleteBtn);
-                        }
-                        
-                        postsFeed.appendChild(div);
-                        postsFeed.appendChild(hr)
-                    }
-
-                    const followBtn = document.getElementById("followBtn");
+                const followBtn = document.getElementById("followBtn");
                     if(accountID !== storageAccountID) {
                         try {
                             if(dataResponseGetFollowers["followers"].includes(storageAccountID)) {
@@ -613,13 +490,554 @@
                         }
                     }
 
-                    profileInfo.style.display = "block";
-                    postsFeed.style.display = "block";
-                    
-                } catch(error) {
-                    console.error(error);
+                if(accountID === storageAccountID){
+                    document.getElementById("update_profile").style.display="inline";
+                }
+
+                const responseProfileInfo = await fetch(`/prod/db?accountID=${accountID}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                if(!responseProfileInfo.ok) {
+                    throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                }
+                const dataResponseProfileInfo = await responseProfileInfo.json();
+
+                document.getElementById("name").innerHTML=`${dataResponseProfileInfo["firstName"]} ${dataResponseProfileInfo["lastName"]}`
+                document.getElementById("birthDate").innerHTML=`${dataResponseProfileInfo["birthDate"]}`
+                document.getElementById("gender").innerHTML=`${dataResponseProfileInfo["gender"]}`
+                document.getElementById("profilePictureLink").href=`/prod/profile?accountID=${storageAccountID}`
+                document.getElementById("profilePicture").src=localStorage.getItem("profilePicture");
+                document.getElementById("profilePictureLarge").src=dataResponseProfileInfo["profilePicture"];
+                document.getElementById("profileName").innerHTML=`${dataResponseProfileInfo["firstName"]}'s profile`;
+
+                // get followers info
+                const responseGetFollowers = await fetch(`/prod/followers?accountID=${accountID}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                if(!responseGetFollowers.ok) {
+                    throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                }
+                const dataResponseGetFollowers = await responseGetFollowers.json();
+
+                 // set following info
+                 const ulFollowers = document.getElementById("followersList");
+
+                for(let i = 0; i < dataResponseGetFollowers["followers"].length; ++i) {
+
+                    const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["followers"][i]}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if(!getUserInfo.ok) {
+                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                    }
+                    const userInfo = await getUserInfo.json();
+
+
+                    const liElem = document.createElement("li");
+                    const divElement = document.createElement("div");
+
+                    const a = document.createElement("a");
+                    a.href = `/prod/profile?accountID=${userInfo["accountID"]}`;
+
+                    const picElem = document.createElement("img");
+                    picElem.src = userInfo["profilePicture"];
+                    picElem.className = "profile-picture";
+                    picElem.alt =  '${userInfo["firstName"]} ${userInfo["lastName"]}`s profile picture';
+
+                    const pElem = document.createElement("p");
+                    pElem.textContent = `${userInfo["firstName"]} ${userInfo["lastName"]}`;
+
+                    a.appendChild(picElem);
+                    a.appendChild(pElem);
+
+                    divElement.appendChild(a);
+                    liElem.appendChild(divElement);
+                    ulFollowers.appendChild(liElem);
+                }
+
+                const ulFollowing = document.getElementById("followingList");
+                for(let i = 0; i < dataResponseGetFollowers["following"].length; ++i) {
+                    const liFollowing = document.createElement("li");
+
+                    const getUserInfo = await fetch(`/prod/db?accountID=${dataResponseGetFollowers["following"][i]}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+                    if(!getUserInfo.ok) {
+                        throw new Error(`${responseProfileInfo.status}: ${responseProfileInfo.statusText}`);
+                    }
+                    const userInfo = await getUserInfo.json();
+
+                    const liElem = document.createElement("li");
+                    const divElement = document.createElement("div");
+
+                    const a = document.createElement("a");
+                    a.href = `/prod/profile?accountID=${userInfo["accountID"]}`;
+
+                    const picElem = document.createElement("img");
+                    picElem.src = userInfo["profilePicture"];
+                    picElem.className = "profile-picture";
+                    picElem.alt = '${userInfo["firstName"]} ${userInfo["lastName"]}`s profile picture';
+
+                    const pElem = document.createElement("p");
+                    pElem.textContent = `${userInfo["firstName"]} ${userInfo["lastName"]}`;
+
+                    a.appendChild(picElem);
+                    a.appendChild(pElem);
+
+                    divElement.appendChild(a);
+                    liElem.appendChild(divElement);
+                    ulFollowing.appendChild(liElem);
+                }
+
+                const responseGetAllPosts = await fetch("/prod/postDB", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
                 }
             });
-        </script>
-    </body>
+
+            if(!responseGetAllPosts.ok) {
+                throw new Error(`${responseGetAllPosts.status}: ${responseGetAllPosts.statusText}`);
+            }
+
+            const dateAllPosts = await responseGetAllPosts.json();
+
+
+            for(let i = 0; i < dateAllPosts.length; ++i) {
+
+                if(dateAllPosts[i].accountID !== accountID) {
+                    continue;
+                }
+
+                const profileByID = await fetch(`/prod/db?accountID=${dateAllPosts[i].accountID}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const dataProfileByID = await profileByID.json();
+                
+                // add post logic
+                const postList = document.getElementById("postList");
+                const newPost = document.createElement("li");
+                newPost.classList.add("post-item");
+                const posterInfo = document.createElement("div");
+                posterInfo.classList.add("post-header");
+
+                const posterLink = document.createElement("a");
+                const posterImg = document.createElement("img");
+                const posterName = document.createElement("span");
+                const postImage = document.createElement("img");
+                const postImageTags = document.createElement("p");
+
+                posterLink.href = `/prod/profile?accountID=${dateAllPosts[i].accountID}`;
+                posterImg.src = dataProfileByID.profilePicture;         
+                posterImg.alt = `${dataProfileByID.firstName} ${dataProfileByID.lastName}'s profile picture`;
+                posterImg.classList.add("profile-picture");
+                posterName.textContent = `${dataProfileByID.firstName} ${dataProfileByID.lastName}`;
+                posterName.classList.add("user-name");
+
+                postImage.src = dateAllPosts[i]["postPicture"];
+
+                postImageTags.innerHTML = dateAllPosts[i]["pictureTags"].map(item => `<code>${item}</code>`).join(" ");
+
+                const postTime = document.createElement("span");
+                postTime.classList.add("post-time");
+                postTime.textContent = formatEpochToUTCString(dateAllPosts[i].postTime);
+                postTime.style.marginLeft = "10px";
+
+                const postText = document.createElement("p");
+                postText.classList.add("post-content");
+                postText.textContent = dateAllPosts[i].postText;
+
+                const likeContainer = document.createElement("span");
+                const likeButton = document.createElement("button");
+                const iLike = document.createElement("i");
+                iLike.style = "font-size:30px";
+                iLike.className = "far";
+                iLike.innerHTML = "&#9825;";
+                likeButton.appendChild(iLike);
+                likeButton.classList.add("like-button");
+
+                const likeCount = document.createElement("span");
+                likeCount.classList.add("like-count");
+                likeCount.textContent = "0";
+                likeCount.style.fontSize = "22px";
+
+                const divPopUpFormLike = document.createElement("div");
+                divPopUpFormLike.className = "popup-form";
+                divPopUpFormLike.style.display = "none";
+
+                const divFormContainerLike = document.createElement("div");
+                divFormContainerLike.className = "form-container";
+
+                const spanLike = document.createElement("span");
+                spanLike.innerHTML = "&times;";
+                spanLike.onclick = () => {
+                    divPopUpFormLike.classList.remove("show");
+                    setTimeout(() => divPopUpFormLike.style.display = "none", 300);
+                };
+
+                const h2Like = document.createElement("h2");
+                h2Like.textContent = "Likes";
+
+                const ul = document.createElement("ul");
+
+                divFormContainerLike.appendChild(spanLike);
+                divFormContainerLike.appendChild(h2Like);
+                divFormContainerLike.appendChild(ul);
+                divPopUpFormLike.appendChild(divFormContainerLike);
+
+                for (let j = 0; j < dateAllPosts[i].likes.length; j++) {
+                    const likeName = await fetch(`/prod/db?accountID=${dateAllPosts[i].likes[j]}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (!likeName.ok) {
+                        throw new Error(`${likeName.status}: ${likeName.statusText}`);
+                    }
+
+                    const name = await likeName.json();
+                    const liElem = document.createElement("li");
+                    const divElement = document.createElement("div");
+
+                    const a = document.createElement("a");
+                    a.href = `/prod/profile?accountID=${name.accountID}`;
+
+                    const picElem = document.createElement("img");
+                    picElem.src = name["profilePicture"];
+                    picElem.className = "profile-picture";
+                    picElem.alt = `${name["firstName"]} ${name["lastName"]}'s profile picture`;
+
+
+                    const pElem = document.createElement("p");
+                    pElem.textContent = `${name["firstName"]} ${name["lastName"]}`;
+
+                    a.appendChild(picElem);
+                    a.appendChild(pElem);
+
+                    divElement.appendChild(a);
+                    liElem.appendChild(divElement);
+                    ul.appendChild(liElem);
+                }
+
+
+                newPost.appendChild(divPopUpFormLike);
+
+                likeCount.addEventListener("click", () => {
+                    divPopUpFormLike.style.display = "flex";
+                });
+                spanLike.addEventListener("click", () => {
+                    divPopUpFormLike.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == divPopUpFormLike) {
+                        divPopUpFormLike.style.display = "none";
+                    }
+                });
+
+                const commentContainer = document.createElement("span");
+                const commentButton = document.createElement("button");
+                const iComment = document.createElement("i");
+                iComment.style = "font-size:30px";
+                iComment.className = "far";
+                iComment.innerHTML = "&#x2687;";
+                commentButton.appendChild(iComment);
+                commentButton.classList.add("comment-button");
+
+                const commentCount = document.createElement("span");
+                commentCount.classList.add("comment-count");
+                let count = 0;
+
+                for (const dict of dateAllPosts[i].comments) {
+                    for (const [uuid, timestamps] of Object.entries(dict)) {
+                        count += Object.keys(timestamps).length;
+                    }
+                }
+
+                commentCount.textContent = count;
+                commentCount.style.fontSize = "22px";
+
+                const divPopUpFormComment = document.createElement("div");
+                divPopUpFormComment.className = "popup-form";
+                divPopUpFormComment.style.display = "none";
+
+                const divFormContainerComment = document.createElement("div");
+                divFormContainerComment.className = "form-container";
+
+                const spanComment = document.createElement("span");
+                spanComment.innerHTML = "&times;";
+                spanComment.onclick = () => {
+                    divPopUpFormComment.style.display = "none";
+                };
+
+                const h2Comment = document.createElement("h2");
+                h2Comment.textContent = "Comments";
+
+                const ul2 = document.createElement("ul");
+
+                divFormContainerComment.appendChild(spanComment);
+                divFormContainerComment.appendChild(h2Comment);
+                divFormContainerComment.appendChild(ul2);
+                divPopUpFormComment.appendChild(divFormContainerComment);
+
+                for (const dict of dateAllPosts[i].comments) {
+                    for (const [uuid, timestamps] of Object.entries(dict)) {
+                        for (const [timestamp, [text, classification]] of Object.entries(timestamps)) {
+                            const commentName = await fetch(`/prod/db?accountID=${uuid}`, {
+                                method: "GET",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                }
+                            });
+
+                            if (!commentName.ok) {
+                                throw new Error(`${commentName.status}: ${commentName.statusText}`);
+                            }
+
+                            const name = await commentName.json();
+                            const liElem = document.createElement("li");
+                            const divElement = document.createElement("div");
+
+                            const a = document.createElement("a");
+                            a.href = `/prod/profile?accountID=${name.accountID}`;
+
+                            const picElem = document.createElement("img");
+                            picElem.src = name["profilePicture"];
+                            picElem.className = "profile-picture";
+                            picElem.alt = `${name["firstName"]} ${name["lastName"]}'s profile picture`;
+
+                            const pNameElem = document.createElement("p");
+                            pNameElem.textContent = `${name["firstName"]} ${name["lastName"]}`;
+
+                            const pTimeElem = document.createElement("p");
+                            pTimeElem.textContent = formatEpochToUTCString(timestamp);
+
+                            const pText = document.createElement("p");
+                            pText.textContent = text;
+
+                            if (classification === "Positive") pText.style.color = "green";
+                            else if (classification === "Negative") pText.style.color = "red";
+                            else if (classification === "Neutral") pText.style.color = "purple";
+                            else pText.style.color = "black";
+
+                            a.appendChild(picElem);
+                            a.appendChild(pNameElem);
+
+                            divElement.appendChild(a);
+                            divElement.appendChild(pTimeElem);
+                            divElement.appendChild(pText);
+
+                            liElem.appendChild(divElement);
+                            ul2.appendChild(liElem);
+                        }
+                    }
+                }
+
+                newPost.appendChild(divPopUpFormComment);
+
+                commentCount.addEventListener("click", () => {
+                    divPopUpFormComment.style.display = "flex";
+                });
+                spanComment.addEventListener("click", () => {
+                    divPopUpFormComment.style.display = "none";
+                });
+                window.addEventListener("click", (event) => {
+                    if (event.target == divPopUpFormComment) {
+                        divPopUpFormComment.style.display = "none";
+                    }
+                });
+                
+                likeContainer.appendChild(likeButton);
+                likeContainer.appendChild(likeCount);
+
+                commentContainer.appendChild(commentButton);
+                commentContainer.appendChild(commentCount);
+
+                const interactionBar = document.createElement("div");
+                interactionBar.classList.add("interaction-bar");
+
+                interactionBar.appendChild(likeContainer);
+                interactionBar.appendChild(commentContainer);
+
+                posterLink.appendChild(posterImg);
+                posterInfo.appendChild(posterLink);
+                posterInfo.appendChild(posterName);
+                posterInfo.appendChild(postTime);
+
+                newPost.appendChild(posterInfo);
+                newPost.appendChild(postText);
+                if(dateAllPosts[i]["postPicture"])
+                {
+                    newPost.appendChild(postImage);
+                    newPost.appendChild(postImageTags);
+                }
+                newPost.appendChild(interactionBar);
+
+                const commentInputContainer = document.createElement("div");
+                commentInputContainer.style.display = "flex";
+                commentInputContainer.style.alignItems = "center";
+                commentInputContainer.style.marginTop = "10px";
+
+                const commentInput = document.createElement("input");
+                commentInput.type = "text";
+                commentInput.placeholder = "Add a comment...";
+                commentInput.classList.add("post-input");
+                commentInput.style.flexGrow = "1"; 
+
+                const commentSubmitButton = document.createElement("input");
+                commentSubmitButton.type = "button";
+                commentSubmitButton.value = "Post";
+                commentSubmitButton.className = "comment-btn";
+                commentSubmitButton.style.marginLeft = "10px";
+                commentSubmitButton.classList.add("post-actions");
+
+                commentInputContainer.appendChild(commentInput);
+                commentInputContainer.appendChild(commentSubmitButton);
+                newPost.appendChild(commentInputContainer);
+                likeCount.textContent = dateAllPosts[i].likes.length;
+
+                postList.appendChild(newPost);
+
+                const like = async (isLike) => {
+                    const setLike = await fetch("/prod/postDB", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            isLike: isLike,
+                            postAccountID: dateAllPosts[i].accountID,
+                            postTime: dateAllPosts[i].postTime,
+                            likerAccountID: accountID
+                        })
+                    });
+                    if(!setLike.ok) {
+                        throw new Error(`${setLike.status}: ${setLike.statusText}`);
+                    }
+                    const dataSetLike = await setLike.json();
+                    if(dataSetLike.statusCode !== 200) {
+                        alert(`Cannot ${(isLike) ? 'like' : 'unlike'} at this time!`);
+                        throw new Error(`${dataSetLike.statusCode}: ${dataSetLike.body}`);
+                    }
+                };
+
+                let isLiked = dateAllPosts[i].likes.includes(accountID);
+                let currentLike = isLiked ? () => like(false) : () => like(true);
+                iLike.innerHTML = isLiked ? "&#x2764;" : "&#9825;";
+
+                likeButton.addEventListener("click", async () => {
+                    iLike.innerHTML = (isLiked) ? "&#9825;" : "&#x2764;";
+                    await currentLike();
+                    const currentLikes = parseInt(likeCount.textContent);
+                    likeCount.textContent = isLiked ? currentLikes - 1 : currentLikes + 1;
+                    isLiked = !isLiked;
+                    currentLike = isLiked ? () => like(false) : () => like(true);
+                });
+
+                commentCount.addEventListener("click", async () => {});
+
+                commentButton.addEventListener("click", async () => {});
+
+                commentSubmitButton.addEventListener("click", async () => {
+                    const commentTime = Math.floor(Date.now() / 1000); 
+                    const commentText = commentInput.value.trim();
+                    if (commentText === "") {
+                        alert("Cannot post empty comment!");
+                        return;
+                    }
+                    const newComment = await fetch("/prod/postDB", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            postAccountID: dateAllPosts[i].accountID,
+                            postTime: dateAllPosts[i].postTime,
+                            likerAccountID: accountID,
+                            commentText,
+                            commentTime
+                        })
+                    });
+                    if(!newComment.ok) {
+                        throw new Error(`${newComment.status}: ${newComment.statusText}`);
+                    }
+                    const dataNewComment = await newComment.json();
+                    if(dataNewComment.statusCode !== 200) {
+                        throw new Error(`${dataNewComment.statusCode}: ${dataNewComment.body}`);
+                    }
+                    const currentComments = parseInt(commentCount.textContent);
+                    commentCount.textContent = currentComments + 1;
+                    commentInput.value = "";
+                }); 
+
+            
+            }
+ 
+
+            }catch(error){
+                console.error(error)
+            }
+            
+        });
+
+        function formatEpochToUTCString(epochTime) {
+        const date = new Date(epochTime * 1000);
+        const options = {
+            timeZone: "Asia/Tel_Aviv",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        };
+        const formattedDate = date.toLocaleString("en-IL", options);
+        return formattedDate;
+    }
+
+        function arrayBufferToBase64(buffer) {
+        let binary = "";
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
+
+        document.getElementById('openFormButtonFollowers').addEventListener('click', function() {
+            document.getElementById('popupFormFollowers').style.display = 'flex';
+        });
+
+        document.getElementById('closeFormButtonFollowers').addEventListener('click', function() {
+            document.getElementById('popupFormFollowers').style.display = 'none';
+        });
+
+        document.getElementById('openFormButtonFollowing').addEventListener('click', function() {
+            document.getElementById('popupFormFollowing').style.display = 'flex';
+        });
+
+        document.getElementById('closeFormButtonFollowing').addEventListener('click', function() {
+            document.getElementById('popupFormFollowing').style.display = 'none';
+        });
+    </script>
+</body>
 </html>

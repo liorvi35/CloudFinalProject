@@ -339,6 +339,22 @@
             cursor: pointer;
         }
 
+        #filePreview {
+            display: none;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            border: 2px solid #ddd; /* Border around the preview */
+            object-fit: cover; /* Ensure the image covers the area without distortion */
+            width: 100%; /* Ensures the image fits within the container */
+            max-width: 400px; /* Limit the maximum width */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -362,14 +378,14 @@
             </div>
 		    <br/>
             <div class="post-input-container">
-                <input class="post-input" type="text" id="postContent" placeholder="What's on your mind?">
+                <input class="post-input" type="text" id="postText" placeholder="What's on your mind?">
                 <div class="post-actions">
-                    <label for="postImg">Photo/Video</label>
-                    <input type="file" id="postImg" style="display: none;"/>
-                    <button onclick="addPost()">Post</button>
+                    <label for="postPicture">Photo/Video</label>
+                    <input type="file" id="postPicture" accept="image/*,video/*" style="display: none;"/>
+                    <button id="postBtn">Post</button>
                 </div>
-                <img id="filePreview" alt="Image Preview" />
-            </div>
+                <img id="filePreview" alt="Image Preview" style="display: none; max-width: 100%; margin-top: 10px;" />
+            </div>            
 
             <ul class="post-list" id="postList"></ul>
         </div>
@@ -409,6 +425,114 @@
             // setting profile's picture and link
             document.getElementById("profilePictureLink").href = `/prod/profile?accountID=${accountID}`;
             document.getElementById("profilePicture").src = profilePicture;
+
+            document.getElementById("postBtn").addEventListener("click", async () => {
+                    const postTime = Math.floor(Date.now() / 1000);
+                    const text = document.getElementById("postText").value;
+                    const fileInput = document.getElementById("postPicture");
+                    const file = fileInput.files[0];
+                    
+                    let isText = false, isPicture = false;
+
+                    let postData = {};
+
+                    if(text.trim() !== "") {
+                        isText = true;
+                    }
+                    if(file) {
+                        isPicture = true;
+                    }
+                    if(!(isText || isPicture)) {
+                        alert("Cannot upload empty post");
+                        return;
+                    }
+
+                    if(isPicture) {
+                        const reader = new FileReader();
+                        reader.onloadend = async () => {
+                          const base64File = await arrayBufferToBase64(reader.result);
+                          const format = file.type.split("/")[1];
+
+                          let postData = {}
+                          if(isText) {
+                            postData["postText"] = text.trim();
+                          }
+                          postData["accountID"] = accountID;
+                          postData["format"] = format;
+                          postData["postPicture"] = base64File;
+                          postData["postTime"] = postTime;
+
+                          try {
+                            const responseUploadPost = await fetch("/prod/postDB", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(postData)
+                            });
+
+                            if(!responseUploadPost.ok) {
+                                throw new Error(`${responseUploadPost.status}: ${responseUploadPost.statusText}`);
+                            }
+
+                            const dataUploadPost = await responseUploadPost.json();
+
+                            if(dataUploadPost.statusCode === 200) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(`${dataUploadPost.statusCode}: ${dataUploadPost.body}`);
+                            }
+                          } catch(error) {
+                            console.error(error);
+                          }
+                        };
+                        reader.readAsArrayBuffer(file);
+                    } else if(isText && !isPicture) {
+                        const postData = { accountID, postTime, postText: text.trim() };
+
+                        try {
+                            const responseUploadPost = await fetch("/prod/postDB", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(postData)
+                            });
+
+                            if(!responseUploadPost.ok) {
+                                throw new Error(`${responseUploadPost.status}: ${responseUploadPost.statusText}`);
+                            }
+
+                            const dataUploadPost = await responseUploadPost.json();
+
+                            if(dataUploadPost.statusCode === 200) {
+                                window.location.reload();
+                            } else {
+                                throw new Error(`${dataUploadPost.statusCode}: ${dataUploadPost.body}`);
+                            }
+                        } catch(error) {
+                            console.error(error);
+                        }
+                    }
+                });
+
+                document.getElementById("postPicture").addEventListener("change", function(event) {
+                    const file = event.target.files[0];
+                    const preview = document.getElementById("filePreview");
+
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.src = e.target.result;
+                            preview.style.display = "block"; // Show the image preview
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.src = "";
+                        preview.style.display = "none"; // Hide the image preview if no file is selected
+                    }
+                });
+
 
             const allUsers = await fetch("/prod/db?accountID=ALL", {
                 method: "GET",
@@ -842,134 +966,17 @@
         }
     });
 
+    function arrayBufferToBase64(buffer) {
+        let binary = "";
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
 
-
-    // function addPost() {
-    //     const postContent = document.getElementById("postContent").value.trim();
-    //     const postList = document.getElementById("postList");
-    //     const newPost = document.createElement("li");
-    //     newPost.classList.add("post-item");
-
-    //     const posterInfo = document.createElement("div");
-    //     posterInfo.classList.add("post-header");
-
-    //     const posterLink = document.createElement("a");
-    //     const posterImg = document.createElement("img");
-    //     const posterName = document.createElement("span");
-
-    //     posterLink.href = "#";
-    //     posterImg.src = "poster.jpg";
-    //     posterImg.alt = "Poster Image";
-    //     posterImg.classList.add("profile-picture");
-    //     posterName.textContent = "Poster Name";
-    //     posterName.classList.add("user-name");
-
-    //     const postTime = document.createElement("span");
-    //     postTime.classList.add("post-time");
-    //     postTime.textContent = "Just now";
-    //     postTime.style.marginLeft = "10px";  // Add space between name and time
-
-    //     const postText = document.createElement("p");
-    //     postText.classList.add("post-content");
-    //     postText.textContent = postContent;
-
-    //     // Create like and comment elements with Unicode symbols
-    //     const likeContainer = document.createElement("span");
-    //     const likeButton = document.createElement("button");
-    //     const iLike = document.createElement("i");
-    //     iLike.style = "font-size:30px";
-    //     iLike.className = "far";
-    //     iLike.innerHTML = "&#9825;";
-    //     likeButton.appendChild(iLike);
-    //     likeButton.classList.add("like-button");
-
-    //     const likeCount = document.createElement("span");
-    //     likeCount.classList.add("like-count");
-    //     likeCount.textContent = "0";
-
-    //     const commentContainer = document.createElement("span");
-    //     const commentButton = document.createElement("button");
-    //     const iComment = document.createElement("i");
-    //     iComment.style = "font-size:30px";
-    //     iComment.className = "far";
-    //     iComment.innerHTML = "&#xf4ad;";
-    //     commentButton.appendChild(iComment);
-    //     commentButton.classList.add("comment-button");
-
-    //     const commentCount = document.createElement("span");
-    //     commentCount.classList.add("comment-count");
-    //     commentCount.textContent = "0";
-        
-    //     likeContainer.appendChild(likeButton);
-    //     likeContainer.appendChild(likeCount);
-
-    //     commentContainer.appendChild(commentButton);
-    //     commentContainer.appendChild(commentCount);
-
-    //     const interactionBar = document.createElement("div");
-    //     interactionBar.classList.add("interaction-bar");
-
-    //     // Append like and comment containers to the interaction bar
-    //     interactionBar.appendChild(likeContainer);
-    //     interactionBar.appendChild(commentContainer);
-
-    //     posterLink.appendChild(posterImg);
-    //     posterInfo.appendChild(posterLink);
-    //     posterInfo.appendChild(posterName);
-    //     posterInfo.appendChild(postTime);  // Add postTime right next to posterName
-
-    //     newPost.appendChild(posterInfo);
-    //     newPost.appendChild(postText);
-    //     newPost.appendChild(interactionBar);
-
-    //     // Create a container for comment input and button
-    //     const commentInputContainer = document.createElement("div");
-    //     commentInputContainer.style.display = "flex";
-    //     commentInputContainer.style.alignItems = "center";
-    //     commentInputContainer.style.marginTop = "10px";
-
-    //     // Add a comment input field for each post
-    //     const commentInput = document.createElement("input");
-    //     commentInput.type = "text";
-    //     commentInput.placeholder = "Add a comment...";
-    //     commentInput.classList.add("post-input");
-    //     commentInput.style.flexGrow = "1"; // Makes the input take available space
-
-    //     // Add a submit button next to the comment input
-    //     const commentSubmitButton = document.createElement("input");
-    //     commentSubmitButton.type = "button";
-    //     commentSubmitButton.value = "Post";
-    //     commentSubmitButton.className = "comment-btn";
-    //     commentSubmitButton.style.marginLeft = "10px"; // Adds space between input and button
-    //     commentSubmitButton.classList.add("post-actions"); // Apply the same style as the post button
-
-    //     commentInputContainer.appendChild(commentInput);
-    //     commentInputContainer.appendChild(commentSubmitButton);
-    //     newPost.appendChild(commentInputContainer);
-
-    //     postList.appendChild(newPost);
-    //     document.getElementById("postContent").value = "";
-
-    //     // Add event listeners for like and comment functionality
-    //     likeButton.addEventListener("click", function () {
-    //         const currentLikes = parseInt(likeCount.textContent);
-    //         likeCount.textContent = currentLikes + 1;
-    //     });
-
-    //     commentButton.addEventListener("click", function () {
-    //         const currentComments = parseInt(commentCount.textContent);
-    //         commentCount.textContent = currentComments + 1;
-    //     });
-
-    //     // Add event listener for the comment submit button
-    //     commentSubmitButton.addEventListener("click", function () {
-    //         const commentText = commentInput.value;
-    //         if (commentText.trim() !== "") {
-    //             console.log("New comment:", commentText); // Replace this with the logic to handle the new comment
-    //             commentInput.value = ""; // Clear the input field after submitting the comment
-    //         }
-    //     });
-    // }
+    
 </script>
 
 
