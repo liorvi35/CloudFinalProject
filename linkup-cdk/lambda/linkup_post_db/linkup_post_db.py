@@ -5,20 +5,18 @@ from boto3.dynamodb.conditions import Key
 dynamodb = boto3.resource("dynamodb")
 
 users_table = dynamodb.Table("linkup-users")
-
 followers_table = dynamodb.Table("linkup-followers")
 
 s3 = boto3.client("s3")
-
 profile_pictures_bucket = "linkup-profile-pictures"
 
 female_default_picture = "female_default.png"
-
 male_default_picture = "male_default.png"
 
 
 def lambda_handler(event, context):
     try:
+        # Extract user details from event
         try:
             new_user_item = {
                 "accountID": event["accountID"],
@@ -36,31 +34,55 @@ def lambda_handler(event, context):
                 "following": []
             }
         except KeyError as e:
-            print(f"Key {str(e)} does not exists")
+            print(f"Key {str(e)} does not exist")
             return {
                 "statusCode": 400,
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "body": "Bad Request"
+                "body": "Bad Request: Missing required fields"
             }
         
+        # Check if any of the required fields are empty
+        for key, value in new_user_item.items():
+            if value == "" or value is None:
+                print(f"Empty field: {key}")
+                return {
+                    "statusCode": 400,
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": f"Bad Request: {key} cannot be empty"
+                }
+
+        # Check if accountID already exists
         check_account_id_exists_users = users_table.get_item(Key={"accountID": new_user_item["accountID"]})
-
-        check_email_exists_users = users_table.query(IndexName="email", KeyConditionExpression=Key("email").eq(new_user_item["email"]))
-
-        check_account_id_exists_followers = followers_table.get_item(Key={"accountID": new_user_item["accountID"]})
-
-        if "Item" in check_account_id_exists_users or int(check_email_exists_users["Count"]) > 0 or "Item" in check_account_id_exists_followers:
-            print("accountID or email already exists")
+        if "Item" in check_account_id_exists_users:
+            print("accountID already exists")
             return {
                 "statusCode": 400,
                 "headers": {
                     "Content-Type": "application/json"
                 },
-                "body": "Bad Request"
+                "body": "Bad Request: accountID already exists"
+            }
+
+        # Check if email already exists
+        check_email_exists_users = users_table.query(
+            IndexName="email",
+            KeyConditionExpression=Key("email").eq(new_user_item["email"])
+        )
+        if int(check_email_exists_users["Count"]) > 0:
+            print("email already exists")
+            return {
+                "statusCode": 400,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": "Bad Request: email already exists"
             }
         
+        # Generate the profile picture URL
         profile_picture_signed = s3.generate_presigned_url(
             "get_object",
             Params={"Bucket": profile_pictures_bucket, "Key": female_default_picture if new_user_item["gender"] == "female" else male_default_picture},
@@ -69,8 +91,8 @@ def lambda_handler(event, context):
 
         new_user_item["profilePicture"] = profile_picture_signed
 
+        # Save the user and follower items to DynamoDB
         users_table.put_item(Item=new_user_item)
-
         followers_table.put_item(Item=new_follower_item)
         
         return {
@@ -78,7 +100,7 @@ def lambda_handler(event, context):
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": json.dumps({ "message": "OK", "profilePicture": profile_picture_signed })
+            "body": json.dumps({"message": "OK", "profilePicture": profile_picture_signed})
         }
 
     except Exception as e:
