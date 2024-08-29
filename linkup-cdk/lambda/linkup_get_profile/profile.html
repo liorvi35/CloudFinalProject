@@ -398,22 +398,21 @@
                 <p id="birthDate"></p>
                 <p id="gender"></p>
             </div>
-            <input type="button" id="followBtn" value="Follow" style="display: none;"/>
         </div>
 
         <div class="feed-container">
             <h1 id="profileName">My Profile</h1>
-            <input type="button" onclick="" value="" id="followBtn" style="display: none;"/>
-            <input type="button" id="openFormButtonFollowers" value="Followers"/>
+            <div class="button-group">
+                <input type="button" id="openFormButtonFollowers" value="Followers"/>
+                <input type="button" id="openFormButtonFollowing" value="Following"/>
+                <input type="button" onclick="" value="" id="followBtn" style="display: none;"/>
+            </div>
             <div id="popupFormFollowers" class="popup-form">
                 <div class="form-container">
                     <span id="closeFormButtonFollowers">&times;</span>
                     <h2>Followers</h2>
                     <ul id="followersList"></ul>
                 </div>
-            </div>
-            <div>
-                <input type="button" id="openFormButtonFollowing" value="Following"/>
             </div>
             <div id="popupFormFollowing" class="popup-form">
                 <div class="form-container">
@@ -426,6 +425,7 @@
             <ul class="post-list" id="postList"></ul>
         </div>
     </main>
+</body>
 
     <footer class="footer">
         <p>linkup</p>
@@ -446,49 +446,6 @@
                 const accountID = urlParams.get("accountID");
 
                 const storageAccountID = localStorage.getItem("accountID");
-
-                const followBtn = document.getElementById("followBtn");
-                    if(accountID !== storageAccountID) {
-                        try {
-                            if(dataResponseGetFollowers["followers"].includes(storageAccountID)) {
-                                followBtn.value = "unfollow";
-                                followBtn.style.display = "inline";
-                                followBtn.onclick = async () => {
-                                    const responseFollow = await fetch("/prod/followers", {
-                                        method: "PUT",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
-                                    });
-                                    if(!responseFollow.ok) {
-                                        throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
-                                    } 
-                                    alert(`Successfully unfollowed: ${currentFullName}!`);
-                                    window.location.reload();
-                                };
-                            } else {
-                                followBtn.value = "follow";
-                                followBtn.style.display = "inline";
-                                followBtn.onclick = async () => {
-                                    const responseFollow = await fetch("/prod/followers", {
-                                        method: "POST",
-                                        headers: {
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
-                                    });
-                                    if(!responseFollow.ok) {
-                                        throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
-                                    } 
-                                    alert(`Now following: ${currentFullName}!`);
-                                    window.location.reload();
-                                }
-                            }
-                        } catch(error) {
-                            console.error(error);
-                        }
-                    }
 
                 if(accountID === storageAccountID){
                     document.getElementById("update_profile").style.display="inline";
@@ -613,6 +570,50 @@
             }
 
             const dateAllPosts = await responseGetAllPosts.json();
+
+            const followBtn = document.getElementById("followBtn");
+
+            if(accountID !== storageAccountID) {
+                try {
+                    if(dataResponseGetFollowers["followers"].includes(storageAccountID)) {
+                        followBtn.value = "unfollow";
+                        followBtn.style.display = "inline";
+                        followBtn.onclick = async () => {
+                            const responseFollow = await fetch("/prod/followers", {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
+                            });
+                            if(!responseFollow.ok) {
+                                throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
+                            } 
+                            alert(`Successfully unfollowed`);
+                            window.location.reload();
+                        };
+                    } else {
+                        followBtn.value = "follow";
+                        followBtn.style.display = "inline";
+                        followBtn.onclick = async () => {
+                            const responseFollow = await fetch("/prod/followers", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({ srcAccountID: storageAccountID, dstAccountID: accountID })
+                            });
+                            if(!responseFollow.ok) {
+                                throw new Error(`${responseFollow.status}: ${responseFollow.statusText}`);
+                            } 
+                            alert(`following`);
+                            window.location.reload();
+                        }
+                    }
+                } catch(error) {
+                    console.error(error);
+                }
+            }
 
 
             for(let i = 0; i < dateAllPosts.length; ++i) {
