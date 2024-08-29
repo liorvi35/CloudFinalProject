@@ -52,14 +52,70 @@ def delete_nonexistent_user():
     })
     if int(response.json()["statusCode"]) != 404:
         logger.error("delete_nonexistent_user()/DELETE failed")
-        raise Exception("Somehow deleted nonexistent user")
+        raise Exception("Deleted nonexistent user")
     
     logger.info("delete_nonexistent_user() success")
+
+
+def create_empty_user():
+    user_uuid = str(uuid.uuid4())
+    response = requests.post(EP + "/prod/db", json={
+        "accountID": user_uuid,
+        "firstName": "Test",
+        "hashedPassword": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "email": "test@test.test",
+        "birthDate": "1111-11-11",
+        "gender": "male"
+    })
+    if int(response.json()["statusCode"]) != 400:
+        logger.error("create_empty_user()/POST failed")
+        raise Exception("Created Bad User")
+    
+    response = requests.post(EP + "/prod/db", json={})
+    if int(response.json()["statusCode"]) != 400:
+        logger.error("create_empty_user()/POST failed")
+        raise Exception("Created Bad User")
+    
+    response = requests.post(EP + "/prod/db", json={
+        "accountID": user_uuid,
+        "lastName": "Test",
+        "birthDate": "1111-11-11",
+        "gender": "male"
+    })
+    if int(response.json()["statusCode"]) != 400:
+        logger.error("create_empty_user()/POST failed")
+        raise Exception("Created Bad User")
+    
+    response = requests.post(EP + "/prod/db", json={
+        "accountID": user_uuid,
+        "firstName": "Test",
+        "lastName": "Test",
+        "hashedPassword": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "email": "test@test.test"
+    })
+    if int(response.json()["statusCode"]) != 400:
+        logger.error("create_empty_user()/POST failed")
+        raise Exception("Created Bad User")
+    
+    response = requests.post(EP + "/prod/db", json={
+        "accountID": user_uuid,
+        "firstName": "Test",
+        "lastName": "Test",
+        "email": "test@test.test",
+        "birthDate": "1111-11-11",
+        "gender": "male"
+    })
+    if int(response.json()["statusCode"]) != 400:
+        logger.error("create_empty_user()/POST failed")
+        raise Exception("Created Bad User")
+    
+    logger.info("create_empty_user() success")
 
 
 if __name__ == "__main__":
     try:
         create_read_delete()
         delete_nonexistent_user()
+        create_empty_user()
     except Exception as e:
         print(str(e))
