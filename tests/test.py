@@ -42,7 +42,7 @@ def create_read_delete():
             logger.error("create_read_delete()/DELETE failed")
             raise Exception("Cannot Delete existing user")
 
-    logger.info("create_then_delete_user() success")
+    logger.info("create_read_delete() success")
 
 
 def delete_nonexistent_user():
