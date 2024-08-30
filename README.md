@@ -7,6 +7,13 @@ We've implemented and deployed a social network web application using AWS cloud 
 - [Lior Vinman](https://github.com/liorvi35)
 - [Yoad Tamar](https://github.com/YoadTamar)
 
+## Table of Contents
+- [Introduction](#CloudFinalProject)
+- [Installation](#BuildandRun)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Build and Run
 ### Install AWS CLI
 ```bash
