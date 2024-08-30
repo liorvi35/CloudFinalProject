@@ -4,9 +4,9 @@ Final project in "Big Data &amp; Cloud Computing" course at Ariel-University.
 We've implemented and deployed a social network web application using AWS cloud infrastracture.
 
 ## Authors
-[Lior Vinman](https://github.com/liorvi35)
+- [Lior Vinman](https://github.com/liorvi35)
 
-[Yoad Tamar](https://github.com/YoadTamar)
+- [Yoad Tamar](https://github.com/YoadTamar)
 
 ## Cloud Componets
 - (AWS) API Gateway (REST API)
