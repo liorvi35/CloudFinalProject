@@ -12,7 +12,7 @@ Final project in "Big Data &amp; Cloud Computing" course at Ariel-University.
 
 ## Introduction
 
-We've implemented and deployed a social network web application using AWS cloud infrastracture.
+We've implemented and deployed a social network web application using AWS cloud infrastracture, called `LinkUp`.
 
 ## Authors
 - [Lior Vinman](https://github.com/liorvi35)
