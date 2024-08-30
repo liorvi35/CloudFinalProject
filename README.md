@@ -59,7 +59,6 @@ Deploy the infrastracture to the cloud using:
 cdk deploy
 ```
 
-
 ## Main Cloud Infrastracture Componets
 - (AWS) API Gateway (REST API)
 - (AWS) Lambda Functions and Layers
@@ -68,7 +67,7 @@ cdk deploy
 - (AWS) SQS
 - (AWS) Rekognition
 - (Azure) OpenAI
-- (GCP) Brevo Email API
+
 
 ## Demo Video
 Here is presented a full demo video for our social media network application:
