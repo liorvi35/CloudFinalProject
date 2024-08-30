@@ -1,20 +1,24 @@
 # CloudFinalProject
 Final project in "Big Data &amp; Cloud Computing" course at Ariel-University.
 
+## Table of Contents
+- [Introduction](#Introduction)
+- [Authors](#Authors)
+- [Installation](#Installation)
+- [Cloud](#Cloud)
+- [Demo](#Demo)
+- [Features](#Features)
+- [License](#License)
+
+## Introduction
+
 We've implemented and deployed a social network web application using AWS cloud infrastracture.
 
 ## Authors
 - [Lior Vinman](https://github.com/liorvi35)
 - [Yoad Tamar](https://github.com/YoadTamar)
 
-## Table of Contents
-- [Introduction](#CloudFinalProject)
-- [Installation](#BuildandRun)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Build and Run
+## Installation
 ### Install AWS CLI
 ```bash
 # Download the AWS CLI 
@@ -35,7 +39,7 @@ Run `aws configure` then update your account keys and configurations at `~/.aws/
 
 for verification, run `aws s3 ls`, and make sure that you see some s3 bucket from you account. 
 
-#### Install AWS CDK 
+### Install AWS CDK 
 ```bash
 # Install Typescript
 npm -g install typescript
@@ -66,7 +70,9 @@ Deploy the infrastracture to the cloud using:
 cdk deploy
 ```
 
-## Main Cloud Infrastracture Componets
+## Cloud
+Here are the cloud infrastracture components we've used:
+
 - (AWS) API Gateway (REST API)
 - (AWS) Lambda Functions and Layers
 - (AWS) S3
@@ -75,13 +81,14 @@ cdk deploy
 - (AWS) Rekognition
 - (Azure) OpenAI
 
-
-## Demo Video
+## Demo
 Here is presented a full demo video for our social media network application:
 
 https://github.com/user-attachments/assets/f2edb98d-44ae-4c26-998c-f1f39faf6762
 
-## Flow Diagrams and Main Features
+## Features
+
+### Flow Diagrams and Main Features
 Here are presented some flow diagrams for main application features (all could be seen in the video above):
 
 ### Image Processing to Post Pictures
@@ -99,4 +106,5 @@ Here are presented some flow diagrams for main application features (all could b
 ### Login to Existing User
 <center><img src="https://github.com/liorvi35/CloudFinalProject/blob/main/flow_diagrams/login.png" alt="description of the image"></center>
 
-
+## License
+This project is licensed under the GNU GPLv3 License. See the LICENSE file for details.
