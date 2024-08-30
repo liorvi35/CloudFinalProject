@@ -52,7 +52,7 @@ cdk --version
 ```
 
 ### Bootstrap your account for CDK
-> Note that: If you already bootstrap your account, no need to execute that action
+> Note that: If you already bootstrap your account, no need to execute that action again
 ```bash
 # Go to CDK
 cd linkup-cdk
