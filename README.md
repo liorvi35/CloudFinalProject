@@ -5,10 +5,62 @@ We've implemented and deployed a social network web application using AWS cloud 
 
 ## Authors
 - [Lior Vinman](https://github.com/liorvi35)
-
 - [Yoad Tamar](https://github.com/YoadTamar)
 
-## Cloud Componets
+## Build and Run
+### Install AWS CLI
+```bash
+# Download the AWS CLI 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+# Unzip the package
+unzip awscliv2.zip
+
+# Install the AWS CLI
+sudo ./aws/install
+
+# Clean up the installation files 
+rm -rf awscliv2.zip aws
+```
+
+### Set your Credentials
+Run `aws configure` then update your account keys and configurations at `~/.aws/credentials` and `~/.aws/config`.
+
+for verification, run `aws s3 ls`, and make sure that you see some s3 bucket from you account. 
+
+#### Install AWS CDK 
+```bash
+# Install Typescript
+npm -g install typescript
+
+# Install CDK
+npm install -g aws-cdk
+
+# Verify that CDK Is installed
+cdk --version
+```
+
+### Bootstrap your account for CDK
+> Note that: If you already bootstrap your account, no need to execute that action
+```bash
+# Go to CDK
+cd linkup-cdk
+
+# Install NPM models
+npm install
+
+# Run bootsrap
+cdk bootstrap --template bootstrap-template.yaml
+```
+
+### Deploy the Base Stack
+Deploy the infrastracture to the cloud using:
+```bash
+cdk deploy
+```
+
+
+## Main Cloud Infrastracture Componets
 - (AWS) API Gateway (REST API)
 - (AWS) Lambda Functions and Layers
 - (AWS) S3
@@ -24,7 +76,7 @@ Here is presented a full demo video for our social media network application:
 https://github.com/user-attachments/assets/f2edb98d-44ae-4c26-998c-f1f39faf6762
 
 ## Flow Diagrams and Main Features
-Here are presented some flow diagrams for main application features (that could be seen in the video above):
+Here are presented some flow diagrams for main application features (all could be seen in the video above):
 
 ### Image Processing to Post Pictures
 <center><img src="https://github.com/liorvi35/CloudFinalProject/blob/main/flow_diagrams/image_processing.png" alt="description of the image"></center>
